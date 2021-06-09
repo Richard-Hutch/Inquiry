@@ -2,70 +2,68 @@
 Developer Note: dont forget to click "watch sass" in VS Code
 https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 */
-@import url("https://fonts.googleapis.com/css2?family=Padauk&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2:wght@700&display=swap");
 :root {
   --text-color: #E9C46A;
 }
 
 body {
-  font-family: 'Padauk', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: -webkit-gradient(linear, left bottom, left top, from(#255E5A), to(#255E5A));
-  background: linear-gradient(0deg, #255E5A, #255E5A);
-}
-
-.navbar {
-  position: relative;
-  width: 100%;
-  height: 45px;
-  background: #264653;
-}
-
-.navbar .sitename {
-  position: relative;
-  left: 10px;
-  font-size: 30px;
-  line-height: 52px;
-  text-decoration: none;
+  font-family: 'Baloo Tammudu 2', cursive;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs' width='1440' height='560' preserveAspectRatio='none' viewBox='0 0 1440 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1022%26quot%3b)' fill='none'%3e%3crect width='1440' height='560' x='0' y='0' fill='rgba(221%2c 157%2c 0%2c 1)'%3e%3c/rect%3e%3cpath d='M 0%2c46 C 72%2c69.4 216%2c168.6 360%2c163 C 504%2c157.4 576%2c14.2 720%2c18 C 864%2c21.8 936%2c172 1080%2c182 C 1224%2c192 1368%2c90.8 1440%2c68L1440 560L0 560z' fill='rgba(243%2c 207%2c 59%2c 1)'%3e%3c/path%3e%3cpath d='M 0%2c363 C 57.6%2c345 172.8%2c280.2 288%2c273 C 403.2%2c265.8 460.8%2c336.8 576%2c327 C 691.2%2c317.2 748.8%2c233.2 864%2c224 C 979.2%2c214.8 1036.8%2c284.6 1152%2c281 C 1267.2%2c277.4 1382.4%2c221 1440%2c206L1440 560L0 560z' fill='%23184a7e'%3e%3c/path%3e%3cpath d='M 0%2c487 C 96%2c467.8 288%2c387.8 480%2c391 C 672%2c394.2 768%2c503.4 960%2c503 C 1152%2c502.6 1344%2c411.8 1440%2c389L1440 560L0 560z' fill='%232264ab'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1022'%3e%3crect width='1440' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: white;
 }
 
-.search-section {
-  text-align: center;
-  padding: 50%;
+.navbar .sitename {
+  text-decoration: none;
+  font-size: 2em;
+  color: white;
 }
 
-.search-section .search-title {
-  color: var(--text-color);
+.search-section .search {
+  text-align: center;
 }
 
-.creditBar {
-  margin: 0;
-  padding: 0;
-  position: relative;
-  width: 100%;
-  height: 50px;
+.search-section .search :hover {
+  color: #cecece;
+}
+
+.search-button {
+  font-family: 'Baloo Tammudu 2', cursive;
+  background-color: whitesmoke;
+  height: 5%;
+  border: none;
+  text-decoration: none;
   text-align: center;
-  bottom: 0;
-  background: #264653;
+  cursor: pointer;
+}
+
+#sb-span {
+  font-size: 30px;
 }
 
 .creditBar ul {
-  list-style-type: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-align: center;
 }
 
 .creditBar ul li {
   display: inline;
+  padding: 0em 1em 0em 0em;
 }
 
 .creditBar ul li a {
-  margin-right: 20px;
-  color: var(--text-color);
   text-decoration: none;
+  color: white;
 }
 
 .creditBar ul li a:hover {
-  color: white;
+  color: #cecece;
 }
 /*# sourceMappingURL=main.css.map */

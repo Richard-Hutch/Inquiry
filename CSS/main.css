@@ -3,7 +3,7 @@ Developer Note: dont forget to click "watch sass" in VS Code
 https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 */
 @import url("https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap");
 :root {
   --text-color: #E9C46A;
 }
@@ -23,22 +23,46 @@ body {
   color: white;
 }
 
-.search-section .search {
+.search-section .search-title {
+  text-align: center;
+  font-size: 2em;
+}
+
+.search-section .search-bar-div {
   text-align: center;
 }
 
-.search-section .search :hover {
+.search-section .search-bar-div #search-input {
+  border-style: solid;
+  border-width: 1em;
+  width: 28em;
+  height: 5em;
+  border-radius: 2em;
+  border-color: #ebebeb;
+  outline-width: 0;
+}
+
+.search-section .search-button-div {
+  text-align: center;
+}
+
+.search-section .search-button-div :hover {
   color: #cecece;
 }
 
 .search-button {
-  font-family: 'Baloo Tammudu 2', cursive;
+  font-family: 'Montserrat', sans-serif;
   background-color: whitesmoke;
-  height: 5%;
   border: none;
   text-decoration: none;
   text-align: center;
   cursor: pointer;
+  height: 3.2em;
+  border-radius: .75em;
+}
+
+.search-button #sb-span {
+  font-size: 17px;
 }
 
 #sb-span {

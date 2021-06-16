@@ -3,7 +3,7 @@ Developer Note: dont forget to click "watch sass" in VS Code
 https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
 :root{
     --text-color: #E9C46A;
 }
@@ -22,20 +22,44 @@ body{
     color: white;
 
 }
-.search-section .search{
-    text-align: center;
-    :hover{
-        color: rgb(206, 206, 206);
+.search-section {
+    .search-title{
+        text-align: center;
+        font-size: 2em;
     }
+    .search-bar-div{
+        text-align: center;
+        #search-input{
+            border-style: solid;
+            border-width: 1em;
+            width: 28em;
+            height: 5em;
+            border-radius: 2em;
+            border-color: rgb(235, 235, 235);
+            outline-width: 0; //hides the rectangle that shows when you select it with mouse
+        }
+    }
+
+    .search-button-div{
+        text-align: center;
+        :hover{
+            color: rgb(206, 206, 206);
+        }
+    }
+    
 }
 .search-button{
-    font-family: 'Baloo Tammudu 2', cursive;
+    font-family: 'Montserrat', sans-serif;
     background-color: whitesmoke;
-    height: 5%;
     border: none;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
+    height: 3.2em;
+    border-radius: .75em; //gives the rounded corners
+    #sb-span{
+        font-size: 17px;
+    }
 
 }
 #sb-span{

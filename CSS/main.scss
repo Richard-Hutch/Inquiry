@@ -7,6 +7,7 @@ https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 :root{
     --text-color: #E9C46A;
     --off-white: rgb(242, 242, 242);
+    --custom-opacity: .5;
 }
 body{
     font-family: 'Baloo Tammudu 2', cursive;
@@ -18,11 +19,38 @@ body{
     //position: relative;
 }
 .navbar .sitename{
-    text-decoration: none;
+    display: inline-block;
+    overflow: hidden; //alters the clickable area of <a> tag
+    height: 1.5em;
+    width: auto;
+    margin-top: .15em;
+    margin-left: .5em;    
     font-size: 2em;
-    color: navajowhite;
-
+    color: var(--off-white);
+    text-decoration: none;
 }
+.navbar .sitename:hover{
+    opacity: var(--custom-opacity);
+}
+
+.login-button{
+    position: absolute;
+    top: 1.2em;
+    right: 2em; 
+    margin: 0;
+    padding: .4em;
+    cursor: pointer;
+    font-size: 18px;
+    border: 2px solid; //width and style
+    border-radius: .5em;
+    background-color: transparent;
+    color: var(--off-white);
+}
+//not nested in .login-button because i needed to specifically target the div and not the <b> tag
+.login-button:hover{
+    opacity: var(--custom-opacity);
+}
+
 .search-section {
     .search-title{
         text-align: center;

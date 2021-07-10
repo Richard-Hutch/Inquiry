@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codify</title> <!-- edit this to adjust browser tab name -->
+    <title>Inquiry</title> <!-- edit this to adjust browser tab name -->
     <link rel="stylesheet" href="CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
+    <script src="app.js"></script>
 </head>
 <!--
 
@@ -15,15 +16,15 @@ Create a new playlist from the original playlist after filtering
 -->
 <body>
     <div class="navbar">
-        <a href="#" class="sitename"><b>CODIFY</b></a>
-        <button class = "login-button"><b>LOGIN</b></button>
+        <a href="#" class="sitename"><b>INQUIRY</b></a>
+        <button type = "button" class = "login-button" onclick="authorize()"><b>LOGIN</b></button>
     </div>
     <!--
         search for song here
     -->
     <div class="search-section">
         <div class="search-title">
-            <p><b>SEARCH FOR A PLAYLIST</b></p>
+            <p><b>SEARCH FOR PLAYLIST OR SONG</b></p>
         </div>
         <div class="search-bar-div">
             <form action= "do-search">
@@ -37,7 +38,7 @@ Create a new playlist from the original playlist after filtering
     <div class="creditBar">
         <ul>
             <li><a href="https://www.linkedin.com/in/richard-hutcheson/">LinkedIn: RichardHutcheson</a></li>
-            <li><a href="https://github.com/Richard-Hutch/SpotifyOrganizer">GitHub-Repository</a></li>
+            <li><a href="https://github.com/Richard-Hutch/Inquiry">GitHub-Repository</a></li>
         </ul>
     </div>
 </body>

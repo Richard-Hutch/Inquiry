@@ -29,13 +29,14 @@ body {
   font-size: 2em;
   color: var(--off-white);
   text-decoration: none;
+  cursor: pointer;
 }
 
 .navbar .sitename:hover {
   opacity: var(--custom-opacity);
 }
 
-.login-button {
+.log-btn {
   position: absolute;
   top: 1.2em;
   right: 2em;
@@ -49,8 +50,39 @@ body {
   color: var(--off-white);
 }
 
-.login-button:hover {
+.log-btn:hover {
   opacity: var(--custom-opacity);
+}
+
+#halt-login-id {
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+  top: 5em;
+  font-size: 30px;
+  background-image: linear-gradient(45deg, #CA4246 16.666%, #E16541 16.666%, #E16541 33.333%, #F18F43 33.333%, #F18F43 50%, #8B9862 50%, #8B9862 66.666%, #476098 66.666%, #476098 83.333%, #A7489B 83.333%);
+  background-repeat: repeat;
+  margin-top: .5em;
+}
+
+#msg-text {
+  color: white;
+  text-align: center;
+  font-size: 18px;
+  padding-top: .3em;
+  border-color: white;
+  border-width: .2em;
+  border-style: solid;
+  border-radius: .5em;
+  background-image: linear-gradient(45deg, #CA4246 16.666%, #E16541 16.666%, #E16541 33.333%, #F18F43 33.333%, #F18F43 50%, #8B9862 50%, #8B9862 66.666%, #476098 66.666%, #476098 83.333%, #A7489B 83.333%);
+  background-repeat: repeat;
+}
+
+.search-section {
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
 }
 
 .search-section .search-title {

@@ -28,12 +28,13 @@ body{
     font-size: 2em;
     color: var(--off-white);
     text-decoration: none;
+    cursor: pointer;
 }
 .navbar .sitename:hover{
     opacity: var(--custom-opacity);
 }
 
-.login-button{
+.log-btn{
     position: absolute;
     top: 1.2em;
     right: 2em; 
@@ -47,11 +48,57 @@ body{
     color: var(--off-white);
 }
 //not nested in .login-button because i needed to specifically target the div and not the <b> tag
-.login-button:hover{
+.log-btn:hover{
     opacity: var(--custom-opacity);
 }
-
+#halt-login-id{
+    left: 50%;
+    transform: translate(-50%);
+    top: 5em;
+    font-size: 30px;
+    background-image: linear-gradient(
+        45deg,
+        #CA4246 16.666%, 
+        #E16541 16.666%, 
+        #E16541 33.333%, 
+        #F18F43 33.333%, 
+        #F18F43 50%, 
+        #8B9862 50%, 
+        #8B9862 66.666%, 
+        #476098 66.666%, 
+        #476098 83.333%, 
+        #A7489B 83.333%);
+    background-repeat: repeat;
+    margin-top: .5em;
+}
+#msg-text{
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-size: 18px;
+    padding-top: .3em;
+    border-color: white;
+    border-width: .2em;
+    border-style: solid;
+    border-radius: .5em;
+    background-image: linear-gradient(
+        45deg,
+        #CA4246 16.666%, 
+        #E16541 16.666%, 
+        #E16541 33.333%, 
+        #F18F43 33.333%, 
+        #F18F43 50%, 
+        #8B9862 50%, 
+        #8B9862 66.666%, 
+        #476098 66.666%, 
+        #476098 83.333%, 
+        #A7489B 83.333%);
+    background-repeat: repeat;
+}
 .search-section {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%); //centers the search related divs
+
     .search-title{
         text-align: center;
         font-size: 2.5em;
@@ -65,7 +112,6 @@ body{
         margin-bottom: .2em;
 
         p{
-
             /* Create the gradient. */
             background-image: linear-gradient(
                 45deg,
@@ -131,16 +177,12 @@ body{
     }
     .search-button:hover{
         opacity: 90%;
-        // #sb-span{
-        //     color: white;
-        // }
     }
 }
 
 .creditBar{
 
     ul{
-
         position: fixed;
         bottom: 0;
         list-style: none; //removes bullet point
@@ -152,12 +194,10 @@ body{
         left: 50%;
         transform: translate(-50%); 
         li{
-
             display: inline;
             padding: 0em 1em 0em 0em; //separates the list elements
         }
         li a{
-
             text-decoration: none; //removes blue highlight
             color: white;
         }

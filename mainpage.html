@@ -17,8 +17,8 @@ provided playlists
 -->
 <body>
     <div class="navbar">
-        <a href="#" class="sitename"><b>INQUIRY</b></a>
-        <button type = "button" class = "login-button" onclick="authorize()"><b>LOGIN</b></button>
+        <a href = "#", onclick = "location.reload()", class="sitename"><b>INQUIRY</b></a>
+        <button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>
     </div>
     <!--
         search for song here
@@ -28,10 +28,12 @@ provided playlists
             <p><b>SEARCH FOR PLAYLIST OR SONG</b></p>
         </div>
         <div class="search-bar-div">
-            
-            <form for = "search-input", onsubmit = "search()"> <!--when user presses enter, implicit submission takes place-->
+            <input type="search", name = "search-input", id = "search-input", placeholder="Search...", autocomplete = "off", required>
+            <!--        
+            <form for = "search-input", onsubmit = "search()"> when user presses enter, implicit submission takes place
                 <input type="search", name = "search-input", id = "search-input", placeholder="Search...", autocomplete = "off", required>
             </form>
+            -->
         </div>
         <div class="search-button-div">
             <button type = "button" class = "search-button" id = "search-button-id" onclick = "search()"><span id = "sb-span">SEARCH</span></button>

@@ -18,7 +18,32 @@ provided playlists
 <body>
     <div class="navbar">
         <a href = "#", onclick = "location.reload()", class="sitename"><b>INQUIRY</b></a>
-        <button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>
+        <div class="menu-bars", onclick = "menuDropDown()">
+            <div class = "bar1", id = "bar1-id"></div>
+            <div class = "bar2", id = "bar2-id"></div>
+            <div class = "bar3", id = "bar3-id"></div>
+        </div>
+        
+        <div class="menu-content", id = "menu-content-id">
+                
+            <ul class = "menu-list", id = "menu-list-id">
+                <li>PROFILE</li>
+                <li>LOGOUT</li>
+            </ul>
+            
+            <!--
+            <div class="profile-div", id = "profile-id">
+                <p>PROFILE</p>
+            </div>
+            <div class="logout-div", id = "logout-id">
+                <p>LOGOUT</p>
+            </div> -->
+        </div>
+        <!--        
+            <div class="menu-wrapper" onclick = "menuDropDown()"></div>
+        -->
+
+        <!--<button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>-->
     </div>
     <!--
         search for song here
@@ -29,11 +54,6 @@ provided playlists
         </div>
         <div class="search-bar-div">
             <input type="search", name = "search-input", id = "search-input", placeholder="Search...", autocomplete = "off", required>
-            <!--        
-            <form for = "search-input", onsubmit = "search()"> when user presses enter, implicit submission takes place
-                <input type="search", name = "search-input", id = "search-input", placeholder="Search...", autocomplete = "off", required>
-            </form>
-            -->
         </div>
         <div class="search-button-div">
             <button type = "button" class = "search-button" id = "search-button-id" onclick = "search()"><span id = "sb-span">SEARCH</span></button>

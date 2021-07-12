@@ -18,21 +18,78 @@ body{
     color: white;
     //position: relative;
 }
-.navbar .sitename{
+.navbar {
     display: inline-block;
-    overflow: hidden; //alters the clickable area of <a> tag
-    height: 1.5em;
-    width: auto;
-    margin-top: .15em;
-    margin-left: .5em;    
-    font-size: 2em;
-    color: var(--off-white);
-    text-decoration: none;
-    cursor: pointer;
+
+    .sitename{
+        overflow: hidden; //alters the clickable area of <a> tag
+        height: 1.5em;
+        width: auto;
+        margin-top: .15em;
+        margin-left: .5em;    
+        font-size: 2em;
+        color: var(--off-white);
+        text-decoration: none;
+        cursor: pointer;
+    }
+    //hamburger styled icon
+    .menu-bars {
+        position: absolute;
+        right: 2em;
+        top: 1.5em;
+        cursor: pointer;
+
+        div{
+            height: 4px;
+            background-color: white;
+            margin: 5px;
+            width: 35px;
+            transition: .5s;
+        }
+        .bar2{
+            margin-left: .6em;
+            width: 25px;
+        }
+        .bar3{
+            margin-left: .95em;
+            width: 15px;
+        }
+    }
+    .menu-content{
+        display: none;
+        transition: .5s;
+        position: absolute;
+        right: 2em;
+        top: 3em;
+        z-index: 1;
+        .menu-list{
+            text-decoration: none;
+            list-style-type: none;
+            li{
+                color: orange;
+                text-align: center;
+                background-color: white;
+                margin-bottom: .4em;
+                padding: 0;
+                height: 27px;
+                width: 100px;
+                border-color: white;
+                border-radius: .4em;
+                border-style: solid;
+            }
+        }
+    }
+}
+.navbar .menu-bars:hover{
+    div{
+        margin-left: 5px;
+        width: 35px;
+    }
 }
 .navbar .sitename:hover{
     opacity: var(--custom-opacity);
 }
+
 
 .log-btn{
     position: absolute;

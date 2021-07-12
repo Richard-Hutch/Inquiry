@@ -65,3 +65,25 @@ function callHomePg(){
     }
     location.href = url + "?" + access_token;
 }
+async function userDetails(){
+    fetch("https://api.spotify.com/v1/me")
+    .then(function(response){
+        return response.json();
+    })
+    .then(function(result){
+        console.log(result);
+    })
+    .catch(function(error){
+        console.log("Error: " + error);
+    })
+}
+
+function menuDropDown(){
+    let state = document.getElementById("menu-content-id").style.display;
+    if (state === "none"){
+        state = "inline-block"
+    }else{
+        state = "none";
+    }
+    document.getElementById("menu-content-id").style.display = state;
+}

@@ -11,8 +11,22 @@
 <body>
     <div class="navbar">
         <a href="#", onclick = "callHomePg()", class="sitename"><b>INQUIRY</b></a>
-        <button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>
+        <div class="menu-wrapper" onclick = "menuDropDown()">
+            <div class="menu-bars">
+                <div class = "bar1", id = "bar1-id"></div>
+                <div class = "bar2", id = "bar2-id"></div>
+                <div class = "bar3", id = "bar3-id"></div>
+            </div>
+            <div class="menu-content">
+                <div class="profile-div">
+                    <p>PROFILE</p>
+                </div>
+                <div class="logout-div">
+                    <p>LOGOUT</p>
+                </div>
+            </div>
 
+       </div>
     </div>
     <div class="results">
         <p id = "results-p"></p>

@@ -63,8 +63,6 @@ body {
 
 .navbar .menu-content {
   display: none;
-  -webkit-transition: .5s;
-  transition: .5s;
   position: absolute;
   right: 2em;
   top: 3em;
@@ -72,11 +70,13 @@ body {
 }
 
 .navbar .menu-content .menu-list {
+  padding: 0;
   text-decoration: none;
   list-style-type: none;
 }
 
 .navbar .menu-content .menu-list li {
+  cursor: pointer;
   color: orange;
   text-align: center;
   background-color: white;

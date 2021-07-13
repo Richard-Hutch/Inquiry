@@ -57,15 +57,16 @@ body{
     }
     .menu-content{
         display: none;
-        transition: .5s;
         position: absolute;
         right: 2em;
         top: 3em;
         z-index: 1;
         .menu-list{
+            padding: 0;
             text-decoration: none;
             list-style-type: none;
             li{
+                cursor: pointer;
                 color: orange;
                 text-align: center;
                 background-color: white;
@@ -89,7 +90,6 @@ body{
 .navbar .sitename:hover{
     opacity: var(--custom-opacity);
 }
-
 
 .log-btn{
     position: absolute;
@@ -209,7 +209,6 @@ body{
             outline-width: 0; //hides the rectangle that shows when you select it with mouse
         }
     }
-
     .search-button-div{
         text-align: center;
         :hover{
@@ -249,7 +248,8 @@ body{
         text-align: center;
         //left 50% starts the text 50% of the way across the screen so translate it left 50% relative to length of the text
         left: 50%;
-        transform: translate(-50%); 
+        transform: translate(-50%);
+
         li{
             display: inline;
             padding: 0em 1em 0em 0em; //separates the list elements

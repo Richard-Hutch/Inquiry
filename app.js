@@ -24,9 +24,6 @@ document.addEventListener("keyup", function(event){
     }
 });
 
-
-
-
 function checkLoggedIn(order = 0){
     if (order === 1){
         if (!location.href.includes("halt")){
@@ -65,18 +62,18 @@ IDEA: create drop down box that allows user to select to search for song, playli
 
 */
 
-
-
-
 async function search(val = document.getElementById("search-input").value){
 
     if (val === ""){
         console.log("Search is empty");
     }else{
-
+        val = "\""+ val + "\"";
+        alert(val);
         console.log("searching for: " + val);
-        let limit = "5";
-        url = "https://api.spotify.com/v1/search?q=" + val + "&type=track&limit=" + limit;
+        let market = "&market=from_token";
+        let type = "&type=track";
+        let limit = "&limit=5";
+        url = "https://api.spotify.com/v1/search?q=" + val + type + limit + market;
         fetch(url, 
         {
             method: "GET",
@@ -87,17 +84,30 @@ async function search(val = document.getElementById("search-input").value){
             }
         })
         .then((response)=>response.json())
-        .then(function(response){
-            console.log(response);
-            localStorage.setItem("request", JSON.stringify(response));
-            let retrievedObject = localStorage.getItem("request");
-            if (!retrievedObject){
-                alert("not found");
-            }else{
-                hash = window.location.hash;
-                window.location.href = "/result.html?" + hash;
-                console.log("request", JSON.parse(retrievedObject));
-            }
+        .then(function(data){
+            //console.log(data);
+            //let str = JSON.stringify(data);
+            console.log(JSON.stringify(data, null , 2));
+            //console.log("\n" + JSON.stringify(data.tracks.items[0].name, null, 2));
+            //for each item, get the name
+            data.tracks.items.forEach(function(key){
+                let tempStr = key.name + ", by ";
+                //console.log(key.name + ", by ");
+                //for each artist in the item get the name
+                key.artists.forEach(function(key2){
+                    tempStr += key2.name + ", ";
+                });
+                console.log(tempStr);
+            });
+
+            // data.tracks.items[0].artists.forEach(function(key){
+            //     console.log(key.name);
+            // })
+            //console.log("\n" + JSON.stringify(data.tracks.items[0].artists[1].name, null, 2));
+
+
+            hash = window.location.hash;
+            window.location.href = "/result.html?" + hash;
 
         })
         .catch(function(error){

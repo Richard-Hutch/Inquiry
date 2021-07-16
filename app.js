@@ -11,8 +11,10 @@ let userHash;
 let accessToken;
 let url = "";
 
+
 //on each page load, check if user is logged into spotify account. If not, have them log in
 checkLoggedIn(1);
+
 
 //check if user presses the enter key while the focused on the search bar
 document.addEventListener("keyup", function(event){
@@ -46,34 +48,21 @@ function checkLoggedIn(order = 0){
 function authorize(){
     //console.log(authURL)
 
-    const time_limit =  .5; //amnt of minutes
-    startTimer(time_limit * 60 * 1000); //amnt of minutes * 60 seconds * 60 milliseconds
     window.location = authURL;
     //user denied login
     if (location.href.includes("error=access_denied")){
         location.href = "/halt.html";
+    }else{
+        console.log("true");
+        timerActive = true;
     }
-}
-
-function startTimer(time_limit){
-    let currTimer = time_limit;
-    setInterval(function(){
-        currTimer -= 1000;
-        console.log("called");
-        if (currTimer <= 0){
-            alert("Reauthentication Required.")
-            clearInterval();
-        }
-    }, 1000);
 }
 
 function logout(){
     location.href = "/halt.html"; //by changing url, userHash is lost
 }
 /*
-
 IDEA: create drop down box that allows user to select to search for song, playlist, or both
-
 */
 
 async function search(val = document.getElementById("search-input").value){
@@ -81,12 +70,21 @@ async function search(val = document.getElementById("search-input").value){
     if (val === ""){
         alert("Search is empty!");
     }else{
+        let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
+        console.log("option = " + option);
         val = "\""+ val + "\"";
         console.log("searching for: " + val);
         let market = "&market=from_token";
         let type = "&type=track";
         let limit = "&limit=5";
-        url = "https://api.spotify.com/v1/search?q=" + val + type + limit + market;
+        url = "https://api.spotify.com/v1/search?q=";
+        //append track: to exclusively search track titles
+        if (option === "SongStrict"){
+            url += "track:";
+        }else if (option === "Playlist"){
+            type = "&type=playlist";
+        }
+        url += val + type + limit + market;
         fetch(url, 
         {
             method: "GET",
@@ -98,27 +96,41 @@ async function search(val = document.getElementById("search-input").value){
         })
         .then((response)=>response.json())
         .then(function(data){
-            //console.log(data);
-            //let str = JSON.stringify(data);
-            if (data.tracks.items[0] == null){
-                alert("No Result found");
-            }else{
-                console.log(JSON.stringify(data, null , 2));
-                //console.log("\n" + JSON.stringify(data.tracks.items[0].name, null, 2));
-                //for each item, get the name
-                data.tracks.items.forEach(function(key){
-                    let tempStr = key.name + ", by ";
-                    //for each artist in the item get the name
-                    key.artists.forEach(function(key2){
-                        tempStr += key2.name + ", ";
-                    });
-                    console.log(tempStr);
-                });
-                hash = window.location.hash;
-                window.location.href = "/result.html?" + hash;
+
+            //handle playlist searching
+            if (option === "Playlist"){
+                if (data.playlists.items[0] == null){
+                    alert("No results found");
+                }else{
+                    console.log(JSON.stringify(data, null , 2));
+                }
             }
+            //handle track searching
+            else{
+                if (data.tracks.items[0] == null){
+                    alert("No Result found");
+                }else{
+                    
+                    console.log(JSON.stringify(data, null , 2));
+                    //for each item, get the name
+                    data.tracks.items.forEach(function(key){
+                        let tempStr = key.name + ", by ";
+                        //for each artist in the item get the name
+                        key.artists.forEach(function(key2){
+                            tempStr += key2.name + ", ";
+                        });
+                        tempStr += " ID: " + key.id;
+                        console.log(tempStr);
+                    });
+                    hash = window.location.hash;
+                    window.location.href = "/result.html?" + hash;
+                }
+            }
+
+            
         })
         .catch(function(error){
+            confirm("Access Token Expired. Please login again.");
             console.log("Error: " + error);
         })
     }
@@ -148,6 +160,7 @@ async function userDetails(){
         console.log(result);
     })
     .catch(function(error){
+        alert("Access Token Expired. Please login again.");
         console.log("Error: " + error);
     })
 }

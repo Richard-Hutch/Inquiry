@@ -14,6 +14,13 @@ https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
     from {opacity: 0%;}
     to{opacity: 100%;}
 }
+//fades in
+@keyframes disappear{
+    from {opacity: 100%;}
+    to{opacity: 0%;
+    display: none;}
+
+}
 //so far, only applies to mainpage body
 .fade-in{
     animation-name: appear;
@@ -74,7 +81,7 @@ body{
         }
     }
     .menu-bars-inactive{
-        transition: 1s;
+        transition: 1s; //ensures a smooth transition back to regular size after done hovering
 
         div{
             width: 20px;
@@ -89,14 +96,20 @@ body{
             opacity: 0%;
         }
         &:hover{
-            transition: 1s;
-
+            transition: 1s; //grow larger when hovered over
             transform: scale(1.5);
         }
-
     }
-    .menu-content{
-        display: none;
+    .menu-content-show{
+        display: inline-block;
+        animation-name: appear;
+        animation-duration: 2s;
+    }
+    .menu-content-hide{
+        animation-name: disappear;
+        animation-duration: 2s;
+    }
+    .menu-content-show, .menu-content-hide{
         position: absolute;
         right: 2em;
         top: 3em;

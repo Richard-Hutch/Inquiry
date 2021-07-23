@@ -169,13 +169,17 @@ function menuDropDown(){
     console.log("state = " + state);
     //menu is not showing, show
     if (state === "menu-bars-active"){
-        document.getElementById("menu-content-id").style.display = "inline-block";
+        //document.getElementById("menu-content-id").style.display = "inline-block";
+        document.getElementById("menu-content-id").classList.remove("menu-content-hide");
+        document.getElementById("menu-content-id").classList.add("menu-content-show");
         document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
         document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
     }
     //menu is showing, hide
     else if (state === "menu-bars-inactive"){
-        document.getElementById("menu-content-id").style.display = "none";
+        //document.getElementById("menu-content-id").style.display = "none";
+        document.getElementById("menu-content-id").classList.remove("menu-content-show");
+        document.getElementById("menu-content-id").classList.add("menu-content-hide");
         document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
         document.getElementById("menu-bars-id").classList.add("menu-bars-active");
     }

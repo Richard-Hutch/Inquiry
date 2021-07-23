@@ -165,22 +165,44 @@ async function userDetails(){
     })
 }
 function menuDropDown(){
+    let state = document.getElementById("menu-bars-id").className;
+    console.log("state = " + state);
+    //menu is not showing, show
+    if (state === "menu-bars-active"){
+        document.getElementById("menu-content-id").style.display = "inline-block";
+        document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
+        document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
+    }
+    //menu is showing, hide
+    else if (state === "menu-bars-inactive"){
+        document.getElementById("menu-content-id").style.display = "none";
+        document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
+        document.getElementById("menu-bars-id").classList.add("menu-bars-active");
+    }
+
+    /*
     let state = document.getElementById("menu-content-id").style.display;
+    //
     if (state === "none" || state === ""){ //the "" is because DOM doesn't know the display in master css yet
         state = "inline-block";
         document.getElementById("bar1-id").style.width = "25px";
         document.getElementById("bar1-id").style.transform = "translate(5px, 9px) rotate(45deg)";
         document.getElementById("bar2-id").style.transform = "rotate(130deg)";
+        document.getElementById("bar2-id").style.width = "25px";
+
         document.getElementById("bar3-id").style.visibility = "hidden";
     }
     else{
         document.getElementById("bar1-id").style.transform = "rotate(0deg)";
         document.getElementById("bar1-id").style.width = "35px";
+        document.getElementById("bar2-id").style.width = "35px";
+
         //document.getElementById("bar1-id").style.transform = "translate(5px, -5px)";
 
         document.getElementById("bar2-id").style.transform = "rotate(0deg)";
         document.getElementById("bar3-id").style.visibility = "visible";
-         state = "none";
+        state = "none";
     }
     document.getElementById("menu-content-id").style.display = state;
+    */
 }

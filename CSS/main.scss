@@ -9,6 +9,16 @@ https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
     --off-white: rgb(242, 242, 242);
     --custom-opacity: .5;
 }
+//fades in
+@keyframes appear{
+    from {opacity: 0%;}
+    to{opacity: 100%;}
+}
+//so far, only applies to mainpage body
+.fade-in{
+    animation-name: appear;
+    animation-duration: 2s;
+}
 body{
     font-family: 'Baloo Tammudu 2', cursive;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs' width='1440' height='560' preserveAspectRatio='none' viewBox='0 0 1440 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1022%26quot%3b)' fill='none'%3e%3crect width='1440' height='560' x='0' y='0' fill='rgba(221%2c 157%2c 0%2c 1)'%3e%3c/rect%3e%3cpath d='M 0%2c46 C 72%2c69.4 216%2c168.6 360%2c163 C 504%2c157.4 576%2c14.2 720%2c18 C 864%2c21.8 936%2c172 1080%2c182 C 1224%2c192 1368%2c90.8 1440%2c68L1440 560L0 560z' fill='rgba(243%2c 207%2c 59%2c 1)'%3e%3c/path%3e%3cpath d='M 0%2c363 C 57.6%2c345 172.8%2c280.2 288%2c273 C 403.2%2c265.8 460.8%2c336.8 576%2c327 C 691.2%2c317.2 748.8%2c233.2 864%2c224 C 979.2%2c214.8 1036.8%2c284.6 1152%2c281 C 1267.2%2c277.4 1382.4%2c221 1440%2c206L1440 560L0 560z' fill='%23184a7e'%3e%3c/path%3e%3cpath d='M 0%2c487 C 96%2c467.8 288%2c387.8 480%2c391 C 672%2c394.2 768%2c503.4 960%2c503 C 1152%2c502.6 1344%2c411.8 1440%2c389L1440 560L0 560z' fill='%232264ab'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1022'%3e%3crect width='1440' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e");
@@ -16,6 +26,7 @@ body{
     background-repeat: no-repeat;
     background-attachment: fixed; //needed for background img to cover whole background
     color: white;
+
     //position: relative;
 }
 .navbar {
@@ -31,9 +42,13 @@ body{
         color: var(--off-white);
         text-decoration: none;
         cursor: pointer;
+        &:hover{
+            opacity: var(--custom-opacity);
+        }
     }
+
     //hamburger styled icon
-    .menu-bars {
+    .menu-bars-active, .menu-bars-inactive {
         position: absolute;
         right: 2em;
         top: 1.5em;
@@ -44,16 +59,41 @@ body{
             background-color: white;
             margin: 5px;
             width: 35px;
-            transition: .5s;
+            transition: 1s;
         }
+
+    }
+    .menu-bars-active:hover{
         .bar2{
-            margin-left: .6em;
+            transform: translate(5px);
             width: 25px;
         }
         .bar3{
-            margin-left: .95em;
+            transform: translate(10px);
             width: 15px;
         }
+    }
+    .menu-bars-inactive{
+        transition: 1s;
+
+        div{
+            width: 20px;
+        }
+        .bar1{
+            transform: rotate(45deg) translate(7px,6px);
+        }
+        .bar2{
+            transform: rotate(130deg);
+        }
+        .bar3{
+            opacity: 0%;
+        }
+        &:hover{
+            transition: 1s;
+
+            transform: scale(1.5);
+        }
+
     }
     .menu-content{
         display: none;
@@ -61,6 +101,7 @@ body{
         right: 2em;
         top: 3em;
         z-index: 1;
+        transition: 1s;
         .menu-list{
             padding: 0;
             text-decoration: none;
@@ -81,15 +122,7 @@ body{
         }
     }
 }
-.navbar .menu-bars:hover{
-    div{
-        margin-left: 5px;
-        width: 35px;
-    }
-}
-.navbar .sitename:hover{
-    opacity: var(--custom-opacity);
-}
+
 
 .log-btn{
     position: absolute;
@@ -103,11 +136,12 @@ body{
     border-radius: .5em;
     background-color: transparent;
     color: var(--off-white);
+    //not nested in .login-button because i needed to specifically target the div and not the <b> tag
+    &:hover{
+        opacity: var(--custom-opacity);
+    }
 }
-//not nested in .login-button because i needed to specifically target the div and not the <b> tag
-.log-btn:hover{
-    opacity: var(--custom-opacity);
-}
+
 #halt-login-id{
     left: 50%;
     transform: translate(-50%);

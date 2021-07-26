@@ -64,10 +64,19 @@ function logout(){
 /*
 IDEA: create drop down box that allows user to select to search for song, playlist, or both
 */
-function test(){
-    console.log("LIGMA CHO KEN STROGEMA");
+function navigate(url, hash = ""){
+    window.location.assign(url + hash);
 }
-async function search(val = document.getElementById("search-input").value){
+function search(){
+    navigate("/result.html?", window.location.hash)
+
+    data = doSearch();
+    console.log("yo");
+    document.getElementById("element-data-id").innerHTML = "hello";
+}
+
+async function doSearch(val = document.getElementById("search-input").value){
+    let dataStr = null;
 
     if (val === ""){
         alert("Search is empty!");
@@ -87,6 +96,11 @@ async function search(val = document.getElementById("search-input").value){
             type = "&type=playlist";
         }
         url += val + type + limit + market;
+
+
+        dataStr = "Data not found";
+
+
         fetch(url, 
         {
             method: "GET",
@@ -114,7 +128,6 @@ async function search(val = document.getElementById("search-input").value){
                 }else{
                     
                     console.log(JSON.stringify(data, null , 2));
-                    let dataStr = "Data not found";
                     //for each item, get the name
                     data.tracks.items.forEach(function(key){
                         dataStr = key.name + ", by ";
@@ -126,33 +139,31 @@ async function search(val = document.getElementById("search-input").value){
                         console.log(dataStr);
 
                     });
-                    hash = window.location.hash;
-                    window.location.assign("/result.html?" + hash);
-                    window.onload = test;
-                    console.log("howdy");
-
-                    
-
                 }
             }
-
-            
         })
         .catch(function(error){
-            confirm("Access Token Expired. Please login again.");
+            if (error == "TypeError: Failed to fetch"){
+                confirm("Error fetching data.");
+
+            }else{
+                confirm("Access Token Expired. Please login again.");
+            }
             console.log("Error: " + error);
         })
     }
+    return dataStr;
 }
 function callHomePg(){
     url = "http://127.0.0.1:5500/mainpage.html";
     userHash = window.location.hash;
     if (userHash){
+        
         url = url + "?" + userHash;
     }else{
         console.log("no token: " + userHash);
     }
-    location.href = url + "?" + userHash;
+    location.href = url;
 }
 async function userDetails(){
     fetch("https://api.spotify.com/v1/me", 
@@ -192,30 +203,4 @@ function menuDropDown(){
         document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
         document.getElementById("menu-bars-id").classList.add("menu-bars-active");
     }
-
-    /*
-    let state = document.getElementById("menu-content-id").style.display;
-    //
-    if (state === "none" || state === ""){ //the "" is because DOM doesn't know the display in master css yet
-        state = "inline-block";
-        document.getElementById("bar1-id").style.width = "25px";
-        document.getElementById("bar1-id").style.transform = "translate(5px, 9px) rotate(45deg)";
-        document.getElementById("bar2-id").style.transform = "rotate(130deg)";
-        document.getElementById("bar2-id").style.width = "25px";
-
-        document.getElementById("bar3-id").style.visibility = "hidden";
-    }
-    else{
-        document.getElementById("bar1-id").style.transform = "rotate(0deg)";
-        document.getElementById("bar1-id").style.width = "35px";
-        document.getElementById("bar2-id").style.width = "35px";
-
-        //document.getElementById("bar1-id").style.transform = "translate(5px, -5px)";
-
-        document.getElementById("bar2-id").style.transform = "rotate(0deg)";
-        document.getElementById("bar3-id").style.visibility = "visible";
-        state = "none";
-    }
-    document.getElementById("menu-content-id").style.display = state;
-    */
 }

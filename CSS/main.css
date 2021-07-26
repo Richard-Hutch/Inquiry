@@ -69,6 +69,7 @@ body {
 }
 
 .navbar .sitename {
+  display: inherit;
   overflow: hidden;
   height: 1.5em;
   width: auto;
@@ -78,9 +79,13 @@ body {
   color: var(--off-white);
   text-decoration: none;
   cursor: pointer;
+  -webkit-transition: 1s;
+  transition: 1s;
 }
 
 .navbar .sitename:hover {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
   opacity: var(--custom-opacity);
 }
 
@@ -138,8 +143,9 @@ body {
 .navbar .menu-bars-inactive:hover {
   -webkit-transition: 1s;
   transition: 1s;
-  -webkit-transform: scale(1.5);
-          transform: scale(1.5);
+  -webkit-transform: scale(1.2);
+          transform: scale(1.2);
+  opacity: var(--custom-opacity);
 }
 
 .navbar .menu-content-show {
@@ -155,6 +161,9 @@ body {
           animation-name: disappear;
   -webkit-animation-duration: 2s;
           animation-duration: 2s;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+  display: none;
 }
 
 .navbar .menu-content-show, .navbar .menu-content-hide {

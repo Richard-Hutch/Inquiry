@@ -64,7 +64,9 @@ function logout(){
 /*
 IDEA: create drop down box that allows user to select to search for song, playlist, or both
 */
-
+function test(){
+    console.log("LIGMA CHO KEN STROGEMA");
+}
 async function search(val = document.getElementById("search-input").value){
 
     if (val === ""){
@@ -112,18 +114,25 @@ async function search(val = document.getElementById("search-input").value){
                 }else{
                     
                     console.log(JSON.stringify(data, null , 2));
+                    let dataStr = "Data not found";
                     //for each item, get the name
                     data.tracks.items.forEach(function(key){
-                        let tempStr = key.name + ", by ";
+                        dataStr = key.name + ", by ";
                         //for each artist in the item get the name
                         key.artists.forEach(function(key2){
-                            tempStr += key2.name + ", ";
+                            dataStr += key2.name + ", ";
                         });
-                        tempStr += " ID: " + key.id;
-                        console.log(tempStr);
+                        dataStr += " ID: " + key.id;
+                        console.log(dataStr);
+
                     });
                     hash = window.location.hash;
-                    window.location.href = "/result.html?" + hash;
+                    window.location.assign("/result.html?" + hash);
+                    window.onload = test;
+                    console.log("howdy");
+
+                    
+
                 }
             }
 

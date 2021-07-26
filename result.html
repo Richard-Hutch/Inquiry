@@ -7,16 +7,15 @@
     <link rel="stylesheet" href="CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
     <script src="app.js"></script>
 </head>
-
 <body>
     <div class="navbar">
         <a href="#", onclick = "callHomePg()", class="sitename"><b>INQUIRY</b></a>
-        <div class="menu-bars", onclick = "menuDropDown()", id = "menu-bars-id">
+        <div class="menu-bars-active", onclick = "menuDropDown()", id = "menu-bars-id">
             <div class = "bar1", id = "bar1-id"></div>
             <div class = "bar2", id = "bar2-id"></div>
             <div class = "bar3", id = "bar3-id"></div>
         </div>
-        <div class="menu-content", id = "menu-content-id">
+        <div class="menu-content-hide", id = "menu-content-id">
                 
             <ul class = "menu-list", id = "menu-list-id">
                 <li onclick = "userDetails()">PROFILE</li>
@@ -24,6 +23,11 @@
             </ul>
         </div>
     </div>
+
+    <div class="element">
+        <p class="element-data", id = "element-data-id"></p>
+    </div>
+
     <div class="results">
         <p id = "results-p"></p>
     </div>

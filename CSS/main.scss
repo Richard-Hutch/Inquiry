@@ -17,8 +17,10 @@ https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 //fades in
 @keyframes disappear{
     from {opacity: 100%;}
-    to{opacity: 0%;
-    display: none;}
+    to{
+        opacity: 0%;
+        display: none;
+    }
 
 }
 //so far, only applies to mainpage body
@@ -40,6 +42,7 @@ body{
     display: inline-block;
 
     .sitename{
+        display: inherit;
         overflow: hidden; //alters the clickable area of <a> tag
         height: 1.5em;
         width: auto;
@@ -49,11 +52,13 @@ body{
         color: var(--off-white);
         text-decoration: none;
         cursor: pointer;
+        transition: 1s;
         &:hover{
+            transform: scale(1.05);
             opacity: var(--custom-opacity);
         }
-    }
 
+    }
     //hamburger styled icon
     .menu-bars-active, .menu-bars-inactive {
         position: absolute;
@@ -97,17 +102,23 @@ body{
         }
         &:hover{
             transition: 1s; //grow larger when hovered over
-            transform: scale(1.5);
+            transform: scale(1.2);
+            opacity: var(--custom-opacity);
         }
     }
+    //menu content showing
     .menu-content-show{
         display: inline-block;
         animation-name: appear;
         animation-duration: 2s;
     }
+    //menu content not showing
     .menu-content-hide{
         animation-name: disappear;
         animation-duration: 2s;
+        animation-fill-mode: forwards;
+        display: none;
+
     }
     .menu-content-show, .menu-content-hide{
         position: absolute;
@@ -135,7 +146,6 @@ body{
         }
     }
 }
-
 
 .log-btn{
     position: absolute;

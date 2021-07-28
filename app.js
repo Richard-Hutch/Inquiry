@@ -11,10 +11,13 @@ let userHash;
 let accessToken;
 let url = "";
 
+//PARAMETERS
+let SEARCH_ITEM = "&searchItem=";
+let SEARCH_OPTION = "&searchOption=";
 
 //on each page load, check if user is logged into spotify account. If not, have them log in
 checkLoggedIn(1);
-
+checkParameters();
 
 //check if user presses the enter key while the focused on the search bar
 document.addEventListener("keyup", function(event){
@@ -46,8 +49,6 @@ function checkLoggedIn(order = 0){
 
 }
 function authorize(){
-    //console.log(authURL)
-
     window.location = authURL;
     //user denied login
     if (location.href.includes("error=access_denied")){
@@ -61,27 +62,43 @@ function authorize(){
 function logout(){
     location.href = "/halt.html"; //by changing url, userHash is lost
 }
+
+function checkParameters(){
+    userHash = window.location.hash.substring(1); //cuts out the '#'
+    //GET PARAMETERS OF HASH BY KEY AND VALUE 
+    let params = {};
+    userHash.split('&').map(key =>{
+        let temp = key.split('=');
+        params[temp[0]] = temp[1];
+    })
+    console.log(params);
+    //check if a search is being made
+    console.log(params.item);
+    if (params.searchItem && params.searchOption){
+        let val = params.searchItem;
+        let option = params.searchOption;
+        doSearch(val,option);
+    }
+
+}
 /*
-IDEA: create drop down box that allows user to select to search for song, playlist, or both
+TO-DO: make sure that user does not include & or = in their search
 */
-function navigate(url, hash = ""){
-    window.location.assign(url + hash);
-}
 function search(){
-    navigate("/result.html?", window.location.hash)
 
-    data = doSearch();
-    console.log("yo");
-    document.getElementById("element-data-id").innerHTML = "hello";
+    let key = document.getElementById("search-input").value;
+    let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
+    window.location.assign("/result.html?" + window.location.hash + SEARCH_ITEM + key + SEARCH_OPTION + option);
+    // document.getElementById("element-data-id").innerHTML = "hello";
 }
 
-async function doSearch(val = document.getElementById("search-input").value){
+async function doSearch(val, option){
     let dataStr = null;
 
     if (val === ""){
         alert("Search is empty!");
     }else{
-        let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
+        //
         console.log("option = " + option);
         val = "\""+ val + "\"";
         console.log("searching for: " + val);
@@ -96,11 +113,7 @@ async function doSearch(val = document.getElementById("search-input").value){
             type = "&type=playlist";
         }
         url += val + type + limit + market;
-
-
         dataStr = "Data not found";
-
-
         fetch(url, 
         {
             method: "GET",
@@ -123,8 +136,10 @@ async function doSearch(val = document.getElementById("search-input").value){
             }
             //handle track searching
             else{
+                //no result from search found
                 if (data.tracks.items[0] == null){
                     alert("No Result found");
+                    callHomePg();
                 }else{
                     
                     console.log(JSON.stringify(data, null , 2));
@@ -135,10 +150,11 @@ async function doSearch(val = document.getElementById("search-input").value){
                         key.artists.forEach(function(key2){
                             dataStr += key2.name + ", ";
                         });
+                        //get the id of the track
                         dataStr += " ID: " + key.id;
                         console.log(dataStr);
-
                     });
+                    //document.getElementById("element-data-id").innerHTML = "HELLO";
                 }
             }
         })
@@ -154,11 +170,42 @@ async function doSearch(val = document.getElementById("search-input").value){
     }
     return dataStr;
 }
+//IMPORTANT! "parameter" must include the & and the = symbols
+function removeHashParameter(parameter, hash){
+    let ndx;
+    let size = hash.length;
+
+    //erase item search parameter
+    if (ndx = hash.search(parameter)){
+        for (let i = ndx + 6; i < size; i++){
+            //there are more parameters so find where item value ends
+            if (hash[i] === "&"){
+                let strToDelete = hash.substring(ndx, i);
+                hash = hash.replace(strToDelete, "");
+                break;
+            }
+            else{
+                //there are no further URL parameters
+                if (i == size -1){
+                    let strToDelete = hash.substr(ndx);
+                    hash = hash.replace(strToDelete, "");
+                }
+            }
+        }
+    }
+    //hash parameter not found
+    if (ndx == -1) {
+        confirm("Error: parameter not found");
+    }
+    return hash;
+}
 function callHomePg(){
     url = "http://127.0.0.1:5500/mainpage.html";
     userHash = window.location.hash;
+    //hash exists
     if (userHash){
-        
+        userHash = removeHashParameter(SEARCH_ITEM, userHash);
+        userHash = removeHashParameter(SEARCH_OPTION, userHash);
         url = url + "?" + userHash;
     }else{
         console.log("no token: " + userHash);
@@ -180,21 +227,31 @@ async function userDetails(){
         console.log(result);
     })
     .catch(function(error){
-        alert("Access Token Expired. Please login again.");
+        if (error == "TypeError: Failed to fetch"){
+            confirm("Error fetching data.");
+        }else{
+            confirm("Access Token Expired. Please login again.");
+        }
         console.log("Error: " + error);
     })
 }
 function menuDropDown(){
     let state = document.getElementById("menu-bars-id").className;
-    console.log("state = " + state);
+    let contentState = document.getElementById("menu-content-id").className;
     //menu is not showing, show
     if (state === "menu-bars-active"){
         //document.getElementById("menu-content-id").style.display = "inline-block";
-        document.getElementById("menu-content-id").classList.remove("menu-content-hide");
+        //page just loaded and we do not want to execute animation on content
+        if (contentState === "menu-content-hide-first"){
+            document.getElementById("menu-content-id").classList.remove("menu-content-hide-first");
+        }else{
+            document.getElementById("menu-content-id").classList.remove("menu-content-hide");    
+        }
         document.getElementById("menu-content-id").classList.add("menu-content-show");
         document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
         document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
     }
+
     //menu is showing, hide
     else if (state === "menu-bars-inactive"){
         //document.getElementById("menu-content-id").style.display = "none";

@@ -153,8 +153,9 @@ async function doSearch(val, option){
                         //get the id of the track
                         dataStr += " ID: " + key.id;
                         console.log(dataStr);
+                        document.getElementById("element-data-id").innerHTML += dataStr +"<br/>";
+
                     });
-                    //document.getElementById("element-data-id").innerHTML = "HELLO";
                 }
             }
         })

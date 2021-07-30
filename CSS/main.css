@@ -54,30 +54,6 @@ https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
   }
 }
 
-@-webkit-keyframes slide-ltor {
-  from {
-    margin-left: -30%;
-    left: 0;
-  }
-  to {
-    -webkit-transform: translate(50%);
-            transform: translate(50%);
-    left: -50%;
-  }
-}
-
-@keyframes slide-ltor {
-  from {
-    margin-left: -30%;
-    left: 0;
-  }
-  to {
-    -webkit-transform: translate(50%);
-            transform: translate(50%);
-    left: -50%;
-  }
-}
-
 .fade-in {
   -webkit-animation-name: appear;
           animation-name: appear;
@@ -229,12 +205,57 @@ body {
 }
 
 .searching-for {
-  -webkit-animation-name: slide-ltor;
-          animation-name: slide-ltor;
+  text-align: center;
+}
+
+.searching-for #searching-for-id {
+  position: relative;
+  display: inline-block;
+  -webkit-animation-name: appear;
+          animation-name: appear;
   -webkit-animation-duration: 3s;
           animation-duration: 3s;
   -webkit-animation-fill-mode: forwards;
           animation-fill-mode: forwards;
+}
+
+.element .element-data {
+  position: relative;
+}
+
+.element-wrapper {
+  position: relative;
+  border-style: solid;
+  border-radius: .5em;
+  width: 380px;
+  height: 80px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  background-color: var(--off-white);
+  -webkit-transition: .25s;
+  transition: .25s;
+}
+
+.element-wrapper .card-container {
+  position: relative;
+  height: 90px;
+}
+
+.element-wrapper .card-container #card-svg-id {
+  padding-top: 2em;
+  margin-top: -2em;
+  padding-bottom: 2em;
+  margin-bottom: -2em;
+  position: absolute;
+  left: 92%;
+  -webkit-transform: translateY(35%);
+          transform: translateY(35%);
+  cursor: pointer;
+}
+
+.element-wrapper:hover {
+  border-width: .4em;
 }
 
 .log-btn {

@@ -16,8 +16,11 @@ let SEARCH_ITEM = "&searchItem=";
 let SEARCH_OPTION = "&searchOption=";
 
 //on each page load, check if user is logged into spotify account. If not, have them log in
-checkLoggedIn(1);
-checkParameters();
+window.onload = function(){
+    checkLoggedIn(1);
+    checkParameters();
+}
+
 
 //check if user presses the enter key while the focused on the search bar
 document.addEventListener("keyup", function(event){
@@ -75,11 +78,11 @@ function checkParameters(){
     //check if a search is being made
     console.log(params.item);
     if (params.searchItem && params.searchOption){
-        let val = params.searchItem;
+        let val = decodeURI(params.searchItem);
         let option = params.searchOption;
+        document.getElementById("searching-for-id").innerText += " " + val.toUpperCase(); 
         doSearch(val,option);
     }
-
 }
 /*
 TO-DO: make sure that user does not include & or = in their search
@@ -156,6 +159,7 @@ async function doSearch(val, option){
                         document.getElementById("element-data-id").innerHTML += dataStr +"<br/>";
 
                     });
+                    const body = document.querySelector('body');
                 }
             }
         })

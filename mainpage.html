@@ -15,53 +15,56 @@ Create a new playlist from the original playlist after filtering. Allow filterin
 provided playlists
 
 -->
-<body class = "fade-in">
-    <div class="navbar">
-        <a href = "#", onclick = "location.reload()", class="sitename"><b>INQUIRY</b></a>
-        <div class="menu-bars-active", onclick = "menuDropDown()", id = "menu-bars-id">
-            <div class = "bar1", id = "bar1-id"></div>
-            <div class = "bar2", id = "bar2-id"></div>
-            <div class = "bar3", id = "bar3-id"></div>
+<body class = "fade-in", id = "main-body-id">
+    <div class="body-container">
+        <div class="navbar">
+            <a href = "#", onclick = "location.reload()", class="sitename"><b>INQUIRY</b></a>
+            <div class="menu-bars-active", onclick = "menuDropDown()", id = "menu-bars-id">
+                <div class = "bar1", id = "bar1-id"></div>
+                <div class = "bar2", id = "bar2-id"></div>
+                <div class = "bar3", id = "bar3-id"></div>
+            </div>
+            <div class="menu-content-hide-first", id = "menu-content-id">
+                    
+                <ul class = "menu-list", id = "menu-list-id">
+                    <li onclick = "userDetails()">PROFILE</li>
+                    <li onclick = "logout()">LOGOUT</li>
+                </ul>
+            </div>
+            <!--<button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>-->
         </div>
-        <div class="menu-content-hide-first", id = "menu-content-id">
-                
-            <ul class = "menu-list", id = "menu-list-id">
-                <li onclick = "userDetails()">PROFILE</li>
-                <li onclick = "logout()">LOGOUT</li>
+        <!--
+            search for song here
+        -->
+        <div class="search-section">
+            <div class="search-title">
+                <p><b>SEARCH FOR PLAYLIST OR SONG</b></p>
+            </div>
+            <div class="search-bar-div">
+                <input type="search", name = "search-input", id = "search-input", placeholder="Search...", autocomplete = "off", required>
+            </div>
+            <div class="dropdown-wrapper">
+                <select class="selectSearch" id = "select-ID">
+                    <option value="Song">Song</option>
+                    <option value="SongStrict">Song (strict)</option>
+                    <option value="Playlist">Playlist</option>
+    
+                </select>
+            </div>
+            <div class="search-button-div">
+                <button type = "button" class = "search-button" id = "search-button-id" onclick = "search()"><span id = "sb-span">SEARCH</span></button>
+            </div>
+    
+        </div>
+        <div class="creditBar">
+            <ul>
+                <li><a href="https://www.linkedin.com/in/richard-hutcheson/">LinkedIn: RichardHutcheson</a></li>
+                <li><a href="https://github.com/Richard-Hutch/Inquiry">GitHub-Repository</a></li>
             </ul>
         </div>
-        <!--<button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>-->
-    </div>
-    <!--
-        search for song here
-    -->
-    <div class="search-section">
-        <div class="search-title">
-            <p><b>SEARCH FOR PLAYLIST OR SONG</b></p>
+        <div class="profile-wrapper">
+    
         </div>
-        <div class="search-bar-div">
-            <input type="search", name = "search-input", id = "search-input", placeholder="Search...", autocomplete = "off", required>
-        </div>
-        <div class="dropdown-wrapper">
-            <select class="selectSearch" id = "select-ID">
-                <option value="Song">Song</option>
-                <option value="SongStrict">Song (strict)</option>
-                <option value="Playlist">Playlist</option>
-
-            </select>
-        </div>
-        <div class="search-button-div">
-            <button type = "button" class = "search-button" id = "search-button-id" onclick = "search()"><span id = "sb-span">SEARCH</span></button>
-        </div>
-
     </div>
-    <div class="creditBar">
-        <ul>
-            <li><a href="https://www.linkedin.com/in/richard-hutcheson/">LinkedIn: RichardHutcheson</a></li>
-            <li><a href="https://github.com/Richard-Hutch/Inquiry">GitHub-Repository</a></li>
-        </ul>
-    </div>
-    <div class="profile-wrapper">
-
-    </div>
+    
 </body>

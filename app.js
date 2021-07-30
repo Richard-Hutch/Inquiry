@@ -80,7 +80,8 @@ function checkParameters(){
     if (params.searchItem && params.searchOption){
         let val = decodeURI(params.searchItem);
         let option = params.searchOption;
-        document.getElementById("searching-for-id").innerText += " " + val.toUpperCase(); 
+        //document.getElementById("searching-for-id").innerText += " " + val.toUpperCase(); 
+        document.getElementById("searching-for-query-id").innerText = val.toUpperCase();
         doSearch(val,option);
     }
 }

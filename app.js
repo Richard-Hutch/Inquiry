@@ -95,6 +95,31 @@ function search(){
     // document.getElementById("element-data-id").innerHTML = "hello";
 }
 
+function createHTML(dataMap){
+    console.log(dataMap);
+    const WRAPPER_DIV = document.createElement('div'); 
+    const CONTAINER_DIV = document.createElement('div'); 
+    const IFRAME_ATR = document.createElement('iframe');
+    const IMG_ATR = document.createElement('img');
+    const BODY = document.querySelector('body');
+    BODY.append(WRAPPER_DIV);
+    WRAPPER_DIV.append(CONTAINER_DIV);
+    CONTAINER_DIV.append(IFRAME_ATR);
+    CONTAINER_DIV.append(IMG_ATR);
+    
+    WRAPPER_DIV.setAttribute("class", "element-wrapper");
+    CONTAINER_DIV.setAttribute("class", "card-container");
+    console.log(dataMap.get("uri"));
+    IFRAME_ATR.setAttribute("src", "https://open.spotify.com/embed/track/" + dataMap.get("uri"));
+    IFRAME_ATR.setAttribute("width", "350");
+    IFRAME_ATR.setAttribute("height", "80");
+    IFRAME_ATR.setAttribute("frameborder", "0");
+    IFRAME_ATR.setAttribute("allowtransparency", "true");
+    IFRAME_ATR.setAttribute("allow", "encypted-media");
+    IMG_ATR.setAttribute("src","resources/down-arrow2.svg");
+    IMG_ATR.setAttribute("alt","down arrow svg");
+    IMG_ATR.setAttribute("id","card-svg-id");
+}
 async function doSearch(val, option){
     let dataStr = null;
 
@@ -148,18 +173,55 @@ async function doSearch(val, option){
                     console.log(JSON.stringify(data, null , 2));
                     //for each item, get the name
                     data.tracks.items.forEach(function(key){
-                        dataStr = key.name + ", by ";
+                        let dataMap = new Map();
+                        //dataStr = key.name + ", by ";
                         //for each artist in the item get the name
+                        let artists = "";
                         key.artists.forEach(function(key2){
-                            dataStr += key2.name + ", ";
+                            artists += key2.name + ", ";
+                            //dataStr += key2.name + ", ";
                         });
+                        artists = artists.substr(0, artists.length - 2);
+                        console.log("artists = " + artists);
                         //get the id of the track
-                        dataStr += " ID: " + key.id;
-                        console.log(dataStr);
-                        document.getElementById("element-data-id").innerHTML += dataStr +"<br/>";
+                        //dataStr += " ID: " + key.id;
+                        //console.log(dataStr);
+                        dataMap.set("name", key.name);
+                        dataMap.set("artists", artists);
+                        dataMap.set("uri", key.uri.replace("spotify:track:", ""));
+                        dataMap.set("id", key.id);
+                        console.log("id = " + dataMap.get("id") + " " + key.id);
+                        dataMap.set("popularity", key.popularity);
+                        
+                        //GET AUDIO FEATURES
+                        let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
+                        fetch(audioFeatureURL,{
+                            method: "GET",
+                            headers:{
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + accessToken
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(featureData => {
+                            dataMap.set("danceability",     featureData.danceability);
+                            dataMap.set("energy",           featureData.energy);
+                            dataMap.set("key",              featureData.key);
+                            dataMap.set("loudness",         featureData.loudness);
+                            dataMap.set("speechiness",      featureData.speechiness);
+                            dataMap.set("acousticness",     featureData.acousticness);
+                            dataMap.set("instrumentalness", featureData.instrumentalness);
+                            dataMap.set("liveness",         featureData.liveness);
+                            dataMap.set("valence",          featureData.valence);
+                            dataMap.set("tempo",            featureData.tempo);
+                        })
+                        .catch((error) => {
+                            console.error('Error in feature request:', error);
+                        });
 
+                        createHTML(dataMap);
                     });
-                    const body = document.querySelector('body');
                 }
             }
         })
@@ -170,7 +232,7 @@ async function doSearch(val, option){
             }else{
                 confirm("Access Token Expired. Please login again.");
             }
-            console.log("Error: " + error);
+            console.log("Error in track/playlist request: " + error);
         })
     }
     return dataStr;

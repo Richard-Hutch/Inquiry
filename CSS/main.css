@@ -1,12 +1,12 @@
 /*
 Developer Note: dont forget to click "watch sass" in VS Code
-https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 */
 @import url("https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap");
 :root {
   --text-color: #E9C46A;
   --off-white: rgb(242, 242, 242);
+  --darker-white: rgb(216, 216, 216);
   --custom-opacity: .5;
 }
 
@@ -72,6 +72,10 @@ body {
 
 #main-body-id {
   background-image: url("/resources/main_bg.jpg");
+}
+
+#halt-body-id {
+  background-image: url("/resources/black_bg.jpg");
 }
 
 #main-body-id::before {
@@ -250,47 +254,80 @@ body {
   top: 1em;
 }
 
-.element-wrapper {
+.track-wrapper {
   -webkit-animation-name: appear;
           animation-name: appear;
-  -webkit-animation-duration: 4s;
-          animation-duration: 4s;
+  -webkit-animation-duration: 3s;
+          animation-duration: 3s;
   -webkit-animation-fill-mode: forwards;
           animation-fill-mode: forwards;
   position: relative;
-  border-style: solid;
-  border-width: .5em;
-  border-radius: .5em;
-  width: 380px;
-  height: 80px;
+  width: 400px;
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  background-color: var(--off-white);
-  -webkit-transition: .25s;
-  transition: .25s;
   margin-bottom: 1em;
 }
 
-.element-wrapper .card-container {
+.track-wrapper .track-card-container {
   position: relative;
-  height: 90px;
+  height: 80px;
+  border-style: solid;
+  border-right-width: .7em;
+  border-left-width: .7em;
+  border-radius: .5em;
+  margin-bottom: .3em;
+  background-color: darkgray;
+  -webkit-transition: .25s;
+  transition: .25s;
 }
 
-.element-wrapper .card-container #card-svg-id {
+.track-wrapper .track-card-container .track-arrow-img {
+  display: inline;
+  position: relative;
+  right: .1em;
+}
+
+.track-wrapper .track-card-container .track-arrow-img #card-svg-id {
   padding-top: 2em;
   margin-top: -2em;
   padding-bottom: 2em;
   margin-bottom: -2em;
   position: absolute;
-  left: 92%;
   -webkit-transform: translateY(35%);
           transform: translateY(35%);
   cursor: pointer;
+  -webkit-transition: .25s;
+  transition: .25s;
 }
 
-.element-wrapper:hover {
-  border-width: .8em;
+.track-wrapper .track-card-container:hover {
+  border-top-width: .6em;
+  border-bottom-width: .6em;
+}
+
+.track-wrapper .track-card-container:hover #card-svg-id {
+  -webkit-transform: translateY(35%) scaleX(0.9);
+          transform: translateY(35%) scaleX(0.9);
+}
+
+.track-wrapper .info-card-show {
+  color: black;
+  height: 9em;
+  background-color: white;
+}
+
+.track-wrapper .info-card-show .info-top-data {
+  font-size: small;
+  border-bottom-width: .2em;
+  border-bottom-style: solid;
+}
+
+.track-wrapper .info-card-show .info-top-data p {
+  display: inline;
+  margin: 0;
+  margin-left: .6em;
+  margin-right: .6em;
 }
 
 .log-btn {
@@ -315,24 +352,49 @@ body {
   left: 50%;
   -webkit-transform: translate(-50%);
           transform: translate(-50%);
-  top: 5em;
+  top: 6em;
   font-size: 30px;
-  background-image: linear-gradient(45deg, #CA4246 16.666%, #E16541 16.666%, #E16541 33.333%, #F18F43 33.333%, #F18F43 50%, #8B9862 50%, #8B9862 66.666%, #476098 66.666%, #476098 83.333%, #A7489B 83.333%);
-  background-repeat: repeat;
+  background-color: white;
   margin-top: .5em;
 }
 
-#msg-text {
-  color: white;
+#halt-login-id span {
+  /* Create the gradient. */
+  background-image: linear-gradient(45deg, #CA4246 16.666%, #E16541 16.666%, #E16541 33.333%, #F18F43 33.333%, #F18F43 50%, #8B9862 50%, #8B9862 66.666%, #476098 66.666%, #476098 83.333%, #A7489B 83.333%);
+  background-repeat: repeat;
+  /* Use the text as a mask for the background. */
+  /* This will show the gradient as a text color rather than element bg. */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
+#halt-msg-text {
+  position: relative;
   text-align: center;
   font-size: 18px;
   padding-top: .3em;
-  border-color: white;
-  border-width: .2em;
-  border-style: solid;
-  border-radius: .5em;
+  width: 500px;
+  height: 50px;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+}
+
+#halt-msg-text span {
+  font-size: x-large;
+  /* Create the gradient. */
   background-image: linear-gradient(45deg, #CA4246 16.666%, #E16541 16.666%, #E16541 33.333%, #F18F43 33.333%, #F18F43 50%, #8B9862 50%, #8B9862 66.666%, #476098 66.666%, #476098 83.333%, #A7489B 83.333%);
   background-repeat: repeat;
+  /* Use the text as a mask for the background. */
+  /* This will show the gradient as a text color rather than element bg. */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
 }
 
 .search-section {

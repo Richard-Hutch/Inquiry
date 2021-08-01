@@ -1,12 +1,13 @@
 /*
 Developer Note: dont forget to click "watch sass" in VS Code
-https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
 */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
 :root{
     --text-color: #E9C46A;
     --off-white: rgb(242, 242, 242);
+    --darker-white: rgb(216, 216, 216);
+
     --custom-opacity: .5;
 }
 //fades in
@@ -31,21 +32,7 @@ https://www.figma.com/file/QZzeRP41I7qVcrVXVb9IXe/SpotifySiteDraft?node-id=0%3A1
         opacity: 0%;
     }
 }
-// @keyframes slide-ltor{
-//    from{
-//         //padding-left: 50%;
-//        left: 0%;
-//    }
-    
-//     to{
-//         left: 50%;
-//         transform: translateX(-50%);
-//         //transform: translateX(-25%);
 
-//         //text-align: center;
-
-//     }
-// }
 //so far, only applies to mainpage body
 body{
     animation-name: appear;
@@ -62,6 +49,9 @@ body{
 }
 #main-body-id{
     background-image: url("/resources/main_bg.jpg");
+}
+#halt-body-id{
+    background-image: url("/resources/black_bg.jpg");
 }
 #main-body-id::before{
     
@@ -208,39 +198,77 @@ body{
     }
 }
 
-.element-wrapper{
+.track-wrapper{
     animation-name: appear;
-    animation-duration: 4s;
+    animation-duration: 3s;
     animation-fill-mode: forwards;
     position: relative;
-    border-style:solid;
-    border-width: .5em;
-    border-radius: .5em;
-    width: 380px;
-    height: 80px;
+    width: 400px;
+    //height: 80px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--off-white);
-    transition: .25s;
     margin-bottom: 1em;
-    .card-container{
+    .track-card-container{
         position: relative;
-        height: 90px;
-        #card-svg-id{
-
-            padding-top: 2em;
-            margin-top: -2em; //negative margins to maintain the 
-            padding-bottom: 2em;
-            margin-bottom: -2em;
-            position: absolute;
-            left: 92%;
-            transform: translateY(35%);
-            cursor:pointer;
+        height: 80px;
+        border-style:solid;
+        border-right-width: .7em;
+        border-left-width: .7em;
+        border-radius: .5em;
+        margin-bottom: .3em;
+        background-color: darkgray;
+        transition: .25s;
+        .track-arrow-img{
+            display: inline;
+            position: relative;
+            right: .1em;
+            #card-svg-id{
+                padding-top: 2em;
+                margin-top: -2em; //negative margins to maintain the 
+                padding-bottom: 2em;
+                margin-bottom: -2em;
+                position: absolute;
+                //left: 91.5%;
+                transform: translateY(35%);
+                cursor:pointer;
+                transition: .25s;
+            }
         }
 
+
+        &:hover{
+            border-top-width: .6em;
+            border-bottom-width: .6em;
+            #card-svg-id{
+                transform: translateY(35%) scaleX(.9)
+            }
+        }
     }
-    &:hover{
-        border-width: .8em;
+
+    .info-card-show{
+        color: black;
+        height: 9em;
+        background-color: white;
+        .info-top-data{
+            font-size: small;
+            border-bottom-width: .2em;
+            border-bottom-style: solid;
+            //width: 120px;
+            p{
+                display:inline;
+
+                margin: 0;
+                margin-left: .6em;
+                margin-right: .6em;
+            }
+            #duration{
+            }
+            #tempo{
+            }#key{
+            }
+            #time-signature{
+            }
+        }
     }
 
 }
@@ -267,45 +295,104 @@ body{
 #halt-login-id{
     left: 50%;
     transform: translate(-50%);
-    top: 5em;
+    top: 6em;
     font-size: 30px;
-    background-image: linear-gradient(
-        45deg,
-        #CA4246 16.666%, 
-        #E16541 16.666%, 
-        #E16541 33.333%, 
-        #F18F43 33.333%, 
-        #F18F43 50%, 
-        #8B9862 50%, 
-        #8B9862 66.666%, 
-        #476098 66.666%, 
-        #476098 83.333%, 
-        #A7489B 83.333%);
-    background-repeat: repeat;
+    background-color: white; 
+    span{
+         /* Create the gradient. */
+         background-image: linear-gradient(
+            45deg,
+            #CA4246 16.666%, 
+            #E16541 16.666%, 
+            #E16541 33.333%, 
+            #F18F43 33.333%, 
+            #F18F43 50%, 
+            #8B9862 50%, 
+            #8B9862 66.666%, 
+            #476098 66.666%, 
+            #476098 83.333%, 
+            #A7489B 83.333%);
+        background-repeat: repeat;
+
+        /* Use the text as a mask for the background. */
+        /* This will show the gradient as a text color rather than element bg. */
+        -webkit-background-clip: text;
+            background-clip: text;
+        -moz-background-clip: text;
+        -webkit-text-fill-color: transparent; 
+        -moz-text-fill-color: transparent
+    }
+    // background-image: linear-gradient(
+    //     45deg,
+    //     #CA4246 16.666%, 
+    //     #E16541 16.666%, 
+    //     #E16541 33.333%, 
+    //     #F18F43 33.333%, 
+    //     #F18F43 50%, 
+    //     #8B9862 50%,  
+    //     #8B9862 66.666%, 
+    //     #476098 66.666%, 
+    //     #476098 83.333%, 
+    //     #A7489B 83.333%);
+    // background-repeat: repeat;
     margin-top: .5em;
 }
-#msg-text{
-    color: rgb(255, 255, 255);
+#halt-msg-text{
+    position: relative;
+    //color: rgb(255, 255, 255);
     text-align: center;
     font-size: 18px;
     padding-top: .3em;
-    border-color: white;
-    border-width: .2em;
-    border-style: solid;
-    border-radius: .5em;
-    background-image: linear-gradient(
-        45deg,
-        #CA4246 16.666%, 
-        #E16541 16.666%, 
-        #E16541 33.333%, 
-        #F18F43 33.333%, 
-        #F18F43 50%, 
-        #8B9862 50%, 
-        #8B9862 66.666%, 
-        #476098 66.666%, 
-        #476098 83.333%, 
-        #A7489B 83.333%);
-    background-repeat: repeat;
+    width: 500px;
+    height: 50px;
+    //border-style: solid;
+    //border-radius: .5em;
+    left: 50%;
+    transform: translate(-50%);
+    //background-color: white;
+    span{
+        
+        font-size: x-large;
+        /* Create the gradient. */
+        background-image: linear-gradient(
+            45deg,
+            #CA4246 16.666%, 
+            #E16541 16.666%, 
+            #E16541 33.333%, 
+            #F18F43 33.333%, 
+            #F18F43 50%, 
+            #8B9862 50%, 
+            #8B9862 66.666%, 
+            #476098 66.666%, 
+            #476098 83.333%, 
+            #A7489B 83.333%);
+        background-repeat: repeat;
+
+        /* Use the text as a mask for the background. */
+        /* This will show the gradient as a text color rather than element bg. */
+        -webkit-background-clip: text;
+            background-clip: text;
+        -moz-background-clip: text;
+        -webkit-text-fill-color: transparent; 
+        -moz-text-fill-color: transparent
+    }
+    // border-color: white;
+    // border-width: .2em;
+    // border-style: solid;
+    // border-radius: .5em;
+    // background-image: linear-gradient(
+    //     45deg,
+    //     #CA4246 16.666%, 
+    //     #E16541 16.666%, 
+    //     #E16541 33.333%, 
+    //     #F18F43 33.333%, 
+    //     #F18F43 50%, 
+    //     #8B9862 50%, 
+    //     #8B9862 66.666%, 
+    //     #476098 66.666%, 
+    //     #476098 83.333%, 
+    //     #A7489B 83.333%);
+    // background-repeat: repeat;
 }
 .search-section {
     position: absolute;
@@ -462,3 +549,19 @@ body{
         }
     }
 }
+
+// @keyframes slide-ltor{
+//    from{
+//         //padding-left: 50%;
+//        left: 0%;
+//    }
+    
+//     to{
+//         left: 50%;
+//         transform: translateX(-50%);
+//         //transform: translateX(-25%);
+
+//         //text-align: center;
+
+//     }
+// }

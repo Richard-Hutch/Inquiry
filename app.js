@@ -100,16 +100,18 @@ function createHTML(dataMap){
     console.log(dataMap);
     const WRAPPER_DIV = document.createElement('div'); 
     const CONTAINER_DIV = document.createElement('div'); 
+    const TRACK_ARROW_IMG_DIV = document.createElement('div'); 
+
     const IFRAME_ATR = document.createElement('iframe');
     const IMG_ATR = document.createElement('img');
     const BODY = document.querySelector('body');
     BODY.append(WRAPPER_DIV);
     WRAPPER_DIV.append(CONTAINER_DIV);
-    CONTAINER_DIV.append(IFRAME_ATR);
-    CONTAINER_DIV.append(IMG_ATR);
-    
-    WRAPPER_DIV.setAttribute("class", "element-wrapper");
-    CONTAINER_DIV.setAttribute("class", "card-container");
+    CONTAINER_DIV.append(TRACK_ARROW_IMG_DIV);
+    TRACK_ARROW_IMG_DIV.append(IMG_ATR);
+        
+    WRAPPER_DIV.setAttribute("class", "track-wrapper");
+    CONTAINER_DIV.setAttribute("class", "track-card-container");
     console.log(dataMap.get("uri"));
     IFRAME_ATR.setAttribute("src", "https://open.spotify.com/embed/track/" + dataMap.get("uri"));
     IFRAME_ATR.setAttribute("width", "350");
@@ -220,8 +222,8 @@ async function doSearch(val, option){
                         .catch((error) => {
                             console.error('Error in feature request:', error);
                         });
-
-                        createHTML(dataMap);
+                        //DYNAMICALLY CREATE TRACK ELEMENTS
+                        //createHTML(dataMap);
                     });
                 }
             }
@@ -237,6 +239,9 @@ async function doSearch(val, option){
         })
     }
     return dataStr;
+}
+function showTrackAnalysis(){
+
 }
 //IMPORTANT! "parameter" must include the & and the = symbols
 function removeHashParameter(parameter, hash){

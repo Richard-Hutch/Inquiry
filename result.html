@@ -16,7 +16,6 @@
             <div class = "bar3", id = "bar3-id"></div>
         </div>
         <div class="menu-content-hide-first", id = "menu-content-id">
-                
             <ul class = "menu-list", id = "menu-list-id">
                 <li onclick = "userDetails()">PROFILE</li>
                 <li onclick = "logout()">LOGOUT</li>
@@ -28,11 +27,25 @@
         <h1 id = "searching-for-query-id"></h1>
     </div>
 
-    <!-- <div class="element-wrapper">
-        <div class="card-container">
+    <div class="track-wrapper">
+        <div class="track-card-container">
 
             <iframe src="https://open.spotify.com/embed/track/4ZtFanR9U6ndgddUvNcjcG" width="350" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-            <img src="resources/down-arrow2.svg" alt="down arrow svg", id = "card-svg-id">
+            <div class="track-arrow-img">
+                <img src="resources/down-arrow2.svg" alt="down arrow svg", id = "card-svg-id" onclick="showTrackAnalysis()">
+            </div>
         </div>
-    </div> -->
+        <div class="info-card-show">
+            <div class="info-top-data">
+                <p id="duration">Duration: xx.xx</p>
+                <p id = "tempo">Tempo: xxx bpm</p>
+                <p id = "key">Key: F</p>
+                <p id = "time-signature">Time Sig: 4/4</p>
+
+            </div>
+            <div class="info-top-data-line">
+
+            </div>
+        </div>
+    </div>
 </body>

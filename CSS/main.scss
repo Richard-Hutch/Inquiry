@@ -3,6 +3,7 @@ Developer Note: dont forget to click "watch sass" in VS Code
 */
 @import url('https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@500&display=swap');
 :root{
     --text-color: #E9C46A;
     --off-white: rgb(242, 242, 242);
@@ -208,6 +209,7 @@ body{
     left: 50%;
     transform: translateX(-50%);
     margin-bottom: 1em;
+    font-family: 'Mukta', sans-serif;
     .track-card-container{
         position: relative;
         height: 80px;
@@ -216,7 +218,7 @@ body{
         border-left-width: .7em;
         border-radius: .5em;
         margin-bottom: .3em;
-        background-color: darkgray;
+        background-color: var(--off-white);
         transition: .25s;
         .track-arrow-img{
             display: inline;
@@ -245,10 +247,13 @@ body{
         }
     }
 
-    .info-card-show{
+
+    .info-card-show, .info-card-hide{
         color: black;
         height: 10em;
         background-color: white;
+        text-align: center;
+        border-radius: .5em;
         .info-top-data{
             font-size: small;
             border-bottom-width: .2em;
@@ -258,23 +263,45 @@ body{
                 display:inline;
 
                 margin: 0;
-                margin-left: 1.5em;
+                margin-left: .8em;
                 //margin-right: .6em;
             }
         }
         .analysis-grid{
             display: grid;
-            grid-template-columns: auto auto auto;
+            grid-template-columns: 120px 120px 120px;
             grid-column-gap: 10px;
             font-size: smaller;
-            padding-left: 1.5em;
+            padding-left: .6em;
+
             div{
                 height: 20px;
+                border-radius: .5em;
+            }
+            .skill-bar-container{
+                box-sizing: border-box;
+                background-color: gray;
+                .skills-bar-text{
+                    background-color: red;
+                    text-align: right;
+                    color: white;
+                    padding-right: 5px;
+                }
+                .dance-bar{width: 30%;}
+                .energy-bar{width: 55%;}
+                .loudness-bar{width: 90%;}
+                .speech-bar{width: 10%;}
+                .popularity-bar{width: 5%;}
+                .acoustic-bar{width: 100%;}
+                .instrument-bar{width: 0%;}
+                .liveness-bar{width: 25%;}
+                .valence-bar{width: 75%;}
             }
         }
     }
-
-
+    .info-card-hide{
+        display:none;
+    }
 }
 
 

@@ -3,6 +3,7 @@ Developer Note: dont forget to click "watch sass" in VS Code
 */
 @import url("https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@500&display=swap");
 :root {
   --text-color: #E9C46A;
   --off-white: rgb(242, 242, 242);
@@ -267,6 +268,7 @@ body {
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
   margin-bottom: 1em;
+  font-family: 'Mukta', sans-serif;
 }
 
 .track-wrapper .track-card-container {
@@ -277,7 +279,7 @@ body {
   border-left-width: .7em;
   border-radius: .5em;
   margin-bottom: .3em;
-  background-color: darkgray;
+  background-color: var(--off-white);
   -webkit-transition: .25s;
   transition: .25s;
 }
@@ -311,36 +313,92 @@ body {
           transform: translateY(35%) scaleX(0.9);
 }
 
-.track-wrapper .info-card-show {
+.track-wrapper .info-card-show, .track-wrapper .info-card-hide {
   color: black;
   height: 10em;
   background-color: white;
+  text-align: center;
+  border-radius: .5em;
 }
 
-.track-wrapper .info-card-show .info-top-data {
+.track-wrapper .info-card-show .info-top-data, .track-wrapper .info-card-hide .info-top-data {
   font-size: small;
   border-bottom-width: .2em;
   border-bottom-style: solid;
 }
 
-.track-wrapper .info-card-show .info-top-data p {
+.track-wrapper .info-card-show .info-top-data p, .track-wrapper .info-card-hide .info-top-data p {
   display: inline;
   margin: 0;
-  margin-left: 1.5em;
+  margin-left: .8em;
 }
 
-.track-wrapper .info-card-show .analysis-grid {
+.track-wrapper .info-card-show .analysis-grid, .track-wrapper .info-card-hide .analysis-grid {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: auto auto auto;
-      grid-template-columns: auto auto auto;
+  -ms-grid-columns: 120px 120px 120px;
+      grid-template-columns: 120px 120px 120px;
   grid-column-gap: 10px;
   font-size: smaller;
-  padding-left: 1.5em;
+  padding-left: .6em;
 }
 
-.track-wrapper .info-card-show .analysis-grid div {
+.track-wrapper .info-card-show .analysis-grid div, .track-wrapper .info-card-hide .analysis-grid div {
   height: 20px;
+  border-radius: .5em;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  background-color: gray;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .skills-bar-text, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .skills-bar-text {
+  background-color: red;
+  text-align: right;
+  color: white;
+  padding-right: 5px;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .dance-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .dance-bar {
+  width: 30%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .energy-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .energy-bar {
+  width: 55%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .loudness-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .loudness-bar {
+  width: 90%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .speech-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .speech-bar {
+  width: 10%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .popularity-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .popularity-bar {
+  width: 5%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .acoustic-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .acoustic-bar {
+  width: 100%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .instrument-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .instrument-bar {
+  width: 0%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .liveness-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .liveness-bar {
+  width: 25%;
+}
+
+.track-wrapper .info-card-show .analysis-grid .skill-bar-container .valence-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .valence-bar {
+  width: 75%;
+}
+
+.track-wrapper .info-card-hide {
+  display: none;
 }
 
 .log-btn {

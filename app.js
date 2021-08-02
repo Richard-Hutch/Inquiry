@@ -241,7 +241,14 @@ async function doSearch(val, option){
     return dataStr;
 }
 function showTrackAnalysis(){
-
+    let state = document.getElementById("info-card-id").className;
+    if (state === "info-card-show"){
+        document.getElementById("info-card-id").classList.remove("info-card-show");
+        document.getElementById("info-card-id").classList.add("info-card-hide");
+    }else{
+        document.getElementById("info-card-id").classList.remove("info-card-hide");
+        document.getElementById("info-card-id").classList.add("info-card-show");        
+    }
 }
 //IMPORTANT! "parameter" must include the & and the = symbols
 function removeHashParameter(parameter, hash){

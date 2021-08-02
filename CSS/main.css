@@ -313,7 +313,7 @@ body {
 
 .track-wrapper .info-card-show {
   color: black;
-  height: 9em;
+  height: 10em;
   background-color: white;
 }
 
@@ -326,8 +326,21 @@ body {
 .track-wrapper .info-card-show .info-top-data p {
   display: inline;
   margin: 0;
-  margin-left: .6em;
-  margin-right: .6em;
+  margin-left: 1.5em;
+}
+
+.track-wrapper .info-card-show .analysis-grid {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto auto auto;
+      grid-template-columns: auto auto auto;
+  grid-column-gap: 10px;
+  font-size: smaller;
+  padding-left: 1.5em;
+}
+
+.track-wrapper .info-card-show .analysis-grid div {
+  height: 20px;
 }
 
 .log-btn {

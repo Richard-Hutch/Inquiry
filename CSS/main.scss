@@ -247,7 +247,7 @@ body{
 
     .info-card-show{
         color: black;
-        height: 9em;
+        height: 10em;
         background-color: white;
         .info-top-data{
             font-size: small;
@@ -258,18 +258,22 @@ body{
                 display:inline;
 
                 margin: 0;
-                margin-left: .6em;
-                margin-right: .6em;
+                margin-left: 1.5em;
+                //margin-right: .6em;
             }
-            #duration{
-            }
-            #tempo{
-            }#key{
-            }
-            #time-signature{
+        }
+        .analysis-grid{
+            display: grid;
+            grid-template-columns: auto auto auto;
+            grid-column-gap: 10px;
+            font-size: smaller;
+            padding-left: 1.5em;
+            div{
+                height: 20px;
             }
         }
     }
+
 
 }
 

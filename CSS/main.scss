@@ -220,48 +220,51 @@ body{
         margin-bottom: .3em;
         background-color: var(--off-white);
         transition: .25s;
+        display: grid;
+        grid-template-columns: 351px 40px;
+
         .track-arrow-img{
             display: inline;
             position: relative;
             right: .1em;
-            #card-svg-id{
+            .card-svg-down-class, .card-svg-up-class{
                 padding-top: 2em;
                 margin-top: -2em; //negative margins to maintain the 
                 padding-bottom: 2em;
                 margin-bottom: -2em;
                 position: absolute;
-                //left: 91.5%;
                 transform: translateY(35%);
                 cursor:pointer;
                 transition: .25s;
             }
+            .card-svg-down-class{
+                transform: translateY(35%) rotate(0deg);
+            }
+            .card-svg-up-class{
+                transform: translateY(35%) rotate(180deg);
+            }
+            
         }
-
-
         &:hover{
             border-top-width: .6em;
             border-bottom-width: .6em;
-            #card-svg-id{
-                transform: translateY(35%) scaleX(.9)
-            }
         }
     }
-
 
     .info-card-show, .info-card-hide{
         color: black;
         height: 10em;
         background-color: white;
         text-align: center;
-        border-radius: .5em;
+        border-radius: .8em;
         .info-top-data{
             font-size: small;
-            border-bottom-width: .2em;
+            border-bottom-width: .3em;
             border-bottom-style: solid;
+            border-color: var(--off-white);
             //width: 120px;
             p{
                 display:inline;
-
                 margin: 0;
                 margin-left: .8em;
                 //margin-right: .6em;
@@ -287,15 +290,15 @@ body{
                     color: white;
                     padding-right: 5px;
                 }
-                .dance-bar{width: 30%;}
-                .energy-bar{width: 55%;}
-                .loudness-bar{width: 90%;}
-                .speech-bar{width: 10%;}
-                .popularity-bar{width: 5%;}
-                .acoustic-bar{width: 100%;}
-                .instrument-bar{width: 0%;}
-                .liveness-bar{width: 25%;}
-                .valence-bar{width: 75%;}
+                // .dance-bar{width: 30%;}
+                // .energy-bar{width: 55%;}
+                // .loudness-bar{width: 90%;}
+                // .speech-bar{width: 10%;}
+                // .popularity-bar{width: 5%;}
+                // .acoustic-bar{width: 100%;}
+                // .instrument-bar{width: 0%;}
+                // .liveness-bar{width: 25%;}
+                // .valence-bar{width: 75%;}
             }
         }
     }

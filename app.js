@@ -97,31 +97,179 @@ function search(){
 }
 
 function createHTML(dataMap){
-    console.log(dataMap);
+    console.log("MAP = ", dataMap);
+    const BODY = document.querySelector('body');
+
     const WRAPPER_DIV = document.createElement('div'); 
     const CONTAINER_DIV = document.createElement('div'); 
     const TRACK_ARROW_IMG_DIV = document.createElement('div'); 
-
+    const FRAME_CONT = document.createElement("div");
     const IFRAME_ATR = document.createElement('iframe');
     const IMG_ATR = document.createElement('img');
-    const BODY = document.querySelector('body');
     BODY.append(WRAPPER_DIV);
     WRAPPER_DIV.append(CONTAINER_DIV);
+    CONTAINER_DIV.append(FRAME_CONT);
+    FRAME_CONT.append(IFRAME_ATR);
     CONTAINER_DIV.append(TRACK_ARROW_IMG_DIV);
     TRACK_ARROW_IMG_DIV.append(IMG_ATR);
         
     WRAPPER_DIV.setAttribute("class", "track-wrapper");
     CONTAINER_DIV.setAttribute("class", "track-card-container");
     console.log(dataMap.get("uri"));
+    FRAME_CONT.setAttribute("class", "iframe-container");
     IFRAME_ATR.setAttribute("src", "https://open.spotify.com/embed/track/" + dataMap.get("uri"));
     IFRAME_ATR.setAttribute("width", "350");
     IFRAME_ATR.setAttribute("height", "80");
     IFRAME_ATR.setAttribute("frameborder", "0");
     IFRAME_ATR.setAttribute("allowtransparency", "true");
     IFRAME_ATR.setAttribute("allow", "encypted-media");
+    TRACK_ARROW_IMG_DIV.setAttribute("class", "track-arrow-img");
     IMG_ATR.setAttribute("src","resources/down-arrow2.svg");
     IMG_ATR.setAttribute("alt","down arrow svg");
     IMG_ATR.setAttribute("id","card-svg-id");
+    IMG_ATR.setAttribute("class", "card-svg-down-class");
+    IMG_ATR.setAttribute("onclick", "showTrackAnalysis()");
+    /////////////////////////////////////////
+    const INFO_CARD_DIV = document.createElement("div");
+    const INFO_TOP_DATA_DIV = document.createElement("div");
+    const DURATION_P = document.createElement("p");
+    const TEMPO_P = document.createElement("p");
+    const KEY_P = document.createElement("p");
+    const TIME_SIG_P = document.createElement("p");
+     
+    WRAPPER_DIV.append(INFO_CARD_DIV);
+    INFO_CARD_DIV.append(INFO_TOP_DATA_DIV);
+    INFO_TOP_DATA_DIV.append(DURATION_P);
+    INFO_TOP_DATA_DIV.append(TEMPO_P);
+    INFO_TOP_DATA_DIV.append(KEY_P);
+    INFO_TOP_DATA_DIV.append(TIME_SIG_P);
+    INFO_CARD_DIV.setAttribute("class", "info-card-hide");
+    INFO_CARD_DIV.setAttribute("id", "info-card-id");
+    INFO_TOP_DATA_DIV.setAttribute("class", "info-top-data");
+    DURATION_P.setAttribute("id", "duration");
+    TEMPO_P.setAttribute("id", "tempo");
+    KEY_P.setAttribute("id", "key");
+    TIME_SIG_P.setAttribute("id", "time-signature");
+    
+    DURATION_P.innerHTML = "Duration: ";
+    TEMPO_P.innerHTML = "Tempo: ";
+    KEY_P.innerHTML = " Key: ";
+    TIME_SIG_P.innerHTML = "Time Sig: ";
+
+
+    const ANALYSIS_GRID_DIV = document.createElement("div");
+    INFO_CARD_DIV.append(ANALYSIS_GRID_DIV);
+    ANALYSIS_GRID_DIV.setAttribute("class", "analysis-grid");
+
+    const DANCEABILITY_DIV = document.createElement("div");
+    const ENERGY_DIV = document.createElement("div");
+    const LOUDNESS_DIV = document.createElement("div");
+    const DANCE_BAR_CONT_DIV = document.createElement("div");
+    const DANCE_BAR_DIV = document.createElement("div");
+    const ENERGY_BAR_CONT_DIV = document.createElement("div");
+    const ENERGY_BAR_DIV = document.createElement("div");
+    const LOUDNESS_BAR_CONT_DIV = document.createElement("div");
+    const LOUDNESS_BAR_DIV = document.createElement("div");
+    ANALYSIS_GRID_DIV.append(DANCEABILITY_DIV);
+    ANALYSIS_GRID_DIV.append(ENERGY_DIV);
+    ANALYSIS_GRID_DIV.append(LOUDNESS_DIV);
+    ANALYSIS_GRID_DIV.append(DANCE_BAR_CONT_DIV);
+    ANALYSIS_GRID_DIV.append(ENERGY_BAR_CONT_DIV);
+    ANALYSIS_GRID_DIV.append(LOUDNESS_BAR_CONT_DIV);
+    DANCE_BAR_CONT_DIV.append(DANCE_BAR_DIV);
+    ENERGY_BAR_CONT_DIV.append(ENERGY_BAR_DIV);
+    LOUDNESS_BAR_CONT_DIV.append(LOUDNESS_BAR_DIV);
+
+    DANCEABILITY_DIV.setAttribute("class", "danceability");
+    ENERGY_DIV.setAttribute("class", "energy");
+    LOUDNESS_DIV.setAttribute("class", "loudness");
+    DANCE_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    DANCE_BAR_DIV.setAttribute("class", "skills-bar-text dance-bar");
+    ENERGY_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    ENERGY_BAR_DIV.setAttribute("class", "skills-bar-text energy-bar")
+    LOUDNESS_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    LOUDNESS_BAR_DIV.setAttribute("class", "skills-bar-text loudness-bar");
+
+    DANCEABILITY_DIV.innerHTML = "danceability";
+    ENERGY_DIV.innerHTML = "energy";
+    LOUDNESS_DIV.innerHTML = "loudness";
+    console.log(dataMap.has("danceability"), dataMap.get("danceability"));
+    //console.log(dataMap.get("danceability"));
+    DANCE_BAR_DIV.style.width = dataMap.get("danceability") + "%";
+
+    const SPEECH_DIV = document.createElement("div");
+    const POP_DIV = document.createElement("div");
+    const ACOUS_DIV = document.createElement("div");
+    const SPEECH_BAR_CONT_DIV = document.createElement("div");
+    const SPEECH_BAR_DIV = document.createElement("div");
+    const POP_BAR_CONT_DIV = document.createElement("div");
+    const POP_BAR_DIV = document.createElement("div");
+    const ACOUS_BAR_CONT_DIV = document.createElement("div");
+    const ACOUS_BAR_DIV = document.createElement("div");
+    ANALYSIS_GRID_DIV.append(SPEECH_DIV);
+    ANALYSIS_GRID_DIV.append(POP_DIV);
+    ANALYSIS_GRID_DIV.append(ACOUS_DIV);
+    ANALYSIS_GRID_DIV.append(SPEECH_BAR_CONT_DIV);
+    ANALYSIS_GRID_DIV.append(POP_BAR_CONT_DIV);
+    ANALYSIS_GRID_DIV.append(ACOUS_BAR_CONT_DIV);
+    SPEECH_BAR_CONT_DIV.append(SPEECH_BAR_DIV);
+    POP_BAR_CONT_DIV.append(POP_BAR_DIV);
+    ACOUS_BAR_CONT_DIV.append(ACOUS_BAR_DIV);
+
+    SPEECH_DIV.innerHTML = "speechiness";
+    POP_DIV.innerHTML = "popularity";
+    ACOUS_DIV.innerHTML = "acousticness";
+
+    POP_BAR_DIV.innerHTML = dataMap.popularity;
+    POP_BAR_DIV.style.width = parseFloat(dataMap.popularity) + "%"; 
+    SPEECH_BAR_DIV.innerHTML = dataMap.speechiness;
+    SPEECH_BAR_DIV.style.width = parseFloat(dataMap.speechiness) + "%";
+    ACOUS_BAR_DIV.innerHTML = dataMap.acousticness;
+
+    SPEECH_DIV.setAttribute("class", "speechiness");
+    POP_DIV.setAttribute("class", "popularity");
+    ACOUS_DIV.setAttribute("class", "acousticness");
+    SPEECH_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    SPEECH_BAR_DIV.setAttribute("class", "skills-bar-text speech-bar");
+    POP_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    POP_BAR_DIV.setAttribute("class", "skills-bar-text popularity-bar")
+    ACOUS_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    ACOUS_BAR_DIV.setAttribute("class", "skills-bar-text acoustic-bar");
+
+    const INSTRUMENT_DIV = document.createElement("div");
+    const LIVENESS_DIV = document.createElement("div");
+    const VALENCE_DIV = document.createElement("div");
+    const INSTRUMENT_BAR_CONT_DIV = document.createElement("div");
+    const INSTRUMENT_BAR_DIV = document.createElement("div");
+    const LIVENESS_BAR_CONT_DIV = document.createElement("div");
+    const LIVENESS_BAR_DIV = document.createElement("div");
+    const VALENCE_BAR_CONT_DIV = document.createElement("div");
+    const VALENCE_BAR_DIV = document.createElement("div");
+    ANALYSIS_GRID_DIV.append(INSTRUMENT_DIV);
+    ANALYSIS_GRID_DIV.append(LIVENESS_DIV);
+    ANALYSIS_GRID_DIV.append(VALENCE_DIV);
+    ANALYSIS_GRID_DIV.append(INSTRUMENT_BAR_CONT_DIV);
+    ANALYSIS_GRID_DIV.append(LIVENESS_BAR_CONT_DIV);
+    ANALYSIS_GRID_DIV.append(VALENCE_BAR_CONT_DIV);
+    INSTRUMENT_BAR_CONT_DIV.append(INSTRUMENT_BAR_DIV);
+    LIVENESS_BAR_CONT_DIV.append(LIVENESS_BAR_DIV);
+    VALENCE_BAR_CONT_DIV.append(VALENCE_BAR_DIV);
+
+    INSTRUMENT_DIV.setAttribute("class", "instrumentalness");
+    LIVENESS_DIV.setAttribute("class", "liveness");
+    VALENCE_DIV.setAttribute("class", "valence");
+    INSTRUMENT_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    INSTRUMENT_BAR_DIV.setAttribute("class", "skills-bar-text instrument-bar");
+    LIVENESS_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    LIVENESS_BAR_DIV.setAttribute("class", "skills-bar-text liveness-bar")
+    VALENCE_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
+    VALENCE_BAR_DIV.setAttribute("class", "skills-bar-text valence-bar");
+
+    INSTRUMENT_DIV.innerHTML = "instrumentalness";
+    LIVENESS_DIV.innerHTML = "liveness";
+    VALENCE_DIV.innerHTML = "valence";
+
+
 }
 async function doSearch(val, option){
     let dataStr = null;
@@ -173,7 +321,7 @@ async function doSearch(val, option){
                     callHomePg();
                 }else{
                     
-                    console.log(JSON.stringify(data, null , 2));
+                    //console.log(JSON.stringify(data, null , 2));
                     //for each item, get the name
                     data.tracks.items.forEach(function(key){
                         let dataMap = new Map();
@@ -218,12 +366,14 @@ async function doSearch(val, option){
                             dataMap.set("liveness",         featureData.liveness);
                             dataMap.set("valence",          featureData.valence);
                             dataMap.set("tempo",            featureData.tempo);
+                            createHTML(dataMap);
+
                         })
                         .catch((error) => {
                             console.error('Error in feature request:', error);
                         });
+
                         //DYNAMICALLY CREATE TRACK ELEMENTS
-                        //createHTML(dataMap);
                     });
                 }
             }
@@ -242,12 +392,19 @@ async function doSearch(val, option){
 }
 function showTrackAnalysis(){
     let state = document.getElementById("info-card-id").className;
+    //data is showing, hide it; arrow is showing up, point down
     if (state === "info-card-show"){
         document.getElementById("info-card-id").classList.remove("info-card-show");
         document.getElementById("info-card-id").classList.add("info-card-hide");
-    }else{
+        document.getElementById("card-svg-id").classList.remove("card-svg-up-class");
+        document.getElementById("card-svg-id").classList.add("card-svg-down-class");
+    }
+    //data is not showing, show it; arrow is pointing down, point up
+    else{
         document.getElementById("info-card-id").classList.remove("info-card-hide");
-        document.getElementById("info-card-id").classList.add("info-card-show");        
+        document.getElementById("info-card-id").classList.add("info-card-show");    
+        document.getElementById("card-svg-id").classList.remove("card-svg-down-class");
+        document.getElementById("card-svg-id").classList.add("card-svg-up-class");    
     }
 }
 //IMPORTANT! "parameter" must include the & and the = symbols

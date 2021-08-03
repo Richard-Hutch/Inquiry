@@ -282,6 +282,10 @@ body {
   background-color: var(--off-white);
   -webkit-transition: .25s;
   transition: .25s;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 351px 40px;
+      grid-template-columns: 351px 40px;
 }
 
 .track-wrapper .track-card-container .track-arrow-img {
@@ -290,7 +294,7 @@ body {
   right: .1em;
 }
 
-.track-wrapper .track-card-container .track-arrow-img #card-svg-id {
+.track-wrapper .track-card-container .track-arrow-img .card-svg-down-class, .track-wrapper .track-card-container .track-arrow-img .card-svg-up-class {
   padding-top: 2em;
   margin-top: -2em;
   padding-bottom: 2em;
@@ -303,14 +307,19 @@ body {
   transition: .25s;
 }
 
+.track-wrapper .track-card-container .track-arrow-img .card-svg-down-class {
+  -webkit-transform: translateY(35%) rotate(0deg);
+          transform: translateY(35%) rotate(0deg);
+}
+
+.track-wrapper .track-card-container .track-arrow-img .card-svg-up-class {
+  -webkit-transform: translateY(35%) rotate(180deg);
+          transform: translateY(35%) rotate(180deg);
+}
+
 .track-wrapper .track-card-container:hover {
   border-top-width: .6em;
   border-bottom-width: .6em;
-}
-
-.track-wrapper .track-card-container:hover #card-svg-id {
-  -webkit-transform: translateY(35%) scaleX(0.9);
-          transform: translateY(35%) scaleX(0.9);
 }
 
 .track-wrapper .info-card-show, .track-wrapper .info-card-hide {
@@ -318,13 +327,14 @@ body {
   height: 10em;
   background-color: white;
   text-align: center;
-  border-radius: .5em;
+  border-radius: .8em;
 }
 
 .track-wrapper .info-card-show .info-top-data, .track-wrapper .info-card-hide .info-top-data {
   font-size: small;
-  border-bottom-width: .2em;
+  border-bottom-width: .3em;
   border-bottom-style: solid;
+  border-color: var(--off-white);
 }
 
 .track-wrapper .info-card-show .info-top-data p, .track-wrapper .info-card-hide .info-top-data p {
@@ -359,42 +369,6 @@ body {
   text-align: right;
   color: white;
   padding-right: 5px;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .dance-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .dance-bar {
-  width: 30%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .energy-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .energy-bar {
-  width: 55%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .loudness-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .loudness-bar {
-  width: 90%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .speech-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .speech-bar {
-  width: 10%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .popularity-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .popularity-bar {
-  width: 5%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .acoustic-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .acoustic-bar {
-  width: 100%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .instrument-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .instrument-bar {
-  width: 0%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .liveness-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .liveness-bar {
-  width: 25%;
-}
-
-.track-wrapper .info-card-show .analysis-grid .skill-bar-container .valence-bar, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .valence-bar {
-  width: 75%;
 }
 
 .track-wrapper .info-card-hide {

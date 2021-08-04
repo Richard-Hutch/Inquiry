@@ -79,6 +79,10 @@ body {
   background-image: url("/resources/black_bg.jpg");
 }
 
+#result-body-id, #profile-body-id {
+  background-image: url("/resources/bg.jpg");
+}
+
 #main-body-id::before {
   content: "";
   position: absolute;
@@ -87,10 +91,6 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-}
-
-#result-body-id {
-  background-image: url("/resources/bg.jpg");
 }
 
 .navbar {

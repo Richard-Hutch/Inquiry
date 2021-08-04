@@ -537,7 +537,13 @@ async function userDetails(){
         return response.json();
     })
     .then(function(result){
-        console.log(result);
+        window.location.assign("/profile.html?" + window.location.hash);
+
+
+        document.getElementById("")
+
+
+        console.log(JSON.stringify(result, null, 2));
     })
     .catch(function(error){
         if (error == "TypeError: Failed to fetch"){

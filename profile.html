@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inquiry-Results</title> <!-- edit this to adjust browser tab name -->
+    <link rel="stylesheet" href="CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
+    <script src="app.js"></script>
+</head>
+<body id = "profile-body-id">
+    <div class="navbar">
+        <a href="#", onclick = "callHomePg()", class="sitename"><b>INQUIRY</b></a>
+        <div class="menu-bars-active", onclick = "menuDropDown()", id = "menu-bars-id">
+            <div class = "bar1", id = "bar1-id"></div>
+            <div class = "bar2", id = "bar2-id"></div>
+            <div class = "bar3", id = "bar3-id"></div>
+        </div>
+        <div class="menu-content-hide-first", id = "menu-content-id">
+            <ul class = "menu-list", id = "menu-list-id">
+                <li onclick = "logout()">LOGOUT</li>
+            </ul>
+        </div>
+    </div>
+    <div class="profile-header-wrapper">
+        <div class="profile-header">PROFILE FOR:</div>
+        <div class="profile-picture-show"></div>
+        <div class="profile-name", id = "profile-name-id"></div>
+    </div>
+    <div class="profile-info-cont">
+        <ul>
+            <li id="user-name">USERNAME: </li>
+            <li id="email">EMAIL: </li>
+            <li id="follower-count">FOLLOWERS: </li>
+            <li id="subscription-type">SUBSCRIPTION TYPE: </li>
+            <li id="profile-type">PROFILE_TYPE</li>
+            <li id="explicit-content">EXPLICIT CONTENT: </li>
+            <li id="profile-link">PROFILE LINK: </li>
+
+        </ul>
+    </div>
+    <div class="playlist-wrapper">
+        <ul id = "playlist-list-id">
+        </ul>
+    </div>
+</body>

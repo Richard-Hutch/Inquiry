@@ -179,6 +179,7 @@ body{
     text-align: center;
     position: relative;
     height: 10em;
+    overflow: hidden;
     #searching-for-id{
         position: relative;
         display: inline-block;
@@ -283,22 +284,13 @@ body{
             }
             .skill-bar-container{
                 box-sizing: border-box;
-                background-color: gray;
+                background-color: darkred;
                 .skills-bar-text{
-                    background-color: red;
+                    background-color: rgb(255, 0, 0);
                     text-align: right;
                     color: white;
                     padding-right: 5px;
                 }
-                // .dance-bar{width: 30%;}
-                // .energy-bar{width: 55%;}
-                // .loudness-bar{width: 90%;}
-                // .speech-bar{width: 10%;}
-                // .popularity-bar{width: 5%;}
-                // .acoustic-bar{width: 100%;}
-                // .instrument-bar{width: 0%;}
-                // .liveness-bar{width: 25%;}
-                // .valence-bar{width: 75%;}
             }
         }
     }

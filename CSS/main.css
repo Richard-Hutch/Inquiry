@@ -231,6 +231,7 @@ body {
   text-align: center;
   position: relative;
   height: 10em;
+  overflow: hidden;
 }
 
 .searching-for #searching-for-id {
@@ -361,7 +362,7 @@ body {
 .track-wrapper .info-card-show .analysis-grid .skill-bar-container, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  background-color: gray;
+  background-color: darkred;
 }
 
 .track-wrapper .info-card-show .analysis-grid .skill-bar-container .skills-bar-text, .track-wrapper .info-card-hide .analysis-grid .skill-bar-container .skills-bar-text {

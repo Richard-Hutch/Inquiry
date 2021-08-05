@@ -15,6 +15,7 @@ let unique_id_counter = 0;
 //PARAMETERS
 let SEARCH_ITEM = "&searchItem=";
 let SEARCH_OPTION = "&searchOption=";
+let PROFILE_PAGE = "&profilePage=";
 
 //on each page load, check if user is logged into spotify account. If not, have them log in
 window.onload = function(){
@@ -78,9 +79,11 @@ function checkParameters(){
     if (params.searchItem && params.searchOption){
         let val = decodeURI(params.searchItem);
         let option = params.searchOption;
-        //document.getElementById("searching-for-id").innerText += " " + val.toUpperCase(); 
         document.getElementById("searching-for-query-id").innerText = val.toUpperCase();
         doSearch(val,option);
+    }
+    if (params.profilePage){
+        doUserDetails();
     }
 }
 /*
@@ -92,7 +95,6 @@ function search(){
     let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
     window.location.assign("/result.html?" + window.location.hash + SEARCH_ITEM + key + SEARCH_OPTION + option);
 }
-
 async function doSearch(val, option){
     let dataStr = null;
 
@@ -317,13 +319,20 @@ function removeHashParameter(parameter, hash){
     }
     return hash;
 }
-function callHomePg(){
+function callHomePg(page){
     url = "http://127.0.0.1:5500/mainpage.html";
     userHash = window.location.hash;
     //hash exists
     if (userHash){
-        userHash = removeHashParameter(SEARCH_ITEM, userHash);
-        userHash = removeHashParameter(SEARCH_OPTION, userHash);
+        if (page === "result"){
+            userHash = removeHashParameter(SEARCH_ITEM, userHash);
+            userHash = removeHashParameter(SEARCH_OPTION, userHash);
+        }else if (page === "profile"){
+            userHash = removeHashParameter(PROFILE_PAGE, userHash);
+        }else {
+            confirm("error in callHomePg()");
+        }
+
         url = url + "?" + userHash;
     }else{
         url = url + "?" + userHash;
@@ -331,7 +340,10 @@ function callHomePg(){
     }
     location.href = url;
 }
-async function userDetails(){
+function userDetails(){
+    window.location.assign("/profile.html?" + window.location.hash + "&profilePage=true");
+}
+async function doUserDetails(){
     fetch("https://api.spotify.com/v1/me", 
     {
         method: "GET",
@@ -343,11 +355,18 @@ async function userDetails(){
         return response.json();
     })
     .then(function(result){
-        window.location.assign("/profile.html?" + window.location.hash);
 
-
-        document.getElementById("")
-
+        document.getElementById("profile-name-id").innerHTML = result.display_name;
+        document.getElementById("profile-link-id").setAttribute("href", result.external_urls.spotify);
+        document.getElementById("profile-link-id").setAttribute("target", "_blank"); //open to new tab
+        if (result.images[0] != null){
+            document.getElementById("user-img-id").setAttribute("src", result.images[0].url);
+            document.getElementById("profile-picture-div-id").classList.remove("profile-picture-blank");
+            document.getElementById("profile-picture-div-id").classList.add("profile-picture-custom");
+        }
+        document.getElementById("user-name-id").innerHTML += " " + result.id;
+        document.getElementById("email-id").innerHTML += " " + result.email;
+        document.getElementById("follower-count-id").innerHTML += " " + result.followers.total;
 
         console.log(JSON.stringify(result, null, 2));
     })
@@ -423,13 +442,6 @@ function createHTML(dataMap){
     IMG_ATR.setAttribute("alt","down arrow svg");
 
     IMG_ATR.setAttribute("class", "card-svg-down-class");
-    //let functionName = "showTrackAnalysis(" + ui + ")";
-    //IMG_ATR.setAttribute("onclick", "showTrackAnalysis(\'' + uid + \'')");
-
-    // let tempTest = document.getElementById(uid);
-    // tempTest.addEventListener("click", function(){
-    //     showTrackAnalysis(uid);
-    // }, false);
 
     /////////////////////////////////////////
     const INFO_CARD_DIV = document.createElement("div");
@@ -572,8 +584,6 @@ function createHTML(dataMap){
     LIVENESS_BAR_DIV.style.width = (parseFloat(dataMap.get("liveness")) * 100).toString() + "%";
     VALENCE_BAR_DIV.innerHTML = dataMap.get("valence");
     VALENCE_BAR_DIV.style.width = (parseFloat(dataMap.get("valence")) * 100).toString() + "%";
-
-
 
     unique_id_counter += 1;
 }

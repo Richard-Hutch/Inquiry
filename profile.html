@@ -9,7 +9,7 @@
 </head>
 <body id = "profile-body-id">
     <div class="navbar">
-        <a href="#", onclick = "callHomePg()", class="sitename"><b>INQUIRY</b></a>
+        <a href="#", onclick = "callHomePg('profile')", class="sitename"><b>INQUIRY</b></a>
         <div class="menu-bars-active", onclick = "menuDropDown()", id = "menu-bars-id">
             <div class = "bar1", id = "bar1-id"></div>
             <div class = "bar2", id = "bar2-id"></div>
@@ -25,18 +25,18 @@
         <div class="profile-wrapper">
             <div class="profile-header-wrapper">
                 <h3 id ="profile-header-id">PROFILE FOR:</h3>
-                <div class="profile-picture-show">
+                <div class="profile-picture-blank", id = "profile-picture-div-id">
                     <a href="#" id = "profile-link-id">
                         <img src="resources/anon-user.svg" alt="user profile pic", id = "user-img-id">
                     </a>
                 </div>
-                <h1 id = "profile-name-id">JOHN RUTLEDGE</h1>
+                <h1 id = "profile-name-id"></h1>
             </div>
             <div class="profile-info-cont">
                 <ul id = "profile-info-list-id">
-                    <li id="user-name"><p>USERNAME:</p></li>
-                    <li id="email"><p>EMAIL: </p></li>
-                    <li id="follower-count"><p>FOLLOWERS: </p></li>
+                    <li ><p id="user-name-id">USERNAME:</p></li>
+                    <li><p id="email-id">EMAIL: </p></li>
+                    <li ><p id="follower-count-id">FOLLOWERS: </p></li>
                 </ul>
             </div>
         </div>

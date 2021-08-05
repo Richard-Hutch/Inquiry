@@ -583,8 +583,27 @@ body{
         text-align: center;
 
         .profile-header-wrapper{
-            .profile-picture-show{
+            .profile-picture-blank{
                 transform: scale(.8);
+            }
+            .profile-picture-custom{
+                height:170px;
+                position: relative;
+                a{  
+                    display: block;
+                    height: 0;
+                    #user-img-id{
+                        background-color: black;
+                        border-radius: 50%;
+                        border-style: solid;
+                        border-width: .3em;
+                        border-color: black;
+                        width: 140px;
+                        height: 130px;
+                        //transform: scale(.55);
+                    }
+                }
+
             }
             #profile-header-id{
                 margin-top: 2em;

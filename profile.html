@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inquiry-Results</title> <!-- edit this to adjust browser tab name -->
+    <title>Inquiry-Profile</title> <!-- edit this to adjust browser tab name -->
     <link rel="stylesheet" href="CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
     <script src="app.js"></script>
 </head>
@@ -21,25 +21,33 @@
             </ul>
         </div>
     </div>
-    <div class="profile-header-wrapper">
-        <div class="profile-header">PROFILE FOR:</div>
-        <div class="profile-picture-show"></div>
-        <div class="profile-name", id = "profile-name-id"></div>
-    </div>
-    <div class="profile-info-cont">
-        <ul>
-            <li id="user-name">USERNAME: </li>
-            <li id="email">EMAIL: </li>
-            <li id="follower-count">FOLLOWERS: </li>
-            <li id="subscription-type">SUBSCRIPTION TYPE: </li>
-            <li id="profile-type">PROFILE_TYPE</li>
-            <li id="explicit-content">EXPLICIT CONTENT: </li>
-            <li id="profile-link">PROFILE LINK: </li>
+    <div class="sub-body-wrapper">
+        <div class="profile-wrapper">
+            <div class="profile-header-wrapper">
+                <h3 id ="profile-header-id">PROFILE FOR:</h3>
+                <div class="profile-picture-show">
+                    <a href="#" id = "profile-link-id">
+                        <img src="resources/anon-user.svg" alt="user profile pic", id = "user-img-id">
+                    </a>
+                </div>
+                <h1 id = "profile-name-id">JOHN RUTLEDGE</h1>
+            </div>
+            <div class="profile-info-cont">
+                <ul id = "profile-info-list-id">
+                    <li id="user-name"><p>USERNAME:</p></li>
+                    <li id="email"><p>EMAIL: </p></li>
+                    <li id="follower-count"><p>FOLLOWERS: </p></li>
+                </ul>
+            </div>
+        </div>
 
-        </ul>
+        <div class="playlist-wrapper">
+            <h1 id="playlist-heading-id"><span>PLAYLISTS</span></h2>
+
+            <ul id = "playlist-list-id">
+            </ul>
+        </div>
     </div>
-    <div class="playlist-wrapper">
-        <ul id = "playlist-list-id">
-        </ul>
-    </div>
+
+
 </body>

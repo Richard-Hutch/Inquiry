@@ -91,9 +91,301 @@ function search(){
     let key = document.getElementById("search-input").value;
     let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
     window.location.assign("/result.html?" + window.location.hash + SEARCH_ITEM + key + SEARCH_OPTION + option);
-    // document.getElementById("element-data-id").innerHTML = "hello";
 }
 
+async function doSearch(val, option){
+    let dataStr = null;
+
+    if (val === ""){
+        alert("Search is empty!");
+    }else{
+        //
+        //console.log("option = " + option);
+        val = "\""+ val + "\"";
+        //console.log("searching for: " + val);
+        let market = "&market=from_token";
+        let type = "&type=track";
+        let limit = "&limit=5";
+        url = "https://api.spotify.com/v1/search?q=";
+        //append track: to exclusively search track titles
+        if (option === "SongStrict"){
+            url += "track:";
+        }else if (option === "Playlist"){
+            type = "&type=playlist";
+        }
+        url += val + type + limit + market;
+        dataStr = "Data not found";
+        fetch(url, 
+        {
+            method: "GET",
+            headers:{
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            }
+        })
+        .then((response)=>response.json())
+        .then(function(data){
+
+            //handle playlist searching
+            if (option === "Playlist"){
+                if (data.playlists.items[0] == null){
+                    alert("No results found");
+                }else{
+                    console.log(JSON.stringify(data, null , 2));
+                }
+            }
+            //handle track searching
+            else{
+                //no result from search found
+                if (data.tracks.items[0] == null){
+                    alert("No Result found");
+                }else{
+                    
+                    //console.log(JSON.stringify(data, null , 2));
+                    //for each item, get the name
+                    data.tracks.items.forEach(function(key){
+                        let dataMap = new Map();
+                        //dataStr = key.name + ", by ";
+                        //for each artist in the item get the name
+                        let artists = "";
+                        key.artists.forEach(function(key2){
+                            artists += key2.name + ", ";
+                            //dataStr += key2.name + ", ";
+                        });
+                        artists = artists.substr(0, artists.length - 2);
+                        //get the id of the track
+                        //dataStr += " ID: " + key.id;
+                        //console.log(dataStr);
+                        dataMap.set("name", key.name);
+                        dataMap.set("artists", artists);
+                        dataMap.set("uri", key.uri.replace("spotify:track:", ""));
+                        dataMap.set("id", key.id);
+                        //get and set the duration of the track
+                        let tempDurationMin = (parseInt((parseFloat(key.duration_ms) / 1000) / 60)).toString();
+                        let tempDurationSeconds = ((Math.round((parseFloat(key.duration_ms) / 1000) % 60)*100)/ 100).toString()
+                        if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
+                        dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
+                        dataMap.set("popularity", key.popularity);
+                        
+
+                        //GET AUDIO FEATURES
+                        let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
+                        fetch(audioFeatureURL,{
+                            method: "GET",
+                            headers:{
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + accessToken
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(featureData => {
+                            if (featureData.error){
+                                if (featureData.error.status === 401){
+                                    console.log("error 401");
+                                }
+                            }
+
+                            //console.log(JSON.stringify(featureData, null , 2));
+                            
+                            //transcribe the key and assign it
+                            let tempKey = "err";
+                            switch(featureData.key){
+                                case 0:
+                                    tempKey = "C"
+                                    break;
+                                case 1:
+                                    tempKey = "C#"
+                                    break;
+                                case 2:
+                                    tempKey = "D"
+                                    break;
+                                case 3:
+                                    tempKey = "D#"
+                                    break;
+                                case 4:
+                                    tempKey = "E"
+                                    break;
+                                case 5:
+                                    tempKey = "F"
+                                    break;
+                                case 6:
+                                    tempKey = "F#"
+                                    break;
+                                case 7:
+                                    tempKey = "G"
+                                    break;
+                                case 8:
+                                    tempKey = "G#"
+                                    break;
+                                case 9:
+                                    tempKey = "A"
+                                    break;
+                                case 10:
+                                    tempKey = "A#"
+                                    break;
+                                case 11:
+                                    tempKey = "B"
+                                    break;                                    
+                            }
+                            //check if key is major or minor
+                            if (featureData.mode == 1){
+                                tempKey += " major";
+                            }else if (featureData.mode == 0){
+                                tempKey += " minor";
+                            }
+                            dataMap.set("key",              tempKey);
+                            dataMap.set("danceability",     featureData.danceability);
+                            dataMap.set("energy",           featureData.energy);
+                            dataMap.set("loudness",         featureData.loudness);
+                            dataMap.set("speechiness",      featureData.speechiness);
+                            dataMap.set("acousticness",     featureData.acousticness);
+                            dataMap.set("instrumentalness", featureData.instrumentalness);
+                            dataMap.set("liveness",         featureData.liveness);
+                            dataMap.set("valence",          featureData.valence);
+                            dataMap.set("tempo",            featureData.tempo);
+                            dataMap.set("time_signature",   featureData.time_signature);
+
+                            //DYNAMICALLY CREATE TRACK ELEMENTS
+                            createHTML(dataMap);
+
+                        })
+                        .catch((error) => {
+                            console.log("error in feature request", error);
+                            //confirm('Error in feature request:', error);
+                        });
+                    });
+                }
+            }
+        })
+        .catch(function(error){
+            if (error == "TypeError: Failed to fetch"){
+                confirm("Error fetching data.");
+
+            }else{
+                confirm("Access Token Expired. Please login again.");
+            }
+            console.log("Error in track/playlist request: " + error);
+        })
+    }
+    return dataStr;
+}
+function showTrackAnalysis(ucid, uiid){
+    //console.log("uid = " + uid);
+    let state = document.getElementById(uiid).className;
+    //data is showing, hide it; arrow is showing up, point down
+    if (state === "info-card-show"){
+        document.getElementById(uiid).classList.remove("info-card-show");
+        document.getElementById(uiid).classList.add("info-card-hide");
+        document.getElementById(ucid).classList.remove("card-svg-up-class");
+        document.getElementById(ucid).classList.add("card-svg-down-class");
+    }
+    //data is not showing, show it; arrow is pointing down, point up
+    else{
+        document.getElementById(uiid).classList.remove("info-card-hide");
+        document.getElementById(uiid).classList.add("info-card-show");    
+        document.getElementById(ucid).classList.remove("card-svg-down-class");
+        document.getElementById(ucid).classList.add("card-svg-up-class");    
+    }
+}
+//IMPORTANT! "parameter" must include the & and the = symbols
+function removeHashParameter(parameter, hash){
+    let ndx;
+    let size = hash.length;
+    //erase item search parameter
+    if ((ndx = hash.search(parameter)) !== -1){
+        for (let i = ndx + 6; i < size; i++){
+            //there are more parameters so find where item value ends
+            if (hash[i] === "&"){
+                let strToDelete = hash.substring(ndx, i);
+                hash = hash.replace(strToDelete, "");
+                break;
+            }
+            else{
+                //there are no further URL parameters
+                if (i == size -1){
+                    let strToDelete = hash.substr(ndx);
+                    hash = hash.replace(strToDelete, "");
+                }
+            }
+        }
+    }
+    //hash parameter not found
+    if (ndx == -1) {
+        //confirm("Error: parameter not found");
+    }
+    return hash;
+}
+function callHomePg(){
+    url = "http://127.0.0.1:5500/mainpage.html";
+    userHash = window.location.hash;
+    //hash exists
+    if (userHash){
+        userHash = removeHashParameter(SEARCH_ITEM, userHash);
+        userHash = removeHashParameter(SEARCH_OPTION, userHash);
+        url = url + "?" + userHash;
+    }else{
+        url = url + "?" + userHash;
+        console.log("no token: " + userHash);
+    }
+    location.href = url;
+}
+async function userDetails(){
+    fetch("https://api.spotify.com/v1/me", 
+    {
+        method: "GET",
+        headers:{
+            "Authorization": "Bearer " + accessToken
+        }
+    })
+    .then(function(response){
+        return response.json();
+    })
+    .then(function(result){
+        window.location.assign("/profile.html?" + window.location.hash);
+
+
+        document.getElementById("")
+
+
+        console.log(JSON.stringify(result, null, 2));
+    })
+    .catch(function(error){
+        if (error == "TypeError: Failed to fetch"){
+            confirm("Error fetching data.");
+        }else{
+            confirm("Access Token Expired. Please login again.");
+        }
+        console.log("Error: " + error);
+    })
+}
+function menuDropDown(){
+    let state = document.getElementById("menu-bars-id").className;
+    let contentState = document.getElementById("menu-content-id").className;
+    //menu is not showing, show
+    if (state === "menu-bars-active"){
+        //document.getElementById("menu-content-id").style.display = "inline-block";
+        //page just loaded and we do not want to execute animation on content
+        if (contentState === "menu-content-hide-first"){
+            document.getElementById("menu-content-id").classList.remove("menu-content-hide-first");
+        }else{
+            document.getElementById("menu-content-id").classList.remove("menu-content-hide");    
+        }
+        document.getElementById("menu-content-id").classList.add("menu-content-show");
+        document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
+        document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
+    }
+
+    //menu is showing, hide
+    else if (state === "menu-bars-inactive"){
+        //document.getElementById("menu-content-id").style.display = "none";
+        document.getElementById("menu-content-id").classList.remove("menu-content-show");
+        document.getElementById("menu-content-id").classList.add("menu-content-hide");
+        document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
+        document.getElementById("menu-bars-id").classList.add("menu-bars-active");
+    }
+}
 function createHTML(dataMap){
     console.log("MAP = ", dataMap);
 
@@ -284,299 +576,4 @@ function createHTML(dataMap){
 
 
     unique_id_counter += 1;
-
-}
-async function doSearch(val, option){
-    let dataStr = null;
-
-    if (val === ""){
-        alert("Search is empty!");
-    }else{
-        //
-        //console.log("option = " + option);
-        val = "\""+ val + "\"";
-        //console.log("searching for: " + val);
-        let market = "&market=from_token";
-        let type = "&type=track";
-        let limit = "&limit=5";
-        url = "https://api.spotify.com/v1/search?q=";
-        //append track: to exclusively search track titles
-        if (option === "SongStrict"){
-            url += "track:";
-        }else if (option === "Playlist"){
-            type = "&type=playlist";
-        }
-        url += val + type + limit + market;
-        dataStr = "Data not found";
-        fetch(url, 
-        {
-            method: "GET",
-            headers:{
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + accessToken
-            }
-        })
-        .then((response)=>response.json())
-        .then(function(data){
-
-            //handle playlist searching
-            if (option === "Playlist"){
-                if (data.playlists.items[0] == null){
-                    alert("No results found");
-                }else{
-                    console.log(JSON.stringify(data, null , 2));
-                }
-            }
-            //handle track searching
-            else{
-                //no result from search found
-                if (data.tracks.items[0] == null){
-                    alert("No Result found");
-                }else{
-                    
-                    //console.log(JSON.stringify(data, null , 2));
-                    //for each item, get the name
-                    data.tracks.items.forEach(function(key){
-                        let dataMap = new Map();
-                        //dataStr = key.name + ", by ";
-                        //for each artist in the item get the name
-                        let artists = "";
-                        key.artists.forEach(function(key2){
-                            artists += key2.name + ", ";
-                            //dataStr += key2.name + ", ";
-                        });
-                        artists = artists.substr(0, artists.length - 2);
-                        //get the id of the track
-                        //dataStr += " ID: " + key.id;
-                        //console.log(dataStr);
-                        dataMap.set("name", key.name);
-                        dataMap.set("artists", artists);
-                        dataMap.set("uri", key.uri.replace("spotify:track:", ""));
-                        dataMap.set("id", key.id);
-                        //get and set the duration of the track
-                        let tempDurationMin = (parseInt((parseFloat(key.duration_ms) / 1000) / 60)).toString();
-                        let tempDurationSeconds = ((Math.round((parseFloat(key.duration_ms) / 1000) % 60)*100)/ 100).toString()
-                        if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
-                        dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
-                        dataMap.set("popularity", key.popularity);
-                        
-
-                        //GET AUDIO FEATURES
-                        let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
-                        fetch(audioFeatureURL,{
-                            method: "GET",
-                            headers:{
-                                "Accept": "application/json",
-                                "Content-Type": "application/json",
-                                "Authorization": "Bearer " + accessToken
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(featureData => {
-                            if (featureData.error){
-                                if (featureData.error.status === 401){
-                                    console.log("error 401");
-                                }
-                            }
-
-                            //console.log(JSON.stringify(featureData, null , 2));
-                            
-                            //transcribe the key and assign it
-                            let tempKey = "err";
-                            switch(featureData.key){
-                                case 0:
-                                    tempKey = "C"
-                                    break;
-                                case 1:
-                                    tempKey = "C#"
-                                    break;
-                                case 2:
-                                    tempKey = "D"
-                                    break;
-                                case 3:
-                                    tempKey = "D#"
-                                    break;
-                                case 4:
-                                    tempKey = "E"
-                                    break;
-                                case 5:
-                                    tempKey = "F"
-                                    break;
-                                case 6:
-                                    tempKey = "F#"
-                                    break;
-                                case 7:
-                                    tempKey = "G"
-                                    break;
-                                case 8:
-                                    tempKey = "G#"
-                                    break;
-                                case 9:
-                                    tempKey = "A"
-                                    break;
-                                case 10:
-                                    tempKey = "A#"
-                                    break;
-                                case 11:
-                                    tempKey = "B"
-                                    break;                                    
-                            }
-                            //check if key is major or minor
-                            if (featureData.mode == 1){
-                                tempKey += " major";
-                            }else if (featureData.mode == 0){
-                                tempKey += " minor";
-                            }
-                            dataMap.set("key",              tempKey);
-                            dataMap.set("danceability",     featureData.danceability);
-                            dataMap.set("energy",           featureData.energy);
-                            dataMap.set("loudness",         featureData.loudness);
-                            dataMap.set("speechiness",      featureData.speechiness);
-                            dataMap.set("acousticness",     featureData.acousticness);
-                            dataMap.set("instrumentalness", featureData.instrumentalness);
-                            dataMap.set("liveness",         featureData.liveness);
-                            dataMap.set("valence",          featureData.valence);
-                            dataMap.set("tempo",            featureData.tempo);
-                            dataMap.set("time_signature",   featureData.time_signature);
-
-                            //DYNAMICALLY CREATE TRACK ELEMENTS
-                            createHTML(dataMap);
-
-                        })
-                        .catch((error) => {
-                            console.log("error in feature request", error);
-                            //confirm('Error in feature request:', error);
-                        });
-                    });
-                }
-            }
-        })
-        .catch(function(error){
-            if (error == "TypeError: Failed to fetch"){
-                confirm("Error fetching data.");
-
-            }else{
-                confirm("Access Token Expired. Please login again.");
-            }
-            console.log("Error in track/playlist request: " + error);
-        })
-    }
-    return dataStr;
-}
-function showTrackAnalysis(ucid, uiid){
-    //console.log("uid = " + uid);
-    console.log("codes= " + uiid + " " + ucid)
-    let state = document.getElementById(uiid).className;
-    //data is showing, hide it; arrow is showing up, point down
-    if (state === "info-card-show"){
-        document.getElementById(uiid).classList.remove("info-card-show");
-        document.getElementById(uiid).classList.add("info-card-hide");
-        document.getElementById(ucid).classList.remove("card-svg-up-class");
-        document.getElementById(ucid).classList.add("card-svg-down-class");
-    }
-    //data is not showing, show it; arrow is pointing down, point up
-    else{
-        document.getElementById(uiid).classList.remove("info-card-hide");
-        document.getElementById(uiid).classList.add("info-card-show");    
-        document.getElementById(ucid).classList.remove("card-svg-down-class");
-        document.getElementById(ucid).classList.add("card-svg-up-class");    
-    }
-}
-//IMPORTANT! "parameter" must include the & and the = symbols
-function removeHashParameter(parameter, hash){
-    let ndx;
-    let size = hash.length;
-
-    //erase item search parameter
-    if (ndx = hash.search(parameter)){
-        for (let i = ndx + 6; i < size; i++){
-            //there are more parameters so find where item value ends
-            if (hash[i] === "&"){
-                let strToDelete = hash.substring(ndx, i);
-                hash = hash.replace(strToDelete, "");
-                break;
-            }
-            else{
-                //there are no further URL parameters
-                if (i == size -1){
-                    let strToDelete = hash.substr(ndx);
-                    hash = hash.replace(strToDelete, "");
-                }
-            }
-        }
-    }
-    //hash parameter not found
-    if (ndx == -1) {
-        confirm("Error: parameter not found");
-    }
-    return hash;
-}
-function callHomePg(){
-    url = "http://127.0.0.1:5500/mainpage.html";
-    userHash = window.location.hash;
-    //hash exists
-    if (userHash){
-        userHash = removeHashParameter(SEARCH_ITEM, userHash);
-        userHash = removeHashParameter(SEARCH_OPTION, userHash);
-        url = url + "?" + userHash;
-    }else{
-        console.log("no token: " + userHash);
-    }
-    location.href = url;
-}
-async function userDetails(){
-    fetch("https://api.spotify.com/v1/me", 
-    {
-        method: "GET",
-        headers:{
-            "Authorization": "Bearer " + accessToken
-        }
-    })
-    .then(function(response){
-        return response.json();
-    })
-    .then(function(result){
-        window.location.assign("/profile.html?" + window.location.hash);
-
-
-        document.getElementById("")
-
-
-        console.log(JSON.stringify(result, null, 2));
-    })
-    .catch(function(error){
-        if (error == "TypeError: Failed to fetch"){
-            confirm("Error fetching data.");
-        }else{
-            confirm("Access Token Expired. Please login again.");
-        }
-        console.log("Error: " + error);
-    })
-}
-function menuDropDown(){
-    let state = document.getElementById("menu-bars-id").className;
-    let contentState = document.getElementById("menu-content-id").className;
-    //menu is not showing, show
-    if (state === "menu-bars-active"){
-        //document.getElementById("menu-content-id").style.display = "inline-block";
-        //page just loaded and we do not want to execute animation on content
-        if (contentState === "menu-content-hide-first"){
-            document.getElementById("menu-content-id").classList.remove("menu-content-hide-first");
-        }else{
-            document.getElementById("menu-content-id").classList.remove("menu-content-hide");    
-        }
-        document.getElementById("menu-content-id").classList.add("menu-content-show");
-        document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
-        document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
-    }
-
-    //menu is showing, hide
-    else if (state === "menu-bars-inactive"){
-        //document.getElementById("menu-content-id").style.display = "none";
-        document.getElementById("menu-content-id").classList.remove("menu-content-show");
-        document.getElementById("menu-content-id").classList.add("menu-content-hide");
-        document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
-        document.getElementById("menu-bars-id").classList.add("menu-bars-active");
-    }
 }

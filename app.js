@@ -1,6 +1,6 @@
 const client_id = "45d081854dd645af9ace7d813d3f7ae4";
 const redirect_uri = "http://127.0.0.1:5500/mainpage.html";
-const scopes = "user-read-email user-read-private"
+const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative";
 const authURL = "https://accounts.spotify.com/authorize" + 
     "?client_id=" + client_id + 
     "&response_type=token" + 
@@ -87,15 +87,103 @@ function checkParameters(){
     }
 }
 /*
-TO-DO: make sure that user does not include & or = in their search
+TO-DO: 
+* make sure that user does not include & or = in their search
+* round the values of music analysis to just two decimal places and put val out of, ex: .55/1
 */
 function search(){
-
     let key = document.getElementById("search-input").value;
     let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
     window.location.assign("/result.html?" + window.location.hash + SEARCH_ITEM + key + SEARCH_OPTION + option);
 }
-async function doSearch(val, option){
+
+async function getTrackFeatures(dataMap){
+    let tempMap = new Map();
+    //GET AUDIO FEATURES
+    let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
+    return fetch(audioFeatureURL,{
+        method: "GET",
+        headers:{
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+    })
+    .then(response => response.json())
+    .then(featureData => {
+        if (featureData.error){
+            if (featureData.error.status === 401){
+                console.log("error 401");
+                logout(); //NOT CONFIRMED THIS IS BUG FREE
+            }
+        }
+        //console.log(JSON.stringify(featureData, null , 2));
+        //transcribe the key and assign it
+        let tempKey = "err";
+        switch(featureData.key){
+            case 0:
+                tempKey = "C"
+                break;
+            case 1:
+                tempKey = "C#"
+                break;
+            case 2:
+                tempKey = "D"
+                break;
+            case 3:
+                tempKey = "D#"
+                break;
+            case 4:
+                tempKey = "E"
+                break;
+            case 5:
+                tempKey = "F"
+                break;
+            case 6:
+                tempKey = "F#"
+                break;
+            case 7:
+                tempKey = "G"
+                break;
+            case 8:
+                tempKey = "G#"
+                break;
+            case 9:
+                tempKey = "A"
+                break;
+            case 10:
+                tempKey = "A#"
+                break;
+            case 11:
+                tempKey = "B"
+                break;                                    
+        }
+        //check if key is major or minor
+        if (featureData.mode == 1){
+            tempKey += " major";
+        }else if (featureData.mode == 0){
+            tempKey += " minor";
+        }
+        tempMap.set("key",              tempKey);
+        tempMap.set("danceability",     featureData.danceability);
+        tempMap.set("energy",           featureData.energy);
+        tempMap.set("loudness",         featureData.loudness);
+        tempMap.set("speechiness",      featureData.speechiness);
+        tempMap.set("acousticness",     featureData.acousticness);
+        tempMap.set("instrumentalness", featureData.instrumentalness);
+        tempMap.set("liveness",         featureData.liveness);
+        tempMap.set("valence",          featureData.valence);
+        tempMap.set("tempo",            featureData.tempo);
+        tempMap.set("time_signature",   featureData.time_signature);
+        return tempMap;
+    })
+    .catch((error) => {
+        console.log("error in feature request", error);
+        return null;
+    });
+
+}
+function doSearch(val, option){
     let dataStr = null;
 
     if (val === ""){
@@ -153,12 +241,9 @@ async function doSearch(val, option){
                         let artists = "";
                         key.artists.forEach(function(key2){
                             artists += key2.name + ", ";
-                            //dataStr += key2.name + ", ";
                         });
                         artists = artists.substr(0, artists.length - 2);
                         //get the id of the track
-                        //dataStr += " ID: " + key.id;
-                        //console.log(dataStr);
                         dataMap.set("name", key.name);
                         dataMap.set("artists", artists);
                         dataMap.set("uri", key.uri.replace("spotify:track:", ""));
@@ -169,93 +254,12 @@ async function doSearch(val, option){
                         if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
                         dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
                         dataMap.set("popularity", key.popularity);
-                        
-
-                        //GET AUDIO FEATURES
-                        let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
-                        fetch(audioFeatureURL,{
-                            method: "GET",
-                            headers:{
-                                "Accept": "application/json",
-                                "Content-Type": "application/json",
-                                "Authorization": "Bearer " + accessToken
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(featureData => {
-                            if (featureData.error){
-                                if (featureData.error.status === 401){
-                                    console.log("error 401");
-                                }
-                            }
-
-                            //console.log(JSON.stringify(featureData, null , 2));
-                            
-                            //transcribe the key and assign it
-                            let tempKey = "err";
-                            switch(featureData.key){
-                                case 0:
-                                    tempKey = "C"
-                                    break;
-                                case 1:
-                                    tempKey = "C#"
-                                    break;
-                                case 2:
-                                    tempKey = "D"
-                                    break;
-                                case 3:
-                                    tempKey = "D#"
-                                    break;
-                                case 4:
-                                    tempKey = "E"
-                                    break;
-                                case 5:
-                                    tempKey = "F"
-                                    break;
-                                case 6:
-                                    tempKey = "F#"
-                                    break;
-                                case 7:
-                                    tempKey = "G"
-                                    break;
-                                case 8:
-                                    tempKey = "G#"
-                                    break;
-                                case 9:
-                                    tempKey = "A"
-                                    break;
-                                case 10:
-                                    tempKey = "A#"
-                                    break;
-                                case 11:
-                                    tempKey = "B"
-                                    break;                                    
-                            }
-                            //check if key is major or minor
-                            if (featureData.mode == 1){
-                                tempKey += " major";
-                            }else if (featureData.mode == 0){
-                                tempKey += " minor";
-                            }
-                            dataMap.set("key",              tempKey);
-                            dataMap.set("danceability",     featureData.danceability);
-                            dataMap.set("energy",           featureData.energy);
-                            dataMap.set("loudness",         featureData.loudness);
-                            dataMap.set("speechiness",      featureData.speechiness);
-                            dataMap.set("acousticness",     featureData.acousticness);
-                            dataMap.set("instrumentalness", featureData.instrumentalness);
-                            dataMap.set("liveness",         featureData.liveness);
-                            dataMap.set("valence",          featureData.valence);
-                            dataMap.set("tempo",            featureData.tempo);
-                            dataMap.set("time_signature",   featureData.time_signature);
-
-                            //DYNAMICALLY CREATE TRACK ELEMENTS
+                        getTrackFeatures(dataMap).then(featureResult =>{
+                            featureResult.forEach((v, k)=>{
+                                dataMap.set(k, v);
+                            });
                             createHTML(dataMap);
-
-                        })
-                        .catch((error) => {
-                            console.log("error in feature request", error);
-                            //confirm('Error in feature request:', error);
+                            
                         });
                     });
                 }
@@ -271,7 +275,6 @@ async function doSearch(val, option){
             console.log("Error in track/playlist request: " + error);
         })
     }
-    return dataStr;
 }
 function showTrackAnalysis(ucid, uiid){
     //console.log("uid = " + uid);
@@ -369,6 +372,9 @@ async function doUserDetails(){
         document.getElementById("follower-count-id").innerHTML += " " + result.followers.total;
 
         console.log(JSON.stringify(result, null, 2));
+
+
+
     })
     .catch(function(error){
         if (error == "TypeError: Failed to fetch"){
@@ -377,7 +383,34 @@ async function doUserDetails(){
             confirm("Access Token Expired. Please login again.");
         }
         console.log("Error: " + error);
+    });
+    let limit = "limit=10";
+    let url = "https://api.spotify.com/v1/me/playlists?" + limit;
+    //get current user's playlists
+    fetch(url, 
+    {
+        method: "GET",
+        headers:{
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
     })
+    .then(function(response){
+        return response.json();
+    })
+    .then(function(result){
+
+        console.log(JSON.stringify(result, null, 2));
+
+    })
+    .catch(function(error){
+        if (error == "TypeError: Failed to fetch"){
+            confirm("Error fetching data.");
+        }else{
+            confirm("Access Token Expired. Please login again.");
+        }
+        console.log("Error: " + error);
+    });
 }
 function menuDropDown(){
     let state = document.getElementById("menu-bars-id").className;
@@ -431,16 +464,17 @@ function createHTML(dataMap){
     WRAPPER_DIV.setAttribute("class", "track-wrapper");
     CONTAINER_DIV.setAttribute("class", "track-card-container");
     FRAME_CONT.setAttribute("class", "iframe-container");
+
     IFRAME_ATR.setAttribute("src", "https://open.spotify.com/embed/track/" + dataMap.get("uri"));
     IFRAME_ATR.setAttribute("width", "350");
     IFRAME_ATR.setAttribute("height", "80");
     IFRAME_ATR.setAttribute("frameborder", "0");
     IFRAME_ATR.setAttribute("allowtransparency", "true");
     //IFRAME_ATR.setAttribute("allow", "encypted-media");
+    IFRAME_ATR.setAttribute("title", "spotify embed");
     TRACK_ARROW_IMG_DIV.setAttribute("class", "track-arrow-img");
     IMG_ATR.setAttribute("src","resources/down-arrow2.svg");
     IMG_ATR.setAttribute("alt","down arrow svg");
-
     IMG_ATR.setAttribute("class", "card-svg-down-class");
 
     /////////////////////////////////////////
@@ -457,10 +491,10 @@ function createHTML(dataMap){
 
     INFO_CARD_DIV.setAttribute("class", "info-card-hide");
     INFO_TOP_DATA_DIV.setAttribute("class", "info-top-data");
-    DURATION_P.setAttribute("id", "duration");
-    TEMPO_P.setAttribute("id", "tempo");
-    KEY_P.setAttribute("id", "key");
-    TIME_SIG_P.setAttribute("id", "time-signature");
+    // DURATION_P.setAttribute("id", "duration");
+    // TEMPO_P.setAttribute("id", "tempo");
+    // KEY_P.setAttribute("id", "key");
+    // TIME_SIG_P.setAttribute("id", "time-signature");
     
     /////ORDER IS ESSENTIAL. INFO_CARD_DIV and IMG_ATR must be created and appended to their parents already
     IMG_ATR.setAttribute("id", ucid);
@@ -472,6 +506,7 @@ function createHTML(dataMap){
 
 
     DURATION_P.innerHTML = "Duration: " + dataMap.get("duration");
+
     TEMPO_P.innerHTML = "Tempo: " + (Math.round(parseFloat(dataMap.get("tempo")))).toString();
     KEY_P.innerHTML = " Key: " + dataMap.get("key");
     TIME_SIG_P.innerHTML = "Time Sig: " + dataMap.get("time_signature");

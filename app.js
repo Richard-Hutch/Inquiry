@@ -222,7 +222,10 @@ function doSearch(val, option){
                 if (data.playlists.items[0] == null){
                     alert("No results found");
                 }else{
-                    console.log(JSON.stringify(data, null , 2));
+                    //console.log(JSON.stringify(data, null , 2));
+                    data.playlists.items.forEach(playlist=>{
+                        console.log("PLAYLIST NAME: " + playlist.name + "\nby: " + playlist.owner.display_name);
+                    })
                 }
             }
             //handle track searching
@@ -343,6 +346,33 @@ function callHomePg(page){
     }
     location.href = url;
 }
+function getPlaylistTracks(playlistURL, playlistName){
+    //GET PLAYLIST'S TRACKS
+    fetch(playlistURL, {
+        method: "GET",
+        headers:{
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+    }).then(function(response){
+        return response.json();
+    }).then(function(result){
+        console.log("PLAYLIST NAME = " + playlistName);
+        result.items.forEach(track=>{
+            console.log(track.track.name + "\n" + track.track.href);
+        })
+        for (let x = 0; x < 10; x++){
+            console.log(x);
+        }
+    }).catch(function(error){
+        if (error == "TypeError: Failed to fetch"){
+            confirm("Error fetching data.");
+        }else{
+            confirm("Access Token Expired. Please login again.");
+        }
+        console.log("Error in fetching playlist items: " + error);
+    });            
+}
 function userDetails(){
     window.location.assign("/profile.html?" + window.location.hash + "&profilePage=true");
 }
@@ -372,9 +402,6 @@ async function doUserDetails(){
         document.getElementById("follower-count-id").innerHTML += " " + result.followers.total;
 
         console.log(JSON.stringify(result, null, 2));
-
-
-
     })
     .catch(function(error){
         if (error == "TypeError: Failed to fetch"){
@@ -384,7 +411,7 @@ async function doUserDetails(){
         }
         console.log("Error: " + error);
     });
-    let limit = "limit=10";
+    let limit = "limit=50";
     let url = "https://api.spotify.com/v1/me/playlists?" + limit;
     //get current user's playlists
     fetch(url, 
@@ -401,6 +428,10 @@ async function doUserDetails(){
     .then(function(result){
 
         console.log(JSON.stringify(result, null, 2));
+        result.items.forEach(item=>{
+            getPlaylistTracks(item.tracks.href, item.name);
+
+        });
 
     })
     .catch(function(error){

@@ -1,7 +1,7 @@
 const client_id = "45d081854dd645af9ace7d813d3f7ae4";
 const redirect_uri = "http://127.0.0.1:5500/mainpage.html";
 const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative";
-const authURL = "https://accounts.spotify.com/authorize" + 
+const AUTH_URL = "https://accounts.spotify.com/authorize" + 
     "?client_id=" + client_id + 
     "&response_type=token" + 
     "&redirect_uri=" + encodeURI(redirect_uri) + 
@@ -20,8 +20,11 @@ let PROFILE_PAGE = "&profilePage=";
 //on each page load, check if user is logged into spotify account. If not, have them log in
 window.onload = function(){
     checkLoggedIn(1);
+    checkRemoveParameters();
     checkParameters();
 }
+
+//CURRENT BUGS: forbidden access on other account, hash parameters not being deleted beside clicking on home (ex making a search and then clicking profile) 
 
 
 //check if user presses the enter key while the focused on the search bar
@@ -31,6 +34,9 @@ document.addEventListener("keyup", function(event){
        search(element.value);
     }
 });
+function checkRemoveParameters(){
+
+}
 
 function checkLoggedIn(order = 0){
     if (order === 1){
@@ -54,7 +60,7 @@ function checkLoggedIn(order = 0){
 
 }
 function authorize(){
-    window.location = authURL;
+    window.location = AUTH_URL;
     //user denied login
     if (location.href.includes("error=access_denied")){
         location.href = "/halt.html";
@@ -184,7 +190,6 @@ async function getTrackFeatures(dataMap){
     
 }
 function doSearch(val, option){
-    let dataStr = null;
 
     if (val === ""){
         alert("Search is empty!");
@@ -427,26 +432,35 @@ function doUserDetails(){
         return response.json();
     })
     .then(function(result){
-
+        
         //console.log(JSON.stringify(result, null, 2));
         //GET EACH PLAYLIST'S TRACKS
+        let playlistMap = new Map();
+        let playlistIDCounter = 0;
         result.items.forEach(item=>{
-            // let ndx = item.images.length;
-            // if (ndx > 0){
-            //     //spotify lists album imgs in descending order in regards to display size.
-            //     //typically just large, medium, small, so if there are 3 or more albm img sizes get the second to smallest one
-            //     if (ndx >= 3){
-            //         ndx -= 2;
-            //     }else{
-            //         ndx = 0;
-            //     }
-            // }else{
-
-            //}
-            console.log(item.images[0].url);
-            getPlaylistTracks(item.tracks.href, item.name);
+            playlistMap.set("name", item.name);
+            playlistMap.set("albumIMG", item.images[0].url);
+            //console.log(item.images[0].url);
+            //getPlaylistTracks(item.tracks.href, playlistMap.get("name"));
+            const TEMPLATE = 
+            `<div class = "playlist-item-class id = "${"playlist" + playlistIDCounter}">
+                ${playlistMap.get("name")}
+                <img src="${playlistMap.get("albumIMG")}" alt="album image" class = "album-img-class">
+            </div>`;
+            document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
+            playlistIDCounter++;
+            playlistMap.clear();
         });
-
+        $(document).ready(function(){
+            $('.carousel-wrapper').slick({
+                centerMode: true,
+                centerPadding: '40px',
+                slidesToShow: 3,
+                variableWidth: true,
+                adaptiveHeight: true,
+                infinite: false
+            })
+        })
     })
     .catch(function(error){
         if (error == "TypeError: Failed to fetch"){

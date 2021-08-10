@@ -659,4 +659,48 @@ body {
   -webkit-text-fill-color: transparent;
   -moz-text-fill-color: transparent;
 }
+
+.sub-body-wrapper .playlist-wrapper .carousel-container {
+  width: 400px;
+  position: relative;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+}
+
+.sub-body-wrapper .playlist-wrapper .carousel-container div {
+  text-align: center;
+  text-decoration: underline;
+  font-size: large;
+  font-weight: bold;
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: .7em;
+  line-height: 15px;
+}
+
+.sub-body-wrapper .playlist-wrapper .carousel-container .slick-slide {
+  opacity: 50%;
+}
+
+.sub-body-wrapper .playlist-wrapper .carousel-container .slick-center {
+  opacity: 100%;
+}
+
+.sub-body-wrapper .playlist-wrapper .carousel-container .slick-arrow {
+  -webkit-transform: scale(1.5);
+          transform: scale(1.5);
+}
+
+.sub-body-wrapper .playlist-wrapper .carousel-container img {
+  border-style: solid;
+  border-color: #ff844b;
+  border-width: 1em;
+  position: relative;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+  width: 130px;
+  height: 130px;
+}
 /*# sourceMappingURL=main.css.map */

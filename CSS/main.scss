@@ -666,6 +666,42 @@ body{
                 -moz-text-fill-color: transparent;
             }
         }
+        .carousel-container{
+            width: 400px;
+            position: relative;
+            left: 50%;
+            transform: translate(-50%);
+
+            div{
+                text-align: center;
+                text-decoration: underline;
+                font-size:large;
+                font-weight: bold;
+                margin-left: 1em;
+                margin-right: 1em;
+                margin-top: .7em;
+                line-height: 15px;
+            }
+            .slick-slide{
+                opacity: 50%;
+            }
+            .slick-center{
+                opacity: 100%;
+            }
+            .slick-arrow{
+                transform: scale(1.5);
+            }
+            img{
+                border-style: solid;
+                border-color: rgb(255, 132, 75);
+                border-width: 1em;
+                position: relative;
+                left: 50%;
+                transform: translate(-50%);
+                width: 130px;
+                height: 130px;
+            }
+        }
     }
 }
 

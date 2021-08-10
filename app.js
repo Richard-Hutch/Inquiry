@@ -181,7 +181,7 @@ async function getTrackFeatures(dataMap){
         console.log("error in feature request", error);
         return null;
     });
-
+    
 }
 function doSearch(val, option){
     let dataStr = null;
@@ -358,12 +358,12 @@ function getPlaylistTracks(playlistURL, playlistName){
         return response.json();
     }).then(function(result){
         console.log("PLAYLIST NAME = " + playlistName);
-        result.items.forEach(track=>{
-            console.log(track.track.name + "\n" + track.track.href);
-        })
-        for (let x = 0; x < 10; x++){
-            console.log(x);
-        }
+        // result.items.forEach(track=>{
+        //     console.log(track.track.name + "\n" + track.track.href);
+        // })
+        // for (let x = 0; x < 10; x++){
+        //     console.log(x);
+        // }
     }).catch(function(error){
         if (error == "TypeError: Failed to fetch"){
             confirm("Error fetching data.");
@@ -376,7 +376,8 @@ function getPlaylistTracks(playlistURL, playlistName){
 function userDetails(){
     window.location.assign("/profile.html?" + window.location.hash + "&profilePage=true");
 }
-async function doUserDetails(){
+function doUserDetails(){
+    //GET CURRENT USER'S PROFILE DETAILS
     fetch("https://api.spotify.com/v1/me", 
     {
         method: "GET",
@@ -401,7 +402,7 @@ async function doUserDetails(){
         document.getElementById("email-id").innerHTML += " " + result.email;
         document.getElementById("follower-count-id").innerHTML += " " + result.followers.total;
 
-        console.log(JSON.stringify(result, null, 2));
+        //console.log(JSON.stringify(result, null, 2));
     })
     .catch(function(error){
         if (error == "TypeError: Failed to fetch"){
@@ -413,7 +414,7 @@ async function doUserDetails(){
     });
     let limit = "limit=50";
     let url = "https://api.spotify.com/v1/me/playlists?" + limit;
-    //get current user's playlists
+    //GET CURRENT USER'S PLAYLIST
     fetch(url, 
     {
         method: "GET",
@@ -427,10 +428,23 @@ async function doUserDetails(){
     })
     .then(function(result){
 
-        console.log(JSON.stringify(result, null, 2));
+        //console.log(JSON.stringify(result, null, 2));
+        //GET EACH PLAYLIST'S TRACKS
         result.items.forEach(item=>{
-            getPlaylistTracks(item.tracks.href, item.name);
+            // let ndx = item.images.length;
+            // if (ndx > 0){
+            //     //spotify lists album imgs in descending order in regards to display size.
+            //     //typically just large, medium, small, so if there are 3 or more albm img sizes get the second to smallest one
+            //     if (ndx >= 3){
+            //         ndx -= 2;
+            //     }else{
+            //         ndx = 0;
+            //     }
+            // }else{
 
+            //}
+            console.log(item.images[0].url);
+            getPlaylistTracks(item.tracks.href, item.name);
         });
 
     })

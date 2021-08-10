@@ -6,6 +6,12 @@
     <title>Inquiry-Profile</title> <!-- edit this to adjust browser tab name -->
     <link rel="stylesheet" href="CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
     <script src="app.js"></script>
+
+    <!-- SLICK (hosted by jsDelivr CDN) AND JQUERY (hosted from Google's Content Delivery Network)-->
+    <!-- https://github.com/kenwheeler/slick/ -->
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+
 </head>
 <body id = "profile-body-id">
     <div class="navbar">
@@ -43,11 +49,65 @@
 
         <div class="playlist-wrapper">
             <h1 id="playlist-heading-id"><span>PLAYLISTS</span></h2>
+            <!-- <ul id = "playlist-list-id">
+                <li>Foreign and misc</li>
+                <li>Classical</li>
+                <li>Classic</li>
+                <li>Friends</li>
+                <li>Mosh Pit Crazy</li>
+            </ul> -->
+            <div class="carousel-container">
+                <div class="carousel-wrapper">
+                    <div>
+                        Foreign and misc
 
-            <ul id = "playlist-list-id">
-            </ul>
+                        <img src="https://i.scdn.co/image/ab67616d0000b273431daec5815fd0255437b43b" alt="">
+                    </div>
+                    <div>Classical
+                        <img src="https://mosaic.scdn.co/640/ab67616d0000b2732c33399e119cec9b0fcde564ab67616d0000b273692d9189b2bd75525893f0c1ab67616d0000b2737ebe4ccb79ca0dc76356b9bbab67616d0000b273dc1fe2a9798322ed8035faeb" alt="">
+                    </div>
+                    <div>Friends
+                        <img src="https://mosaic.scdn.co/640/ab67616d0000b2731d2128540aaa027aa831aff4ab67616d0000b27382abc8986726acbd00d434e1ab67616d0000b273a8df0c930a741d6f49cc3f8dab67616d0000b273e86572f06bef3af91c843cf4" alt="">
+                    </div>
+                    <div>Classic Rock
+                        <img src="https://mosaic.scdn.co/640/ab67616d0000b2734d45511cc3c54ec67925eb3cab67616d0000b273833c0dc50cc78d25d67c53a0ab67616d0000b273e8a65eb41bbc9231af07b574ab67616d0000b273f7baa28397afb15e8d1cddda" alt="">
+
+                    </div>
+                    <div>Moshpit Crazy
+                        <img src="https://mosaic.scdn.co/640/ab67616d0000b2736e92095455d289f8c6f5159eab67616d0000b273958bbdf3ca7cf3b2f5e4357bab67616d0000b273b039a6480a7925a084535828ab67616d0000b273da2e4a4059497dbf17a9bb78" alt="">
+
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-
+    <!-- SLICK (hosted by jsDelivr CDN) AND JQUERY (hosted from Google's Content Delivery Network)-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+            $('.carousel-wrapper').slick({
+                centerMode: true,
+                centerPadding: '40px',
+                slidesToShow: 3,
+                variableWidth: true,
+                adaptiveHeight: true,
+                infinite: false
+                // responsive: [
+                //     {
+                //     breakpoint: 480,
+                //     settings: {
+                //         arrows: true,
+                //         centerMode: true,
+                //         centerPadding: '40px',
+                //         slidesToShow: 1
+                //     }
+                //     }
+                // ]
+            })
+        })
+    </script>
 
 </body>

@@ -660,7 +660,7 @@ body {
   -moz-text-fill-color: transparent;
 }
 
-.sub-body-wrapper .playlist-wrapper .carousel-container {
+.carousel-container {
   width: 400px;
   position: relative;
   left: 50%;
@@ -668,7 +668,7 @@ body {
           transform: translate(-50%);
 }
 
-.sub-body-wrapper .playlist-wrapper .carousel-container div {
+.carousel-container div {
   text-align: center;
   text-decoration: underline;
   font-size: large;
@@ -679,20 +679,20 @@ body {
   line-height: 15px;
 }
 
-.sub-body-wrapper .playlist-wrapper .carousel-container .slick-slide {
+.carousel-container .slick-slide {
   opacity: 50%;
 }
 
-.sub-body-wrapper .playlist-wrapper .carousel-container .slick-center {
+.carousel-container .slick-center {
   opacity: 100%;
 }
 
-.sub-body-wrapper .playlist-wrapper .carousel-container .slick-arrow {
+.carousel-container .slick-arrow {
   -webkit-transform: scale(1.5);
           transform: scale(1.5);
 }
 
-.sub-body-wrapper .playlist-wrapper .carousel-container img {
+.carousel-container img {
   border-style: solid;
   border-color: #ff844b;
   border-width: 1em;

@@ -1,15 +1,14 @@
 const client_id = "45d081854dd645af9ace7d813d3f7ae4";
 const redirect_uri = "http://127.0.0.1:5500/mainpage.html";
-const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative";
+const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative playlist-modify-private";
 const AUTH_URL = "https://accounts.spotify.com/authorize" + 
     "?client_id=" + client_id + 
     "&response_type=token" + 
     "&redirect_uri=" + encodeURI(redirect_uri) + 
     "&show_dialog=true"  +
     "&scope=" + encodeURIComponent(scopes);
-let userHash;
+let userHash = window.location.hash;
 let accessToken;
-let url = "";
 let unique_id_counter = 0;
 
 //PARAMETERS
@@ -20,26 +19,56 @@ let PROFILE_PAGE = "&profilePage=";
 //on each page load, check if user is logged into spotify account. If not, have them log in
 window.onload = function(){
     checkLoggedIn(1);
-    checkRemoveParameters();
     checkParameters();
 }
-
-//CURRENT BUGS: forbidden access on other account, hash parameters not being deleted beside clicking on home (ex making a search and then clicking profile) 
-
 
 //check if user presses the enter key while the focused on the search bar
 document.addEventListener("keyup", function(event){
     let element = document.getElementById("search-input");
     if (event.code === "Enter" && element === document.activeElement){
-       search(element.value);
+       changePage(2);
     }
 });
-function checkRemoveParameters(){
+function changePage(page){
+    //not on search result page
+    if (page != 2){
+        userHash = removeHashParameter(SEARCH_ITEM, userHash);
+        userHash = removeHashParameter(SEARCH_OPTION, userHash);
+    }
+    let url = "";
+    let change = true;
+    //home page
+    if (page == 0){
+        url = "/mainpage.html#" + userHash;
+    }
+    //profile page
+    else if (page == 1){
+        url = "/profile.html#" + userHash;
+    }
+    //search result page
+    else if (page == 2){
+        console.log("here");
+        let key = document.getElementById("search-input").value;
+        let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
+        url = "/result.html#" + userHash + SEARCH_ITEM + key + SEARCH_OPTION + option;
+    }
+    else if (page == 3){
+        url = "/halt.html#" + userHash;
+    }
+    else{
+        change = false;
+        confirm("Error changing to page '" + page + "'");
+    }
+    //acceptable page to change to, make switch
+    if (change){
+        window.location.assign(url);
+    }
+
 
 }
 
 function checkLoggedIn(order = 0){
-    if (order === 1){
+    if (order == 1){
         if (!location.href.includes("halt")){
             //user does not have access token, meaning not logged in
             if (!location.href.includes("access_token=")){
@@ -60,17 +89,12 @@ function checkLoggedIn(order = 0){
 
 }
 function authorize(){
+
     window.location = AUTH_URL;
-    //user denied login
+    // //user denied login
     if (location.href.includes("error=access_denied")){
         location.href = "/halt.html";
-    }else{
-        timerActive = true;
     }
-}
-
-function logout(){
-    location.href = "/halt.html"; //by changing url, userHash is lost
 }
 
 function checkParameters(){
@@ -82,13 +106,13 @@ function checkParameters(){
         params[temp[0]] = temp[1];
     })
     //check if a search is being made
-    if (params.searchItem && params.searchOption){
+    if (location.href.includes("result.html")){
         let val = decodeURI(params.searchItem);
         let option = params.searchOption;
         document.getElementById("searching-for-query-id").innerText = val.toUpperCase();
         doSearch(val,option);
     }
-    if (params.profilePage){
+    else if (location.href.includes("profile.html")){
         doUserDetails();
     }
 }
@@ -97,13 +121,8 @@ TO-DO:
 * make sure that user does not include & or = in their search
 * round the values of music analysis to just two decimal places and put val out of, ex: .55/1
 */
-function search(){
-    let key = document.getElementById("search-input").value;
-    let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
-    window.location.assign("/result.html?" + window.location.hash + SEARCH_ITEM + key + SEARCH_OPTION + option);
-}
 
-async function getTrackFeatures(dataMap){
+function getTrackFeatures(dataMap){
     let tempMap = new Map();
     //GET AUDIO FEATURES
     let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
@@ -120,7 +139,7 @@ async function getTrackFeatures(dataMap){
         if (featureData.error){
             if (featureData.error.status === 401){
                 console.log("error 401");
-                logout(); //NOT CONFIRMED THIS IS BUG FREE
+                logout();
             }
         }
         //console.log(JSON.stringify(featureData, null , 2));
@@ -221,15 +240,32 @@ function doSearch(val, option){
         })
         .then((response)=>response.json())
         .then(function(data){
-
             //handle playlist searching
             if (option === "Playlist"){
                 if (data.playlists.items[0] == null){
                     alert("No results found");
                 }else{
                     //console.log(JSON.stringify(data, null , 2));
+                    let playlistIDCounter = 0;
                     data.playlists.items.forEach(playlist=>{
                         console.log("PLAYLIST NAME: " + playlist.name + "\nby: " + playlist.owner.display_name);
+                        const TEMPLATE = `            
+                            <div class = "playlist-item-class id = "${"playlist" + playlistIDCounter}">
+                                ${playlist.name}
+                                <img src="${playlist.images[0].url}" alt="album image" class = "album-img-class">
+                            </div>`;
+                        playlistIDCounter++;
+                        document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
+                    });
+                    $(document).ready(function(){
+                        $('.carousel-wrapper').slick({
+                            centerMode: true,
+                            centerPadding: '40px',
+                            slidesToShow: 3,
+                            variableWidth: true,
+                            adaptiveHeight: true,
+                            infinite: false
+                        })
                     })
                 }
             }
@@ -330,27 +366,6 @@ function removeHashParameter(parameter, hash){
     }
     return hash;
 }
-function callHomePg(page){
-    url = "http://127.0.0.1:5500/mainpage.html";
-    userHash = window.location.hash;
-    //hash exists
-    if (userHash){
-        if (page === "result"){
-            userHash = removeHashParameter(SEARCH_ITEM, userHash);
-            userHash = removeHashParameter(SEARCH_OPTION, userHash);
-        }else if (page === "profile"){
-            userHash = removeHashParameter(PROFILE_PAGE, userHash);
-        }else {
-            confirm("error in callHomePg()");
-        }
-
-        url = url + "?" + userHash;
-    }else{
-        url = url + "?" + userHash;
-        console.log("no token: " + userHash);
-    }
-    location.href = url;
-}
 function getPlaylistTracks(playlistURL, playlistName){
     //GET PLAYLIST'S TRACKS
     fetch(playlistURL, {
@@ -363,12 +378,6 @@ function getPlaylistTracks(playlistURL, playlistName){
         return response.json();
     }).then(function(result){
         console.log("PLAYLIST NAME = " + playlistName);
-        // result.items.forEach(track=>{
-        //     console.log(track.track.name + "\n" + track.track.href);
-        // })
-        // for (let x = 0; x < 10; x++){
-        //     console.log(x);
-        // }
     }).catch(function(error){
         if (error == "TypeError: Failed to fetch"){
             confirm("Error fetching data.");
@@ -377,9 +386,6 @@ function getPlaylistTracks(playlistURL, playlistName){
         }
         console.log("Error in fetching playlist items: " + error);
     });            
-}
-function userDetails(){
-    window.location.assign("/profile.html?" + window.location.hash + "&profilePage=true");
 }
 function doUserDetails(){
     //GET CURRENT USER'S PROFILE DETAILS
@@ -440,8 +446,6 @@ function doUserDetails(){
         result.items.forEach(item=>{
             playlistMap.set("name", item.name);
             playlistMap.set("albumIMG", item.images[0].url);
-            //console.log(item.images[0].url);
-            //getPlaylistTracks(item.tracks.href, playlistMap.get("name"));
             const TEMPLATE = 
             `<div class = "playlist-item-class id = "${"playlist" + playlistIDCounter}">
                 ${playlistMap.get("name")}
@@ -498,8 +502,8 @@ function menuDropDown(){
     }
 }
 function createHTML(dataMap){
-    console.log("MAP = ", dataMap);
-
+    
+    //EXPERIMENTING WITH DYNAMIC HTML CREATION USING .createElement METHOD
     let ucid = "";
     ucid = "card-svg-id" + unique_id_counter;
     let uiid = "";
@@ -562,8 +566,6 @@ function createHTML(dataMap){
         showTrackAnalysis(ucid, uiid);
     })
     
-
-
     DURATION_P.innerHTML = "Duration: " + dataMap.get("duration");
 
     TEMPO_P.innerHTML = "Tempo: " + (Math.round(parseFloat(dataMap.get("tempo")))).toString();

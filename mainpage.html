@@ -27,11 +27,10 @@ provided playlists
             <div class="menu-content-hide-first", id = "menu-content-id">
                     
                 <ul class = "menu-list", id = "menu-list-id">
-                    <li onclick = "userDetails()">PROFILE</li>
-                    <li onclick = "logout()">LOGOUT</li>
+                    <li onclick = "changePage(1)">PROFILE</li>
+                    <li onclick = "changePage(3)">LOGOUT</li>
                 </ul>
             </div>
-            <!--<button type = "button" class = "log-btn" onclick="logout()"><b>LOGOUT</b></button>-->
         </div>
         <!--
             search for song here
@@ -46,13 +45,13 @@ provided playlists
             <div class="dropdown-wrapper">
                 <select class="selectSearch" id = "select-ID">
                     <option value="Song">Song</option>
-                    <option value="SongStrict">Song (strict)</option>
+                    <option value="SongStrict">Song (exact)</option>
                     <option value="Playlist">Playlist</option>
     
                 </select>
             </div>
             <div class="search-button-div">
-                <button type = "button" class = "search-button" id = "search-button-id" onclick = "search()"><span id = "sb-span">SEARCH</span></button>
+                <button type = "button" class = "search-button" id = "search-button-id" onclick = "changePage(2)"><span id = "sb-span">SEARCH</span></button>
             </div>
     
         </div>

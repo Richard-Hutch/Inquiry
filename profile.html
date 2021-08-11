@@ -15,7 +15,7 @@
 </head>
 <body id = "profile-body-id">
     <div class="navbar">
-        <a href="#", onclick = "callHomePg('profile')", class="sitename"><b>INQUIRY</b></a>
+        <a href="#", onclick = "changePage(0)", class="sitename"><b>INQUIRY</b></a>
         <div class="menu-bars-active", onclick = "menuDropDown()", id = "menu-bars-id">
             <div class = "bar1", id = "bar1-id"></div>
             <div class = "bar2", id = "bar2-id"></div>
@@ -23,7 +23,7 @@
         </div>
         <div class="menu-content-hide-first", id = "menu-content-id">
             <ul class = "menu-list", id = "menu-list-id">
-                <li onclick = "logout()">LOGOUT</li>
+                <li onclick = "changePage(3)">LOGOUT</li>
             </ul>
         </div>
     </div>
@@ -60,29 +60,5 @@
     <!-- SLICK (hosted by jsDelivr CDN) AND JQUERY (hosted from Google's Content Delivery Network)-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-    
-    <!-- <script>
-        $(document).ready(function(){
-            $('.carousel-wrapper').slick({
-                centerMode: true,
-                centerPadding: '40px',
-                slidesToShow: 3,
-                variableWidth: true,
-                adaptiveHeight: true,
-                infinite: false
-                // responsive: [
-                //     {
-                //     breakpoint: 480,
-                //     settings: {
-                //         arrows: true,
-                //         centerMode: true,
-                //         centerPadding: '40px',
-                //         slidesToShow: 1
-                //     }
-                //     }
-                // ]
-            })
-        })
-    </script> -->
 
 </body>

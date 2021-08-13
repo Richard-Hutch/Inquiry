@@ -174,7 +174,7 @@ async function showTrackAnalysis(ucid, uiid, dataMap){
         
         //GET FEATURES OF THE TRACK
         //dont make a request if a request for this track has already been made before
-        featureData = await getTrackFeatures(dataMap).catch(error =>{
+        featureData = await fetchTrackFeatures(dataMap).catch(error =>{
             confirm('There has been a problem with your fetch operation: ' + error.message);
         });
 
@@ -314,7 +314,7 @@ function removeHashParameter(parameter, hash){
     }
     return hash;
 }
-async function getTrackFeatures(dataMap){
+async function fetchTrackFeatures(dataMap){
     //GET AUDIO FEATURES
     let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
     let response = await fetch(audioFeatureURL,{
@@ -329,7 +329,7 @@ async function getTrackFeatures(dataMap){
     let featureData = await response.json();
     return featureData;    
 }
-async function searchTorP(url){
+async function fetchTorP(url){
     let response = await fetch(url, 
         {
             method: "GET",
@@ -361,25 +361,31 @@ async function doSearch(val, option){
             type = "&type=playlist";
         }
         url += val + type + limit + market;
-        let data = await searchTorP(url).catch(error =>{
+        let data = await fetchTorP(url).catch(error =>{
             confirm('There has been a problem with your fetch operation: ' + error.message);
         });
-        //handle playlist searching
+        //PLAYLIST OPTION!!!!!
         if (option === "Playlist"){
             if (data.playlists.items[0] == null){
                 alert("No results found");
-            }else{
-                //console.log(JSON.stringify(data, null , 2));
+            }else{                
                 let playlistIDCounter = 0;
                 data.playlists.items.forEach(playlist=>{
+                    let currPlaylistMap = new Map();
+                    //if the playlist has a period in it then it breaks the templating so remove periods
+                    currPlaylistMap.set("name", playlist.name);
+                    currPlaylistMap.set("albumIMG", playlist.images[0].url);
+                    currPlaylistMap.set("trackHREF", playlist.tracks.href);
+                    let tempID = "playlist-id" + playlistIDCounter;
                     //console.log("PLAYLIST NAME: " + playlist.name + "\nby: " + playlist.owner.display_name);
                     const TEMPLATE = `            
-                        <div class = "playlist-item-class id = "${"playlist" + playlistIDCounter}">
-                            ${playlist.name}
-                            <img src="${playlist.images[0].url}" alt="album image" class = "album-img-class">
+                        <div class = "playlist-item-class" id ="${tempID}">
+                            ${currPlaylistMap.get("name")}
+                            <img src="${currPlaylistMap.get("albumIMG")}" alt="album image" class = "album-img-class">
                         </div>`;
                     playlistIDCounter++;
                     document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
+                    playlistMap.set(tempID, currPlaylistMap);
                 });
                 $(document).ready(function(){
                     $('.carousel-wrapper').slick({
@@ -389,11 +395,15 @@ async function doSearch(val, option){
                         variableWidth: true,
                         adaptiveHeight: true,
                         infinite: false
-                    })
+                    });
+                    //assinging event listeners to carousel arrow
+                    addPlaylistArrowEL();
+                    //get track analytics and display to screen
+                    doPlaylistTrackDetails();
                 })
             }
         }
-        //handle track searching
+        //TRACK OPTIONS!!!!!!!!!!
         else{
             //no result from search found
             if (data.tracks.items[0] == null){
@@ -422,7 +432,7 @@ async function doSearch(val, option){
                     dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
                     dataMap.set("popularity", key.popularity);
                             //GET FEATURES OF THE TRACK
-                    let featureData = await getTrackFeatures(dataMap).catch(error =>{
+                    let featureData = await fetchTrackFeatures(dataMap).catch(error =>{
                         confirm('There has been a problem with your fetch operation: ' + error.message);
                     });
 
@@ -504,9 +514,10 @@ async function doSearch(val, option){
         }
     }
 }
-async function getPlaylistTracks(playlistURL){
+async function fetchPlaylistTracks(playlistURL){
+    //the "+ "?market=US"" is because of country permissions and music company licensing 
     //GET PLAYLIST'S TRACKS
-    let response = await fetch(playlistURL, {
+    let response = await fetch(playlistURL + "?market=US", {
         method: "GET",
         headers:{
             "Content-Type": "application/json",
@@ -530,7 +541,7 @@ function addPlaylistArrowEL(){
         })
     })
 }
-async function getUserPlaylists(url){
+async function fetchUserPlaylists(url){
     let response = await fetch(url, 
         {
             method: "GET",
@@ -543,7 +554,7 @@ async function getUserPlaylists(url){
     const json = await response.json();
     return json;
 }
-async function getProfileDetails(){
+async function fetchProfileDetails(){
     let response = await fetch("https://api.spotify.com/v1/me", 
     {
         method: "GET",
@@ -569,12 +580,11 @@ async function getProfileDetails(){
 }
 
 async function doPlaylistTrackDetails(){
-    let playlistName = document.body.querySelector(".slick-current").innerText;
-    let playlistTracksJSON = await getPlaylistTracks(playlistMap.get(playlistName).get("trackHREF")).catch(error =>{
+    let playlistID = document.body.querySelector(".slick-current").id;
+    let playlistTracksJSON = await fetchPlaylistTracks(playlistMap.get(playlistID).get("trackHREF")).catch(error =>{
         confirm('There has been a problem with your fetch operation: ' + error.message);
     })
     //console.log(JSON.stringify(playlistTracksJSON, null, 2));
-
     playlistTracksJSON.items.forEach(async function(item){
         //console.log(JSON.stringify(item, null, 2));
         let dataMap = new Map();
@@ -623,12 +633,12 @@ async function doPlaylistTrackDetails(){
 async function doUserDetails(){
         
     //GET CURRENT USER'S PROFILE DETAILS
-    await getProfileDetails();
+    await fetchProfileDetails();
 
     //                         ----- GET CURRENT USER'S PLAYLISTS -----
     let limit = "limit=50";
     let url = "https://api.spotify.com/v1/me/playlists?" + limit;
-    let userPlaylistJSON = await getUserPlaylists(url).catch(error =>{
+    let userPlaylistJSON = await fetchUserPlaylists(url).catch(error =>{
         console.log('There has been a problem with your fetch operation: ' + error.message);
     })
 
@@ -637,7 +647,6 @@ async function doUserDetails(){
     //GET EACH PLAYLIST'S TRACKS
     let playlistIDCounter = 0; 
     userPlaylistJSON.items.forEach(item=>{
-
         let currPlaylistMap = new Map();
         currPlaylistMap.set("name", item.name);
         currPlaylistMap.set("albumIMG", item.images[0].url);
@@ -756,234 +765,3 @@ function createTrackHTML(dataMap, embed = false){
         uniqueCardsMap.set(utid, tempMap);
         unique_id_counter += 1;
 }
-
-/*
-    <div class="info-top-data">
-        <p>Duration: ${dataMap.get("duration")}</p>
-        <p>Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
-        <p> Key: ${dataMap.get("key")}</p>
-        <p>Time Sig: ${dataMap.get("time_signature")}</p>
-    </div>
-    <div class="analysis-grid">
-        <div class="danceability">danceability</div>
-        <div class="energy">energy</div>
-        <div class="loudness">loudness</div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text dance-bar" style="width: ${(parseFloat(dataMap.get("danceability")) * 100).toString() + "%"};">${dataMap.get("danceability")}</div>
-        </div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text energy-bar" style="width: ${(parseFloat(dataMap.get("energy")) * 100).toString() + "%"};">${dataMap.get("energy")}</div>
-        </div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text loudness-bar" style="width: ${(parseFloat(dataMap.get("loudness")) * -1 / 60 * 100).toString() + "%"};">${(parseFloat(dataMap.get("loudness")) * -1).toString()}</div>
-        </div>
-        <div class="speechiness">speechiness</div>
-        <div class="popularity">popularity</div>
-        <div class="acousticness">acousticness</div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text speech-bar" style="width: ${(parseFloat(dataMap.get("speechiness")) * 100).toString() + "%"};">${dataMap.get("speechiness")}</div>
-        </div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text popularity-bar" style="width: ${dataMap.get("popularity")+ "%"};">${dataMap.get("popularity")}</div>
-        </div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text acoustic-bar" style="width: ${(parseFloat(dataMap.get("acousticness")) * 100).toString() + "%"};">${dataMap.get("acousticness")}</div>
-        </div>
-        <div class="instrumentalness">instrumentalness</div>
-        <div class="liveness">liveness</div>
-        <div class="valence">valence</div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text instrument-bar" style="width: ${(parseFloat(dataMap.get("instrumentalness")) * 100).toString() + "%"};">${dataMap.get("instrumentalness")}</div>
-        </div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text liveness-bar" style="width: ${(parseFloat(dataMap.get("liveness")) * 100).toString() + "%"};">${dataMap.get("liveness")}</div>
-        </div>
-        <div class="skill-bar-container">
-            <div class="skills-bar-text valence-bar" style="width: ${(parseFloat(dataMap.get("valence")) * 100).toString() + "%"};">${dataMap.get("valence")}</div>
-        </div>
-    </div>
-*/
-
-
-// function createHTML(dataMap){
-    
-//     //EXPERIMENTING WITH DYNAMIC HTML CREATION USING .createElement METHOD
-//     let ucid = "";
-//     ucid = "card-svg-id" + unique_id_counter;
-//     let uiid = "";
-//     uiid = "info-card-id" + unique_id_counter;
-
-//     const BODY = document.querySelector('body');
-
-//     const WRAPPER_DIV = document.createElement('div'); 
-//     const CONTAINER_DIV = document.createElement('div'); 
-//     const TRACK_ARROW_IMG_DIV = document.createElement('div'); 
-//     const FRAME_CONT = document.createElement("div");
-//     const IFRAME_ATR = document.createElement('iframe');
-//     const IMG_ATR = document.createElement('img');
-//     BODY.append(WRAPPER_DIV);
-//     WRAPPER_DIV.append(CONTAINER_DIV);
-//     CONTAINER_DIV.append(FRAME_CONT);
-//     FRAME_CONT.append(IFRAME_ATR);
-//     CONTAINER_DIV.append(TRACK_ARROW_IMG_DIV);
-//     TRACK_ARROW_IMG_DIV.append(IMG_ATR);
-        
-//     WRAPPER_DIV.setAttribute("class", "track-wrapper");
-//     CONTAINER_DIV.setAttribute("class", "track-card-container");
-//     FRAME_CONT.setAttribute("class", "iframe-container");
-
-//     IFRAME_ATR.setAttribute("src", "https://open.spotify.com/embed/track/" + dataMap.get("uri"));
-//     IFRAME_ATR.setAttribute("width", "350");
-//     IFRAME_ATR.setAttribute("height", "80");
-//     IFRAME_ATR.setAttribute("frameborder", "0");
-//     IFRAME_ATR.setAttribute("allowtransparency", "true");
-//     //IFRAME_ATR.setAttribute("allow", "encypted-media");
-//     IFRAME_ATR.setAttribute("title", "spotify embed");
-//     TRACK_ARROW_IMG_DIV.setAttribute("class", "track-arrow-img");
-//     IMG_ATR.setAttribute("src","resources/down-arrow2.svg");
-//     IMG_ATR.setAttribute("alt","down arrow svg");
-//     IMG_ATR.setAttribute("class", "card-svg-down-class");
-
-//     /////////////////////////////////////////
-//     const INFO_CARD_DIV = document.createElement("div");
-//     const INFO_TOP_DATA_DIV = document.createElement("div");
-//     const DURATION_P = document.createElement("p");
-//     const TEMPO_P = document.createElement("p");
-//     const KEY_P = document.createElement("p");
-//     const TIME_SIG_P = document.createElement("p");
-     
-//     WRAPPER_DIV.append(INFO_CARD_DIV);
-//     INFO_CARD_DIV.append(INFO_TOP_DATA_DIV);
-//     INFO_TOP_DATA_DIV.append(DURATION_P, TEMPO_P, KEY_P, TIME_SIG_P);
-
-//     INFO_CARD_DIV.setAttribute("class", "info-card-hide");
-//     INFO_TOP_DATA_DIV.setAttribute("class", "info-top-data");
-//     // DURATION_P.setAttribute("id", "duration");
-//     // TEMPO_P.setAttribute("id", "tempo");
-//     // KEY_P.setAttribute("id", "key");
-//     // TIME_SIG_P.setAttribute("id", "time-signature");
-    
-//     /////ORDER IS ESSENTIAL. INFO_CARD_DIV and IMG_ATR must be created and appended to their parents already
-//     IMG_ATR.setAttribute("id", ucid);
-//     INFO_CARD_DIV.setAttribute("id", uiid);
-//     IMG_ATR.addEventListener("click", function(){
-//         showTrackAnalysis(ucid, uiid);
-//     })
-    
-//     DURATION_P.innerHTML = "Duration: " + dataMap.get("duration");
-
-//     TEMPO_P.innerHTML = "Tempo: " + (Math.round(parseFloat(dataMap.get("tempo")))).toString();
-//     KEY_P.innerHTML = " Key: " + dataMap.get("key");
-//     TIME_SIG_P.innerHTML = "Time Sig: " + dataMap.get("time_signature");
-
-
-//     const ANALYSIS_GRID_DIV = document.createElement("div");
-//     INFO_CARD_DIV.append(ANALYSIS_GRID_DIV);
-//     ANALYSIS_GRID_DIV.setAttribute("class", "analysis-grid");
-
-//     const DANCEABILITY_DIV = document.createElement("div");
-//     const ENERGY_DIV = document.createElement("div");
-//     const LOUDNESS_DIV = document.createElement("div");
-//     const DANCE_BAR_CONT_DIV = document.createElement("div");
-//     const DANCE_BAR_DIV = document.createElement("div");
-//     const ENERGY_BAR_CONT_DIV = document.createElement("div");
-//     const ENERGY_BAR_DIV = document.createElement("div");
-//     const LOUDNESS_BAR_CONT_DIV = document.createElement("div");
-//     const LOUDNESS_BAR_DIV = document.createElement("div");
-//     ANALYSIS_GRID_DIV.append(DANCEABILITY_DIV, ENERGY_DIV, LOUDNESS_DIV, DANCE_BAR_CONT_DIV, ENERGY_BAR_CONT_DIV, LOUDNESS_BAR_CONT_DIV);
-//     DANCE_BAR_CONT_DIV.append(DANCE_BAR_DIV);
-//     ENERGY_BAR_CONT_DIV.append(ENERGY_BAR_DIV);
-//     LOUDNESS_BAR_CONT_DIV.append(LOUDNESS_BAR_DIV);
-
-//     DANCEABILITY_DIV.setAttribute("class", "danceability");
-//     ENERGY_DIV.setAttribute("class", "energy");
-//     LOUDNESS_DIV.setAttribute("class", "loudness");
-//     DANCE_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     DANCE_BAR_DIV.setAttribute("class", "skills-bar-text dance-bar");
-//     ENERGY_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     ENERGY_BAR_DIV.setAttribute("class", "skills-bar-text energy-bar")
-//     LOUDNESS_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     LOUDNESS_BAR_DIV.setAttribute("class", "skills-bar-text loudness-bar");
-
-//     DANCEABILITY_DIV.innerHTML = "danceability";
-//     ENERGY_DIV.innerHTML = "energy";
-//     LOUDNESS_DIV.innerHTML = "loudness";
-//     DANCE_BAR_DIV.innerHTML = dataMap.get("danceability");
-//     DANCE_BAR_DIV.style.width = (parseFloat(dataMap.get("danceability")) * 100).toString() + "%";
-//     ENERGY_BAR_DIV.innerHTML = dataMap.get("energy");
-//     ENERGY_BAR_DIV.style.width = (parseFloat(dataMap.get("energy")) * 100).toString() + "%";
-//     LOUDNESS_BAR_DIV.innerHTML = (parseFloat(dataMap.get("loudness")) * -1).toString();
-//     LOUDNESS_BAR_DIV.style.width = (parseFloat(dataMap.get("loudness")) * -1 / 60 * 100).toString() + "%";   
-
-
-//     const SPEECH_DIV = document.createElement("div");
-//     const POP_DIV = document.createElement("div");
-//     const ACOUS_DIV = document.createElement("div");
-//     const SPEECH_BAR_CONT_DIV = document.createElement("div");
-//     const SPEECH_BAR_DIV = document.createElement("div");
-//     const POP_BAR_CONT_DIV = document.createElement("div");
-//     const POP_BAR_DIV = document.createElement("div");
-//     const ACOUS_BAR_CONT_DIV = document.createElement("div");
-//     const ACOUS_BAR_DIV = document.createElement("div");
-//     ANALYSIS_GRID_DIV.append(SPEECH_DIV, POP_DIV, ACOUS_DIV, SPEECH_BAR_CONT_DIV, POP_BAR_CONT_DIV, ACOUS_BAR_CONT_DIV);
-//     SPEECH_BAR_CONT_DIV.append(SPEECH_BAR_DIV);
-//     POP_BAR_CONT_DIV.append(POP_BAR_DIV);
-//     ACOUS_BAR_CONT_DIV.append(ACOUS_BAR_DIV);
-
-//     SPEECH_DIV.innerHTML = "speechiness";
-//     POP_DIV.innerHTML = "popularity";
-//     ACOUS_DIV.innerHTML = "acousticness";
-//     POP_BAR_DIV.innerHTML = dataMap.get("popularity");
-//     POP_BAR_DIV.style.width = dataMap.get("popularity")+ "%";
-//     SPEECH_BAR_DIV.innerHTML = dataMap.get("speechiness");
-//     SPEECH_BAR_DIV.style.width = (parseFloat(dataMap.get("speechiness")) * 100).toString() + "%";
-//     ACOUS_BAR_DIV.innerHTML = dataMap.get("acousticness");
-//     ACOUS_BAR_DIV.style.width = (parseFloat(dataMap.get("acousticness")) * 100).toString() + "%";
-
-//     SPEECH_DIV.setAttribute("class", "speechiness");
-//     POP_DIV.setAttribute("class", "popularity");
-//     ACOUS_DIV.setAttribute("class", "acousticness");
-//     SPEECH_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     SPEECH_BAR_DIV.setAttribute("class", "skills-bar-text speech-bar");
-//     POP_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     POP_BAR_DIV.setAttribute("class", "skills-bar-text popularity-bar")
-//     ACOUS_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     ACOUS_BAR_DIV.setAttribute("class", "skills-bar-text acoustic-bar");
-
-//     const INSTRUMENT_DIV = document.createElement("div");
-//     const LIVENESS_DIV = document.createElement("div");
-//     const VALENCE_DIV = document.createElement("div");
-//     const INSTRUMENT_BAR_CONT_DIV = document.createElement("div");
-//     const INSTRUMENT_BAR_DIV = document.createElement("div");
-//     const LIVENESS_BAR_CONT_DIV = document.createElement("div");
-//     const LIVENESS_BAR_DIV = document.createElement("div");
-//     const VALENCE_BAR_CONT_DIV = document.createElement("div");
-//     const VALENCE_BAR_DIV = document.createElement("div");
-//     ANALYSIS_GRID_DIV.append(INSTRUMENT_DIV, LIVENESS_DIV, VALENCE_DIV, INSTRUMENT_BAR_CONT_DIV, LIVENESS_BAR_CONT_DIV,VALENCE_BAR_CONT_DIV);
-//     INSTRUMENT_BAR_CONT_DIV.append(INSTRUMENT_BAR_DIV);
-//     LIVENESS_BAR_CONT_DIV.append(LIVENESS_BAR_DIV);
-//     VALENCE_BAR_CONT_DIV.append(VALENCE_BAR_DIV);
-
-//     INSTRUMENT_DIV.setAttribute("class", "instrumentalness");
-//     LIVENESS_DIV.setAttribute("class", "liveness");
-//     VALENCE_DIV.setAttribute("class", "valence");
-//     INSTRUMENT_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     INSTRUMENT_BAR_DIV.setAttribute("class", "skills-bar-text instrument-bar");
-//     LIVENESS_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     LIVENESS_BAR_DIV.setAttribute("class", "skills-bar-text liveness-bar")
-//     VALENCE_BAR_CONT_DIV.setAttribute("class", "skill-bar-container");
-//     VALENCE_BAR_DIV.setAttribute("class", "skills-bar-text valence-bar");
-
-//     INSTRUMENT_DIV.innerHTML = "instrumentalness";
-//     LIVENESS_DIV.innerHTML = "liveness";
-//     VALENCE_DIV.innerHTML = "valence";
-    
-//     INSTRUMENT_BAR_DIV.innerHTML = dataMap.get("instrumentalness");
-//     INSTRUMENT_BAR_DIV.style.width = (parseFloat(dataMap.get("instrumentalness")) * 100).toString() + "%";
-//     LIVENESS_BAR_DIV.innerHTML = dataMap.get("liveness");
-//     LIVENESS_BAR_DIV.style.width = (parseFloat(dataMap.get("liveness")) * 100).toString() + "%";
-//     VALENCE_BAR_DIV.innerHTML = dataMap.get("valence");
-//     VALENCE_BAR_DIV.style.width = (parseFloat(dataMap.get("valence")) * 100).toString() + "%";
-
-//     unique_id_counter += 1;
-// }

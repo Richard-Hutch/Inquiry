@@ -221,7 +221,14 @@ body{
         border-left-width: 1em;
         border-radius: .5em;
         margin-bottom: .3em;
-        background-color: var(--off-white);
+        //background-color: var(--off-white);
+        background-image: linear-gradient(
+            180deg,
+            #ffffff, 
+            #e9e9e9, 
+            #dcdbdb, 
+            #d3d3d3, 
+        );
         transition: .25s;
         display: grid;
         grid-template-columns: 81px 340px 40px;
@@ -258,10 +265,34 @@ body{
         .track-and-artist{
             text-align: center;
             .track-name{
-                color: red;
+                font-size: larger;
+                line-height: .9em;
+                padding-top: .5em;
+                padding-bottom: .5em;
+                font-weight: bold;
+                         /* Create the gradient. */
+                background-image: linear-gradient(
+                    45deg,
+                    #CA4246 40%, 
+                    #E16541 40%, 
+                    #ee4f22 50%, 
+                    #ec7113 65%, 
+                    #fc9343 75%, 
+                    #e0960d 85%, );
+                background-repeat: repeat;
+
+                /* Use the text as a mask for the background. */
+                /* This will show the gradient as a text color rather than element bg. */
+                -webkit-background-clip: text;
+                    background-clip: text;
+                -moz-background-clip: text;
+                -webkit-text-fill-color: transparent; 
+                -moz-text-fill-color: transparent
             }
             .artist-name{
-                color: gray;
+                color: black;
+                opacity: 80%;
+                font-style: italic;
             }
         }
         .track-arrow-img{
@@ -313,10 +344,11 @@ body{
         }
         .analysis-grid{
             display: grid;
+            position: relative;
             grid-template-columns: 120px 120px 120px;
             grid-column-gap: 10px;
             font-size: smaller;
-            padding-left: .6em;
+            padding-left: 4em;
 
             div{
                 height: 20px;

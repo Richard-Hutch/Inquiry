@@ -11,6 +11,7 @@ let userHash = window.location.hash;
 let accessToken;
 let unique_id_counter = 0;
 let playlistMap = new Map();
+let trackMap = new Map();
 let uniqueCardsMap = new Map();
 
 //PARAMETERS
@@ -153,8 +154,9 @@ TO-DO:
 */
 
 
-function showTrackAnalysis(ucid, uiid){
+async function showTrackAnalysis(ucid, uiid, dataMap){
     let state = document.getElementById(uiid).className;
+    let comp = document.querySelector("#"+uiid);
     //data is showing, hide it; arrow is showing up, point down
     if (state === "info-card-show"){
         document.getElementById(uiid).classList.remove("info-card-show");
@@ -167,7 +169,121 @@ function showTrackAnalysis(ucid, uiid){
         document.getElementById(uiid).classList.remove("info-card-hide");
         document.getElementById(uiid).classList.add("info-card-show");    
         document.getElementById(ucid).classList.remove("card-svg-down-class");
-        document.getElementById(ucid).classList.add("card-svg-up-class");    
+        document.getElementById(ucid).classList.add("card-svg-up-class");  
+        
+        
+        //GET FEATURES OF THE TRACK
+        //dont make a request if a request for this track has already been made before
+        featureData = await getTrackFeatures(dataMap).catch(error =>{
+            confirm('There has been a problem with your fetch operation: ' + error.message);
+        });
+
+        //transcribe the key and assign it
+        let tempKey = "err";
+        switch(featureData.key){
+            case 0:
+                tempKey = "C"
+                break;
+            case 1:
+                tempKey = "C#"
+                break;
+            case 2:
+                tempKey = "D"
+                break;
+            case 3:
+                tempKey = "D#"
+                break;
+            case 4:
+                tempKey = "E"
+                break;
+            case 5:
+                tempKey = "F"
+                break;
+            case 6:
+                tempKey = "F#"
+                break;
+            case 7:
+                tempKey = "G"
+                break;
+            case 8:
+                tempKey = "G#"
+                break;
+            case 9:
+                tempKey = "A"
+                break;
+            case 10:
+                tempKey = "A#"
+                break;
+            case 11:
+                tempKey = "B"
+                break;                                    
+        }
+        //check if key is major or minor
+        if (featureData.mode == 1){
+            tempKey += " major";
+        }else if (featureData.mode == 0){
+            tempKey += " minor";
+        }
+        dataMap.set("key",              tempKey);
+        dataMap.set("danceability",     featureData.danceability);
+        dataMap.set("energy",           featureData.energy);
+        dataMap.set("loudness",         featureData.loudness);
+        dataMap.set("speechiness",      featureData.speechiness);
+        dataMap.set("acousticness",     featureData.acousticness);
+        dataMap.set("instrumentalness", featureData.instrumentalness);
+        dataMap.set("liveness",         featureData.liveness);
+        dataMap.set("valence",          featureData.valence);
+        dataMap.set("tempo",            featureData.tempo);
+        dataMap.set("time_signature",   featureData.time_signature);
+        
+        console.log(dataMap.get("energy"));
+        const TEMPLATE = `
+            <div class="info-top-data">
+                <p>Duration: ${dataMap.get("duration")}</p>
+                <p>Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
+                <p> Key: ${dataMap.get("key")}</p>
+                <p>Time Sig: ${dataMap.get("time_signature")}</p>
+            </div>
+            <div class="analysis-grid">
+                <div class="danceability">danceability</div>
+                <div class="energy">energy</div>
+                <div class="loudness">loudness</div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text dance-bar" style="width: ${(parseFloat(dataMap.get("danceability")) * 100).toString() + "%"};">${(dataMap.get("danceability") * 100).toFixed(2)}</div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text energy-bar" style="width: ${(parseFloat(dataMap.get("energy")) * 100).toFixed(2).toString() + "%"};">${(dataMap.get("energy") * 100).toFixed(2)}</div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text loudness-bar" style="width: ${((60 - (parseFloat(dataMap.get("loudness")) * -1)) / 60 * 100).toString() + "%"};">${(60 - parseFloat(dataMap.get("loudness")) * -1).toFixed(2)}</div>
+                </div>
+                <div class="speechiness">speechiness</div>
+                <div class="popularity">popularity</div>
+                <div class="acousticness">acousticness</div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text speech-bar" style="width: ${(parseFloat(dataMap.get("speechiness")) * 100).toString() + "%"};">${(dataMap.get("speechiness") * 100).toFixed(2)}</div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text popularity-bar" style="width: ${dataMap.get("popularity")+ "%"};">${dataMap.get("popularity")}</div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text acoustic-bar" style="width: ${(parseFloat(dataMap.get("acousticness")) * 100).toString() + "%"};">${(dataMap.get("acousticness") * 100).toFixed(2).toString()}</div>
+                </div>
+                <div class="instrumentalness">instrumentalness</div>
+                <div class="liveness">liveness</div>
+                <div class="valence">valence</div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text instrument-bar" style="width: ${(parseFloat(dataMap.get("instrumentalness")) * 100).toString() + "%"};">${(dataMap.get("instrumentalness") * 100).toFixed(2)}</div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text liveness-bar" style="width: ${(parseFloat(dataMap.get("liveness")) * 100).toString() + "%"};">${(dataMap.get("liveness") * 100).toFixed(2)} </div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skills-bar-text valence-bar" style="width: ${(parseFloat(dataMap.get("valence")) * 100).toString() + "%"};">${(dataMap.get("valence") * 100).toFixed(2)}</div>
+                </div>
+            </div>
+        `;
+        comp.innerHTML = TEMPLATE;
     }
 }
 //IMPORTANT! "parameter" must include the & and the = symbols
@@ -480,70 +596,8 @@ async function doPlaylistTrackDetails(){
         if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
         dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
         dataMap.set("popularity", item.track.popularity);
-        //GET FEATURES OF THE TRACK
-        let featureData = await getTrackFeatures(dataMap).catch(error =>{
-            confirm('There has been a problem with your fetch operation: ' + error.message);
-        })
-
-        //console.log(JSON.stringify(featureData, null , 2));
-        //transcribe the key and assign it
-        let tempKey = "err";
-        switch(featureData.key){
-            case 0:
-                tempKey = "C"
-                break;
-            case 1:
-                tempKey = "C#"
-                break;
-            case 2:
-                tempKey = "D"
-                break;
-            case 3:
-                tempKey = "D#"
-                break;
-            case 4:
-                tempKey = "E"
-                break;
-            case 5:
-                tempKey = "F"
-                break;
-            case 6:
-                tempKey = "F#"
-                break;
-            case 7:
-                tempKey = "G"
-                break;
-            case 8:
-                tempKey = "G#"
-                break;
-            case 9:
-                tempKey = "A"
-                break;
-            case 10:
-                tempKey = "A#"
-                break;
-            case 11:
-                tempKey = "B"
-                break;                                    
-        }
-        //check if key is major or minor
-        if (featureData.mode == 1){
-            tempKey += " major";
-        }else if (featureData.mode == 0){
-            tempKey += " minor";
-        }
-        dataMap.set("key",              tempKey);
-        dataMap.set("danceability",     featureData.danceability);
-        dataMap.set("energy",           featureData.energy);
-        dataMap.set("loudness",         featureData.loudness);
-        dataMap.set("speechiness",      featureData.speechiness);
-        dataMap.set("acousticness",     featureData.acousticness);
-        dataMap.set("instrumentalness", featureData.instrumentalness);
-        dataMap.set("liveness",         featureData.liveness);
-        dataMap.set("valence",          featureData.valence);
-        dataMap.set("tempo",            featureData.tempo);
-        dataMap.set("time_signature",   featureData.time_signature);
-        //DYNAMICALLY CREATE THE HTML FOR EACH TRACK
+        
+        //DYNAMICALLY CREATE THE CARD HTML FOR EACH TRACK
         createTrackHTML(dataMap); 
         if (uniqueCardsMap.size !== 0){
             //k = unique track id
@@ -558,7 +612,7 @@ async function doPlaylistTrackDetails(){
                 }
                 //assign event listener to the drop down arrow for each track
                 document.body.querySelector("#"+v.get("ucid")).addEventListener("click", function(){
-                    showTrackAnalysis(v.get("ucid"), v.get("uiid")); //the unique id of the analysis card and the panel arrow
+                    showTrackAnalysis(v.get("ucid"), v.get("uiid"), trackMap.get(v.get("ucid"))); //the unique id of the analysis card and the panel arrow and pass the map with track info
                 });
                 
             });
@@ -684,50 +738,7 @@ function createTrackHTML(dataMap, embed = false){
                 </div>
             </div>
             <div class="info-card-hide" id="${uiid}">
-                <div class="info-top-data">
-                    <p>Duration: ${dataMap.get("duration")}</p>
-                    <p>Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
-                    <p> Key: ${dataMap.get("key")}</p>
-                    <p>Time Sig: ${dataMap.get("time_signature")}</p>
-                </div>
-                <div class="analysis-grid">
-                    <div class="danceability">danceability</div>
-                    <div class="energy">energy</div>
-                    <div class="loudness">loudness</div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text dance-bar" style="width: ${(parseFloat(dataMap.get("danceability")) * 100).toString() + "%"};">${dataMap.get("danceability")}</div>
-                    </div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text energy-bar" style="width: ${(parseFloat(dataMap.get("energy")) * 100).toString() + "%"};">${dataMap.get("energy")}</div>
-                    </div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text loudness-bar" style="width: ${(parseFloat(dataMap.get("loudness")) * -1 / 60 * 100).toString() + "%"};">${(parseFloat(dataMap.get("loudness")) * -1).toString()}</div>
-                    </div>
-                    <div class="speechiness">speechiness</div>
-                    <div class="popularity">popularity</div>
-                    <div class="acousticness">acousticness</div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text speech-bar" style="width: ${(parseFloat(dataMap.get("speechiness")) * 100).toString() + "%"};">${dataMap.get("speechiness")}</div>
-                    </div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text popularity-bar" style="width: ${dataMap.get("popularity")+ "%"};">${dataMap.get("popularity")}</div>
-                    </div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text acoustic-bar" style="width: ${(parseFloat(dataMap.get("acousticness")) * 100).toString() + "%"};">${dataMap.get("acousticness")}</div>
-                    </div>
-                    <div class="instrumentalness">instrumentalness</div>
-                    <div class="liveness">liveness</div>
-                    <div class="valence">valence</div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text instrument-bar" style="width: ${(parseFloat(dataMap.get("instrumentalness")) * 100).toString() + "%"};">${dataMap.get("instrumentalness")}</div>
-                    </div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text liveness-bar" style="width: ${(parseFloat(dataMap.get("liveness")) * 100).toString() + "%"};">${dataMap.get("liveness")}</div>
-                    </div>
-                    <div class="skill-bar-container">
-                        <div class="skills-bar-text valence-bar" style="width: ${(parseFloat(dataMap.get("valence")) * 100).toString() + "%"};">${dataMap.get("valence")}</div>
-                    </div>
-                </div>
+                
             </div>
         </div>`
 
@@ -740,10 +751,59 @@ function createTrackHTML(dataMap, embed = false){
             tempMap.set("uaid", uaid);
             tempMap.set("uacid", uacid);
             tempMap.set("href", dataMap.get("previewURL"));
+            trackMap.set(ucid, dataMap); //THIS IS A GLOBAL MAP HOLDING DATA ABOUT EACH TRACK TO DYNAMICALLY CREATE ANALYSIS GRID ON THE SPOT
         }
         uniqueCardsMap.set(utid, tempMap);
         unique_id_counter += 1;
 }
+
+/*
+    <div class="info-top-data">
+        <p>Duration: ${dataMap.get("duration")}</p>
+        <p>Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
+        <p> Key: ${dataMap.get("key")}</p>
+        <p>Time Sig: ${dataMap.get("time_signature")}</p>
+    </div>
+    <div class="analysis-grid">
+        <div class="danceability">danceability</div>
+        <div class="energy">energy</div>
+        <div class="loudness">loudness</div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text dance-bar" style="width: ${(parseFloat(dataMap.get("danceability")) * 100).toString() + "%"};">${dataMap.get("danceability")}</div>
+        </div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text energy-bar" style="width: ${(parseFloat(dataMap.get("energy")) * 100).toString() + "%"};">${dataMap.get("energy")}</div>
+        </div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text loudness-bar" style="width: ${(parseFloat(dataMap.get("loudness")) * -1 / 60 * 100).toString() + "%"};">${(parseFloat(dataMap.get("loudness")) * -1).toString()}</div>
+        </div>
+        <div class="speechiness">speechiness</div>
+        <div class="popularity">popularity</div>
+        <div class="acousticness">acousticness</div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text speech-bar" style="width: ${(parseFloat(dataMap.get("speechiness")) * 100).toString() + "%"};">${dataMap.get("speechiness")}</div>
+        </div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text popularity-bar" style="width: ${dataMap.get("popularity")+ "%"};">${dataMap.get("popularity")}</div>
+        </div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text acoustic-bar" style="width: ${(parseFloat(dataMap.get("acousticness")) * 100).toString() + "%"};">${dataMap.get("acousticness")}</div>
+        </div>
+        <div class="instrumentalness">instrumentalness</div>
+        <div class="liveness">liveness</div>
+        <div class="valence">valence</div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text instrument-bar" style="width: ${(parseFloat(dataMap.get("instrumentalness")) * 100).toString() + "%"};">${dataMap.get("instrumentalness")}</div>
+        </div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text liveness-bar" style="width: ${(parseFloat(dataMap.get("liveness")) * 100).toString() + "%"};">${dataMap.get("liveness")}</div>
+        </div>
+        <div class="skill-bar-container">
+            <div class="skills-bar-text valence-bar" style="width: ${(parseFloat(dataMap.get("valence")) * 100).toString() + "%"};">${dataMap.get("valence")}</div>
+        </div>
+    </div>
+*/
+
 
 // function createHTML(dataMap){
     

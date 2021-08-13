@@ -8,7 +8,7 @@ Developer Note: dont forget to click "watch sass" in VS Code
     --text-color: #E9C46A;
     --off-white: rgb(242, 242, 242);
     --darker-white: rgb(216, 216, 216);
-
+    --track-card-width: 500px;
     --custom-opacity: .5;
 }
 //fades in
@@ -207,7 +207,7 @@ body{
     animation-duration: 3s;
     animation-fill-mode: forwards;
     position: relative;
-    width: 400px;
+    width: var(--track-card-width);
     //height: 80px;
     left: 50%;
     transform: translateX(-50%);
@@ -217,15 +217,53 @@ body{
         position: relative;
         height: 80px;
         border-style:solid;
-        border-right-width: .7em;
-        border-left-width: .7em;
+        border-right-width: 1em;
+        border-left-width: 1em;
         border-radius: .5em;
         margin-bottom: .3em;
         background-color: var(--off-white);
         transition: .25s;
         display: grid;
-        grid-template-columns: 351px 40px;
-
+        grid-template-columns: 81px 340px 40px;
+        .album-img-container{
+            position: relative;
+            .album-img{
+                width: 80px;
+                height: 80px;
+            }
+            .play-button, .pause-button{
+                height: 50px;
+                width: 50px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                position: absolute;
+                z-index: 9;
+                
+                &:hover{
+                    border-style: solid;
+                    border-color: white;
+                    border-radius: 50%;
+                    background-color: white;
+                }
+            }
+            .audio-playing{
+                border-style: solid;
+                border-color: var(--off-white);
+                border-radius: 50%;
+                background-color: var(--off-white);
+            }
+            
+        }
+        .track-and-artist{
+            text-align: center;
+            .track-name{
+                color: red;
+            }
+            .artist-name{
+                color: gray;
+            }
+        }
         .track-arrow-img{
             display: inline;
             position: relative;
@@ -614,6 +652,7 @@ body{
             background-color: var(--off-white);
             width: 80%;
             left: 50%;
+            margin-top: 0;
             transform: translate(-50%);
             border-radius: .9em;
             padding-top: 14px;
@@ -675,6 +714,20 @@ body{
         width: 130px;
         height: 130px;
     }
+}
+
+.playlist-tracks{
+    // border-top-style: solid;
+    // border-top-width: .5em;
+    padding-top: .5em;
+    margin-top: 1em;
+    margin-bottom: 4em;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    // height: 400px; 
+    // width: 450px; 
+    // overflow: auto;
 }
 
 // @keyframes slide-ltor{

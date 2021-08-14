@@ -238,7 +238,7 @@ body {
 .searching-for {
   text-align: center;
   position: relative;
-  height: 10em;
+  height: 9em;
   overflow: hidden;
 }
 
@@ -366,6 +366,7 @@ body {
   color: black;
   opacity: 80%;
   font-style: italic;
+  line-height: 1em;
 }
 
 .track-wrapper .track-card-container .track-arrow-img {
@@ -758,10 +759,13 @@ body {
   text-decoration: underline;
   font-size: large;
   font-weight: bold;
-  margin-left: 1em;
-  margin-right: 1em;
   margin-top: .7em;
   line-height: 15px;
+}
+
+.carousel-container .playlist-item-class {
+  margin-right: .25em;
+  margin-left: .25em;
 }
 
 .carousel-container .slick-slide {
@@ -790,12 +794,22 @@ body {
 }
 
 .playlist-tracks {
+  border-style: solid;
+  border-width: 1em;
+  border-radius: .5em;
   padding-top: .5em;
   margin-top: 1em;
   margin-bottom: 4em;
   position: relative;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, #CA4246), color-stop(30%, #f03f3f), color-stop(40%, #f56156), color-stop(55%, #ec7113), color-stop(65%, #fc9343), color-stop(75%, #e0960d), color-stop(85%, #ffc964));
+  background-image: linear-gradient(180deg, #CA4246 20%, #f03f3f 30%, #f56156 40%, #ec7113 55%, #fc9343 65%, #e0960d 75%, #ffc964 85%);
+  background-repeat: repeat;
   left: 50%;
   -webkit-transform: translate(-50%);
           transform: translate(-50%);
+  height: auto;
+  max-height: 800px;
+  width: 520px;
+  overflow: auto;
 }
 /*# sourceMappingURL=main.css.map */

@@ -187,7 +187,7 @@ body{
 .searching-for{
     text-align: center;
     position: relative;
-    height: 10em;
+    height: 9em;
     overflow: hidden;
     #searching-for-id{
         position: relative;
@@ -311,6 +311,7 @@ body{
                 color: black;
                 opacity: 80%;
                 font-style: italic;
+                line-height: 1em;
             }
         }
         .track-arrow-img{
@@ -665,9 +666,7 @@ body{
                             border-color: white;
                         }
                     }
-
                 }
-
             }
             #profile-header-id{
                 margin-top: 2em;
@@ -680,7 +679,6 @@ body{
                 margin: 0;
                 line-height: 1em;
             }
-
         }
         .profile-info-cont{
             #profile-info-list-id{
@@ -746,10 +744,12 @@ body{
         text-decoration: underline;
         font-size:large;
         font-weight: bold;
-        margin-left: 1em;
-        margin-right: 1em;
         margin-top: .7em;
         line-height: 15px;
+    }
+    .playlist-item-class{
+        margin-right: .25em;
+        margin-left: .25em
     }
     .slick-slide{
         opacity: 50%;
@@ -773,17 +773,31 @@ body{
 }
 
 .playlist-tracks{
-    // border-top-style: solid;
-    // border-top-width: .5em;
+    border-style: solid;
+    border-width: 1em;
+    border-radius: .5em;
     padding-top: .5em;
     margin-top: 1em;
     margin-bottom: 4em;
     position: relative;
+    background-image: linear-gradient(
+                    180deg,
+                    #CA4246 20%, 
+                    #f03f3f 30%, 
+                    #f56156 40%, 
+                    #ec7113 55%, 
+                    #fc9343 65%, 
+                    #e0960d 75%, 
+                    #ffc964 85%
+                );
+    background-repeat: repeat;
+
     left: 50%;
     transform: translate(-50%);
-    // height: 400px; 
-    // width: 450px; 
-    // overflow: auto;
+    height: auto; 
+    max-height: 800px;
+    width: 520px; 
+    overflow: auto;
 }
 
 // @keyframes slide-ltor{

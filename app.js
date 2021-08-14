@@ -155,6 +155,7 @@ TO-DO:
 
 
 async function showTrackAnalysis(ucid, uiid, dataMap){
+    console.log(uiid);
     let state = document.getElementById(uiid).className;
     let comp = document.querySelector("#"+uiid);
     //data is showing, hide it; arrow is showing up, point down
@@ -503,9 +504,12 @@ async function doSearch(val, option){
                     //DYNAMICALLY CREATE THE HTML FOR EACH TRACK
                     createTrackHTML(dataMap, true); 
                     if (uniqueCardsMap.size !== 0){
+                        //k = unique track id
+                        //v = map of track id info
                         uniqueCardsMap.forEach(function(v, k){
-                            document.body.querySelector("#"+k).addEventListener("click", function(){
-                                showTrackAnalysis(k,v);
+                            //assign event listener to the drop down arrow for each track
+                            document.body.querySelector("#"+v.get("ucid")).addEventListener("click", function(){
+                                showTrackAnalysis(v.get("ucid"), v.get("uiid"), dataMap); //the unique id of the analysis card and the panel arrow and pass the map with track info
                             });
                         });
                     }
@@ -720,36 +724,43 @@ function createTrackHTML(dataMap, embed = false){
         </audio>
     */
     if (embed){
-        insert = `<iframe src="https://open.spotify.com/embed/track/${dataMap.get("uri")}" width="350" height="80" frameborder="0" allowtransparency="true" title="spotify embed"></iframe>`
-    }else{
-        insert = `                
-        <div class="album-img-container">
-            <img src="${dataMap.get("albumHREF")}"  alt="album img" class = "album-img" id = "album-img-id">
-            <img src="/resources/playbutton.svg" alt="play button" class = "play-button" id = "${ppid}">
-            <div class = "audio-container", id = "${uacid}"></div>
-        </div>
-        <div class = "track-and-artist">
-            <div class = "track-name">
-                ${dataMap.get("name").toUpperCase()}
-             </div>
-            <div class = "artist-name">
-                ${dataMap.get("artists")}
-            </div>
-        </div>`;        
-    }
-    
-    const TEMPLATE = `
+        insert = `
         <div class = "track-wrapper" id = "${utid}">
-            <div class="track-card-container">
-                ${insert}
+            <div class="track-card-container track-only-option">
+                <iframe src="https://open.spotify.com/embed/track/${dataMap.get("uri")}" width="420" height="80" frameborder="0" allowtransparency="true" title="spotify embed"></iframe>
                 <div class="track-arrow-img">
                     <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
                 </div>
             </div>
-            <div class="info-card-hide" id="${uiid}">
-                
-            </div>
-        </div>`
+            <div class="info-card-hide" id="${uiid}"></div>
+        </div>`;
+    }else{
+        insert = `
+            <div class = "track-wrapper" id = "${utid}">
+                <div class="track-card-container playlist-option">
+                    <div class="album-img-container">
+                        <img src="${dataMap.get("albumHREF")}"  alt="album img" class = "album-img" id = "album-img-id">
+                        <img src="/resources/playbutton.svg" alt="play button" class = "play-button" id = "${ppid}">
+                        <div class = "audio-container", id = "${uacid}"></div>
+                    </div>
+                    <div class = "track-and-artist">
+                        <div class = "track-name">
+                            ${dataMap.get("name").toUpperCase()}
+                        </div>
+                        <div class = "artist-name">
+                            ${dataMap.get("artists")}
+                        </div>
+                    </div>
+                    <div class="track-arrow-img">
+                        <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
+                    </div>
+                </div>
+                <div class="info-card-hide" id="${uiid}"></div>
+            </div>      
+        `;        
+    }
+    
+    const TEMPLATE = insert;
 
         document.body.querySelector(".playlist-tracks").innerHTML += TEMPLATE;
         tempMap.set("ucid", ucid);

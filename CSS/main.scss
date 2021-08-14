@@ -220,6 +220,14 @@ body{
     transform: translateX(-50%);
     margin-bottom: 1em;
     font-family: 'Mukta', sans-serif;
+    .track-only-option{
+        grid-template-columns: 420px 50px;
+
+    }
+    .playlist-option{
+        grid-template-columns: 81px 335px 64px;
+
+    }
     .track-card-container{
         position: relative;
         height: 80px;
@@ -241,7 +249,7 @@ body{
         );
         transition: .25s;
         display: grid;
-        grid-template-columns: 81px 355px 64px;
+
         .album-img-container{
             position: relative;
             .album-img{
@@ -315,15 +323,16 @@ body{
                 padding-bottom: 2em;
                 margin-bottom: -2em;
                 position: absolute;
-                transform: translateY(35%);
                 cursor:pointer;
                 transition: .25s;
             }
             .card-svg-down-class{
-                transform: translateY(35%) rotate(0deg);
+                left: 50%;
+                transform: translateX(-50%) translateY(35%) rotate(0deg);
             }
             .card-svg-up-class{
-                transform: translateY(35%) rotate(180deg);
+                left: 50%;
+                transform: translateX(-50%) translateY(35%) rotate(180deg);
             }
             
         }
@@ -332,6 +341,7 @@ body{
             border-bottom-width: .6em;
         }
     }
+    
 
     .info-card-show, .info-card-hide{
         color: black;

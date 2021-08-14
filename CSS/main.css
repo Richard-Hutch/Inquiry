@@ -280,6 +280,16 @@ body {
   font-family: 'Mukta', sans-serif;
 }
 
+.track-wrapper .track-only-option {
+  -ms-grid-columns: 420px 50px;
+      grid-template-columns: 420px 50px;
+}
+
+.track-wrapper .playlist-option {
+  -ms-grid-columns: 81px 335px 64px;
+      grid-template-columns: 81px 335px 64px;
+}
+
 .track-wrapper .track-card-container {
   position: relative;
   height: 80px;
@@ -294,8 +304,6 @@ body {
   transition: .25s;
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 81px 355px 64px;
-      grid-template-columns: 81px 355px 64px;
 }
 
 .track-wrapper .track-card-container .album-img-container {
@@ -372,21 +380,21 @@ body {
   padding-bottom: 2em;
   margin-bottom: -2em;
   position: absolute;
-  -webkit-transform: translateY(35%);
-          transform: translateY(35%);
   cursor: pointer;
   -webkit-transition: .25s;
   transition: .25s;
 }
 
 .track-wrapper .track-card-container .track-arrow-img .card-svg-down-class {
-  -webkit-transform: translateY(35%) rotate(0deg);
-          transform: translateY(35%) rotate(0deg);
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(35%) rotate(0deg);
+          transform: translateX(-50%) translateY(35%) rotate(0deg);
 }
 
 .track-wrapper .track-card-container .track-arrow-img .card-svg-up-class {
-  -webkit-transform: translateY(35%) rotate(180deg);
-          transform: translateY(35%) rotate(180deg);
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(35%) rotate(180deg);
+          transform: translateX(-50%) translateY(35%) rotate(180deg);
 }
 
 .track-wrapper .track-card-container:hover {

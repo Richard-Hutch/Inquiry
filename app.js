@@ -33,7 +33,32 @@ document.addEventListener("keyup", function(event){
        changePage(2);
     }
 });
+function menuDropDown(){
+    let state = document.getElementById("menu-bars-id").className;
+    let contentState = document.getElementById("menu-content-id").className;
+    //menu is not showing, show
+    if (state === "menu-bars-active"){
+        //document.getElementById("menu-content-id").style.display = "inline-block";
+        //page just loaded and we do not want to execute animation on content
+        if (contentState === "menu-content-hide-first"){
+            document.getElementById("menu-content-id").classList.remove("menu-content-hide-first");
+        }else{
+            document.getElementById("menu-content-id").classList.remove("menu-content-hide");    
+        }
+        document.getElementById("menu-content-id").classList.add("menu-content-show");
+        document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
+        document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
+    }
 
+    //menu is showing, hide
+    else if (state === "menu-bars-inactive"){
+        //document.getElementById("menu-content-id").style.display = "none";
+        document.getElementById("menu-content-id").classList.remove("menu-content-show");
+        document.getElementById("menu-content-id").classList.add("menu-content-hide");
+        document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
+        document.getElementById("menu-bars-id").classList.add("menu-bars-active");
+    }
+}
 function changePage(page){
     //not on search result page
     if (page != 2){
@@ -155,7 +180,6 @@ TO-DO:
 
 
 async function showTrackAnalysis(ucid, uiid, dataMap){
-    console.log(uiid);
     let state = document.getElementById(uiid).className;
     let comp = document.querySelector("#"+uiid);
     //data is showing, hide it; arrow is showing up, point down
@@ -237,7 +261,6 @@ async function showTrackAnalysis(ucid, uiid, dataMap){
         dataMap.set("tempo",            featureData.tempo);
         dataMap.set("time_signature",   featureData.time_signature);
         
-        console.log(dataMap.get("energy"));
         const TEMPLATE = `
             <div class="info-top-data">
                 <p>Duration: ${dataMap.get("duration")}</p>
@@ -436,7 +459,6 @@ async function doSearch(val, option){
                     let featureData = await fetchTrackFeatures(dataMap).catch(error =>{
                         confirm('There has been a problem with your fetch operation: ' + error.message);
                     });
-
                     if (featureData.error){
                         if (featureData.error.status === 401){
                             console.log("error 401");
@@ -656,14 +678,16 @@ async function doUserDetails(){
         currPlaylistMap.set("albumIMG", item.images[0].url);
         currPlaylistMap.set("trackHREF", item.tracks.href);
         //dynamically add the playlist html
-        const TEMPLATE = 
-            `<div class = "playlist-item-class id = "${"playlist" + playlistIDCounter}">
+        let tempID = "playlist-id" + playlistIDCounter;
+        //console.log("PLAYLIST NAME: " + playlist.name + "\nby: " + playlist.owner.display_name);
+        const TEMPLATE = `            
+            <div class = "playlist-item-class" id ="${tempID}">
                 ${currPlaylistMap.get("name")}
                 <img src="${currPlaylistMap.get("albumIMG")}" alt="album image" class = "album-img-class">
             </div>`;
-        document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
         playlistIDCounter++;
-        playlistMap.set(currPlaylistMap.get("name"), currPlaylistMap);
+        document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
+        playlistMap.set(tempID, currPlaylistMap);
     });
     //let playlistName = "BONK";
     $(document).ready(function(){
@@ -682,32 +706,7 @@ async function doUserDetails(){
 
     })
 }
-function menuDropDown(){
-    let state = document.getElementById("menu-bars-id").className;
-    let contentState = document.getElementById("menu-content-id").className;
-    //menu is not showing, show
-    if (state === "menu-bars-active"){
-        //document.getElementById("menu-content-id").style.display = "inline-block";
-        //page just loaded and we do not want to execute animation on content
-        if (contentState === "menu-content-hide-first"){
-            document.getElementById("menu-content-id").classList.remove("menu-content-hide-first");
-        }else{
-            document.getElementById("menu-content-id").classList.remove("menu-content-hide");    
-        }
-        document.getElementById("menu-content-id").classList.add("menu-content-show");
-        document.getElementById("menu-bars-id").classList.remove("menu-bars-active");
-        document.getElementById("menu-bars-id").classList.add("menu-bars-inactive");
-    }
 
-    //menu is showing, hide
-    else if (state === "menu-bars-inactive"){
-        //document.getElementById("menu-content-id").style.display = "none";
-        document.getElementById("menu-content-id").classList.remove("menu-content-show");
-        document.getElementById("menu-content-id").classList.add("menu-content-hide");
-        document.getElementById("menu-bars-id").classList.remove("menu-bars-inactive");
-        document.getElementById("menu-bars-id").classList.add("menu-bars-active");
-    }
-}
 function createTrackHTML(dataMap, embed = false){
 
     let ucid = "card-svg-id" + unique_id_counter;

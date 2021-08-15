@@ -24,8 +24,6 @@ window.onload = function(){
     checkParameters();
 }
 
-
-
 //check if user presses the enter key while the focused on the search bar
 document.addEventListener("keyup", function(event){
     let element = document.getElementById("search-input");
@@ -59,12 +57,16 @@ function menuDropDown(){
         document.getElementById("menu-bars-id").classList.add("menu-bars-active");
     }
 }
+
+
 function changePage(page){
     //not on search result page
     if (page != 2){
         userHash = removeHashParameter(SEARCH_ITEM, userHash);
         userHash = removeHashParameter(SEARCH_OPTION, userHash);
     }
+
+
     let url = "";
     let change = true;
     //home page
@@ -136,12 +138,16 @@ function checkParameters(){
     })
     //check if a search is being made
     if (location.href.includes("result.html")){
+        addSortFilterEL();
+        checkFilterSelected(); //needed to hide the filter slider right off the bat
         let val = decodeURI(params.searchItem);
         let option = params.searchOption;
         document.getElementById("searching-for-query-id").innerText = val.toUpperCase();
         doSearch(val,option);
     }
     else if (location.href.includes("profile.html")){
+        addSortFilterEL();
+        checkFilterSelected(); //needed to hide the filter slider right off the bat
         doUserDetails();
     }
 }
@@ -263,10 +269,10 @@ async function showTrackAnalysis(ucid, uiid, dataMap){
         
         const TEMPLATE = `
             <div class="info-top-data">
-                <p>Duration: ${dataMap.get("duration")}</p>
-                <p>Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
-                <p> Key: ${dataMap.get("key")}</p>
-                <p>Time Sig: ${dataMap.get("time_signature")}</p>
+                <p class = "duration-class">Duration: ${dataMap.get("duration")}</p>
+                <p class = "tempo-class">Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
+                <p class = "key-class"> Key: ${dataMap.get("key")}</p>
+                <p class = "time-sig-class">Time Sig: ${dataMap.get("time_signature")}</p>
             </div>
             <div class="analysis-grid">
                 <div class="danceability">danceability</div>
@@ -774,4 +780,104 @@ function createTrackHTML(dataMap, embed = false){
         }
         uniqueCardsMap.set(utid, tempMap);
         unique_id_counter += 1;
+}
+
+function checkFilterSelected(){
+    //filter was last clicked so now none or sort is selected so hide filter range
+    //filtershow is defaulted to false because none is default selected
+    let selected = document.getElementsByName("s-or-f");
+    let option = "err";
+    selected.forEach(btn=>{
+        if (btn.checked){
+            option = btn.value;
+        }
+    })
+    //hide visuals related to filtering
+    if (option === "none" || option === "sort"){
+        document.querySelector(".filter-range-div").style.display = "none";
+        document.querySelector("#property-filter-select-id").style.display = "none";
+        document.querySelector("#property-sort-select-id").style.display = "block"; //only difference is that property filter excludes key
+    }else{
+        //find out what property is selected and create slider accordingly, then add to html
+        let slider = document.querySelector("#property-slider-id");
+        let sliderSpan = document.querySelector("#slider-text-id");
+        let minSpan = document.querySelector("#slider-min-id");
+        let maxSpan = document.querySelector("#slider-max-id");
+
+        let property = document.querySelector("#property-filter-select-id").value;
+        let min = 1, max = 100;
+        //find the shortest and the greatest duration
+
+
+        switch(property){
+            // case "danceability":
+            // case "acousticness":
+            // case "energy":
+            // case "instrumentalness":
+            // case "liveness":
+            // case "speechiness":
+            // case "valence":
+
+            //     break;
+            case "duration":
+                let arr = new Array();
+                console.log("unique: ",uniqueCardsMap);
+                console.log("playlist: ", playlistMap);
+                console.log("trackMap: ", trackMap);
+                // let times = document.querySelectorAll(".duration-class");
+                // console.log(times);
+                // times.forEach(item=>{
+                //     console.log("ITEM TEXT = " +  item.innerText);
+                //     arr.push(item.innerText.split(":"));
+                // });
+                // console.log("ARR = ", arr);
+                break;
+            case "tempo":
+                break;
+            case "loudness":
+
+                break;
+            default: confirm("error no property selected");
+        }
+
+        sliderSpan.innerText = slider.value;
+        slider.oninput = function(){
+            sliderSpan.innerText = this.value;
+        }
+        maxSpan.innerText = max;
+        minSpan.innerText = min;
+        const TEMPLATE = `
+
+        `
+        document.querySelector(".filter-range-div").style.display = "block";
+        document.querySelector("#property-filter-select-id").style.display = "block";
+        document.querySelector("#property-sort-select-id").style.display = "none"; //only difference is that property filter excludes key
+    }
+}
+//add event listeners to radio btns
+function addSortFilterEL(){
+    document.querySelector("#none-radio-btn").addEventListener("click", function(){
+        checkFilterSelected();
+    });
+    document.querySelector("#sort-radio-btn").addEventListener("click", function(){
+        checkFilterSelected();
+    });
+    document.querySelector("#filter-radio-btn").addEventListener("click", function(){
+        checkFilterSelected();
+    });
+}
+function sortOrFilterSubmit(){
+    let x = document.getElementsByName("s-or-f");
+    let selected = "err";
+    x.forEach(btn =>{
+        if (btn.checked){
+            selected = btn.value;
+        }
+    })
+    if (selected === "filter"){
+        let property = document.querySelector("#property-select-id").value;
+        console.log(property);
+    }
+
+    
 }

@@ -31,6 +31,59 @@
         <h2 id = "searching-for-id">TOP 5 RESULTS FOR:</h2>
         <h1 id = "searching-for-query-id"></h1>
     </div>
+    <div class="sort-filter-container">
+        
+        <div class="sort-or-filter-radio-wrapper" id = "sort-or-filter-radio-id">
+            <input type="radio" name="s-or-f" id="none-radio-btn" value  = "none" checked>NONE
+            <input type="radio" name="s-or-f" id="sort-radio-btn" value  = "sort">SORT
+            <input type="radio" name="s-or-f" id="filter-radio-btn" value  = "filter">FILTER
+        </div>
+
+        <div class="track-properties-list">
+            <select class="property-select" id = "property-sort-select-id">
+                <option value="duration">DURATION</option>
+                <option value="tempo">TEMPO</option>
+                <option value="key">KEY</option>
+                <option value="timeSig">TIME SIGNATURE</option>
+                <option value="danceability">DANCEABILITY</option>
+                <option value="energy">ENERGY</option>
+                <option value="loudness">LOUDNESS</option>
+                <option value="speechiness">SPEECHINESS</option>
+                <option value="popularity">POPULARITY</option>
+                <option value="acousticness">ACOUSTICNESS</option>
+                <option value="INSTRUMENTALNESS">INSTRUMENTALNESS</option>
+                <option value="LIVENESS">LIVENESS</option>
+                <option value="VALENCE">VALENCE</option>
+            </select>
+            <select class="property-select" id = "property-filter-select-id">
+                <option value="duration">DURATION</option>
+                <option value="tempo">TEMPO</option>
+                <option value="timeSig">TIME SIGNATURE</option>
+                <option value="danceability">DANCEABILITY</option>
+                <option value="energy">ENERGY</option>
+                <option value="loudness">LOUDNESS</option>
+                <option value="speechiness">SPEECHINESS</option>
+                <option value="popularity">POPULARITY</option>
+                <option value="acousticness">ACOUSTICNESS</option>
+                <option value="instrumentalness">INSTRUMENTALNESS</option>
+                <option value="liveness">LIVENESS</option>
+                <option value="valence">VALENCE</option>
+            </select>
+        </div>
+        <div class="sort-or-filter-submit-wrapper">
+            <div class="filter-range-div">
+                <span id = "slider-min-id"></span>
+                <div class="current-range">
+                    <input type="range" min="1" max="100" value="50" class="property-slider" id="property-slider-id">
+                    <span id = "slider-text-id"></span>
+                </div>
+                <span id = "slider-max-id"></span>
+            </div>
+            <input type="button" value="SUBMIT" onclick="sortOrFilterSubmit()">
+        </div>
+    </div>
+
+
     <div class="carousel-container">
         <div class="carousel-wrapper"></div>
     </div>
@@ -40,67 +93,3 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 </body>
-
-
-
-
-    <!-- <div class="track-wrapper">
-        <div class="track-card-container">
-            <div class="iframe-container">
-                <iframe src="https://open.spotify.com/embed/track/4ZtFanR9U6ndgddUvNcjcG" width="350" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-            </div>
-            <div class="track-arrow-img">
-                <img src="resources/down-arrow2.svg" alt="down arrow svg", id = "card-svg-id", class = "card-svg-down-class" onclick="showTrackAnalysis()">
-            </div>
-        </div>
-        <div class="info-card-hide", id = "info-card-id">
-            <div class="info-top-data">
-                <p id="duration">Duration: xx.xx</p>
-                <p id = "tempo">Tempo: xxx bpm</p>
-                <p id = "key">Key: F</p>
-                <p id = "time-signature">Time Sig: 4/4</p>
-            </div>
-
-            <div class="analysis-grid">
-                <div class="danceability">danceability</div>
-                <div class="energy">energy</div>
-                <div class="loudness">loudness</div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text dance-bar">1</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text energy-bar">2</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text loudness-bar">3</div>
-                </div>
-                          
-                <div class="speechiness">speechiness</div>
-                <div class="popularity">popularity</div>
-                <div class="acousticness">acousticness</div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text speech-bar">4</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text popularity-bar">5</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text acoustic-bar">6</div>
-                </div>
-                            
-                <div class="instrumentalness">instrumentalness</div>
-                <div class="liveness">liveness</div>
-                <div class="valence">valence</div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text instrument-bar">7</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text liveness-bar">8</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text valence-bar">9</div>
-                </div>
-
-            </div>
-        </div>
-    </div> -->

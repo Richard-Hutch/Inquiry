@@ -182,16 +182,16 @@ function checkParameters(){
     })
     //check if a search is being made
     if (location.href.includes("result.html")){
-        //addSortFilterEL();
-        //checkFilterSelected(); //needed to hide the filter slider right off the bat
+        addSortFilterEL();
+        checkFilterSelected(); //needed to hide the filter slider right off the bat
         let val = decodeURI(params.searchItem);
         let option = params.searchOption;
         document.getElementById("searching-for-query-id").innerText = val.toUpperCase();
         doSearch(val,option);
     }
     else if (location.href.includes("profile.html")){
-        //addSortFilterEL();
-        //checkFilterSelected(); //needed to hide the filter slider right off the bat
+        addSortFilterEL();
+        checkFilterSelected(); //needed to hide the filter slider right off the bat
         doUserDetails();
     }
 }
@@ -310,7 +310,6 @@ async function handleMusicFeatures(idString, ndxCheckPoint){
         let tempKey = "err";
         //transcribe the key and assign it
         tempKey = featureDataJSON.audio_features[dataNDX].key;
-        console.log(currDataMap);
         switch(tempKey){
             case 0:
                 tempKey = "C"
@@ -829,6 +828,8 @@ function checkFilterSelected(){
         document.querySelector(".filter-range-div").style.display = "none";
         document.querySelector("#property-filter-select-id").style.display = "none";
         document.querySelector("#property-sort-select-id").style.display = "block"; //only difference is that property filter excludes key
+        document.querySelector(".sort-filter-container").classList.remove("filter-range-show");
+
     }else{
         //find out what property is selected and create slider accordingly, then add to html
         let slider = document.querySelector("#property-slider-id");
@@ -839,28 +840,21 @@ function checkFilterSelected(){
         let property = document.querySelector("#property-filter-select-id").value;
         let min = 1, max = 100;
         //find the shortest and the greatest duration
-
-
         switch(property){
-            // case "danceability":
-            // case "acousticness":
-            // case "energy":
-            // case "instrumentalness":
-            // case "liveness":
-            // case "speechiness":
-            // case "valence":
 
             //     break;
             case "duration":
-                let arr = new Array();
+                max = 0;
+                min = "0:00"
+                allTracks.forEach(item =>{
+                    let durationVal = item.get("dataMap").get("duration").replace(":", "");
+                    if (durationVal > max){
+                        max = durationVal;
+                    }
+                })
+                document.body.querySelector("#property-slider-id").max = max;
+                max = [max.slice(0, max.length- 2), ":", max.slice(max.length - 2)].join('');
 
-                // let times = document.querySelectorAll(".duration-class");
-                // console.log(times);
-                // times.forEach(item=>{
-                //     console.log("ITEM TEXT = " +  item.innerText);
-                //     arr.push(item.innerText.split(":"));
-                // });
-                // console.log("ARR = ", arr);
                 break;
             case "tempo":
                 break;
@@ -872,14 +866,15 @@ function checkFilterSelected(){
 
         sliderSpan.innerText = slider.value;
         slider.oninput = function(){
-            sliderSpan.innerText = this.value;
+            sliderSpan.innerText = [this.value.slice(0, this.value.length- 2), ":", this.value.slice(this.value.length - 2)].join('');
         }
         maxSpan.innerText = max;
         minSpan.innerText = min;
         const TEMPLATE = `
 
         `
-        document.querySelector(".filter-range-div").style.display = "block";
+        document.querySelector(".filter-range-div").style.display = "grid";
+        document.querySelector(".sort-filter-container").classList.add("filter-range-show");
         document.querySelector("#property-filter-select-id").style.display = "block";
         document.querySelector("#property-sort-select-id").style.display = "none"; //only difference is that property filter excludes key
     }

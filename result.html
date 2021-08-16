@@ -31,57 +31,61 @@
         <h2 id = "searching-for-id">TOP 5 RESULTS FOR:</h2>
         <h1 id = "searching-for-query-id"></h1>
     </div>
-    <div class="sort-filter-container">
+    <div class="sort-filter-wrapper">
+        <div class="sort-filter-container">
         
-        <div class="sort-or-filter-radio-wrapper" id = "sort-or-filter-radio-id">
-            <input type="radio" name="s-or-f" id="none-radio-btn" value  = "none" checked>NONE
-            <input type="radio" name="s-or-f" id="sort-radio-btn" value  = "sort">SORT
-            <input type="radio" name="s-or-f" id="filter-radio-btn" value  = "filter">FILTER
-        </div>
-
-        <div class="track-properties-list">
-            <select class="property-select" id = "property-sort-select-id">
-                <option value="duration">DURATION</option>
-                <option value="tempo">TEMPO</option>
-                <option value="key">KEY</option>
-                <option value="timeSig">TIME SIGNATURE</option>
-                <option value="danceability">DANCEABILITY</option>
-                <option value="energy">ENERGY</option>
-                <option value="loudness">LOUDNESS</option>
-                <option value="speechiness">SPEECHINESS</option>
-                <option value="popularity">POPULARITY</option>
-                <option value="acousticness">ACOUSTICNESS</option>
-                <option value="INSTRUMENTALNESS">INSTRUMENTALNESS</option>
-                <option value="LIVENESS">LIVENESS</option>
-                <option value="VALENCE">VALENCE</option>
-            </select>
-            <select class="property-select" id = "property-filter-select-id">
-                <option value="duration">DURATION</option>
-                <option value="tempo">TEMPO</option>
-                <option value="timeSig">TIME SIGNATURE</option>
-                <option value="danceability">DANCEABILITY</option>
-                <option value="energy">ENERGY</option>
-                <option value="loudness">LOUDNESS</option>
-                <option value="speechiness">SPEECHINESS</option>
-                <option value="popularity">POPULARITY</option>
-                <option value="acousticness">ACOUSTICNESS</option>
-                <option value="instrumentalness">INSTRUMENTALNESS</option>
-                <option value="liveness">LIVENESS</option>
-                <option value="valence">VALENCE</option>
-            </select>
-        </div>
-        <div class="sort-or-filter-submit-wrapper">
+            <div class="sort-or-filter-radio-wrapper" id = "sort-or-filter-radio-id">
+                <input type="radio" name="s-or-f" id="none-radio-btn" value  = "none" checked>NONE
+                <input type="radio" name="s-or-f" id="sort-radio-btn" value  = "sort">SORT
+                <input type="radio" name="s-or-f" id="filter-radio-btn" value  = "filter">FILTER
+            </div>
+    
+            <div class="track-properties-list">
+                <select class="property-select" id = "property-sort-select-id">
+                    <option value="duration">DURATION</option>
+                    <option value="tempo">TEMPO</option>
+                    <option value="key">KEY</option>
+                    <option value="timeSig">TIME SIGNATURE</option>
+                    <option value="danceability">DANCEABILITY</option>
+                    <option value="energy">ENERGY</option>
+                    <option value="loudness">LOUDNESS</option>
+                    <option value="speechiness">SPEECHINESS</option>
+                    <option value="popularity">POPULARITY</option>
+                    <option value="acousticness">ACOUSTICNESS</option>
+                    <option value="INSTRUMENTALNESS">INSTRUMENTALNESS</option>
+                    <option value="LIVENESS">LIVENESS</option>
+                    <option value="VALENCE">VALENCE</option>
+                </select>
+                <select class="property-select" id = "property-filter-select-id">
+                    <option value="duration">DURATION</option>
+                    <option value="tempo">TEMPO</option>
+                    <option value="timeSig">TIME SIGNATURE</option>
+                    <option value="danceability">DANCEABILITY</option>
+                    <option value="energy">ENERGY</option>
+                    <option value="loudness">LOUDNESS</option>
+                    <option value="speechiness">SPEECHINESS</option>
+                    <option value="popularity">POPULARITY</option>
+                    <option value="acousticness">ACOUSTICNESS</option>
+                    <option value="instrumentalness">INSTRUMENTALNESS</option>
+                    <option value="liveness">LIVENESS</option>
+                    <option value="valence">VALENCE</option>
+                </select>
+            </div>
             <div class="filter-range-div">
                 <span id = "slider-min-id"></span>
                 <div class="current-range">
-                    <input type="range" min="1" max="100" value="50" class="property-slider" id="property-slider-id">
+                    <input type="range" min="0" max="100" value="0" class="property-slider" id="property-slider-id">
                     <span id = "slider-text-id"></span>
                 </div>
                 <span id = "slider-max-id"></span>
             </div>
-            <input type="button" value="SUBMIT" onclick="sortOrFilterSubmit()">
+    
+            <div class="sort-or-filter-submit-wrapper">
+                <input type="button" value="SUBMIT" onclick="sortOrFilterSubmit()" id = "sort-filter-submit-id">
+            </div>
         </div>
     </div>
+    
 
 
     <div class="carousel-container">

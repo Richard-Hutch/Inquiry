@@ -800,6 +800,64 @@ body{
     overflow: auto;
 }
 
+.sort-filter-wrapper{
+    position: relative;
+    left: 50%;
+    width: 800px;
+    transform: translate(-50%);
+    .sort-filter-container{
+        position: relative;
+        left: 50%;
+        width: 800px;
+        transform: translate(-50%);
+        display: grid;
+
+        grid-template-columns: 200px 200px 100px;
+        .sort-or-filter-radio-wrapper{
+    
+        }
+        .track-properties-list{
+            .property-select{
+    
+            }
+        }
+        .filter-range-div{
+            display: grid;
+            grid-template-columns: 40px 150px 40px;
+            text-align: center;
+    
+            #slider-min-id{
+    
+            }
+            #slider-max-id{
+    
+            };
+            .current-range{
+                display: grid;
+                grid-template-rows: 10px 10px;
+                #property-slider-id{
+    
+                }
+                #slider-text-id{
+                    
+                }
+            }
+        }
+        .sort-or-filter-submit-wrapper{
+    
+            #sort-filter-submit-id{
+    
+            }
+        }
+    
+    }
+    .filter-range-show{
+        grid-template-columns: 200px 200px 250px 100px;
+    
+    }
+}
+
+
 // @keyframes slide-ltor{
 //    from{
 //         //padding-left: 50%;

@@ -10,9 +10,23 @@ const AUTH_URL = "https://accounts.spotify.com/authorize" +
 let userHash = window.location.hash;
 let accessToken;
 let unique_id_counter = 0;
-let playlistMap = new Map();
-let trackMap = new Map();
-let uniqueCardsMap = new Map();
+// let playlistMap = new Map();
+// let trackMap = new Map();
+// let uniqueCardsMap = new Map();
+
+const MAX_AUDIO_FEATURE_LIMIT = 99;
+
+let allTracks = new Array(); //this 2D array holds all of the tracks displayed on screen holds arrays of track information
+
+
+
+/*
+//allTracks visualization example
+3 Tracks
+[TrackMap, TrackMap, TrackMap]
+Track Map visualization
+["dataMap" : dataMap, "trackIDs" : idMap]
+*/
 
 //PARAMETERS
 let SEARCH_ITEM = "&searchItem=";
@@ -23,6 +37,37 @@ window.onload = function(){
     checkLoggedIn(1);
     checkParameters();
 }
+
+function deepCopy(obj) {
+  
+    if (null === obj || 'object' !== typeof obj) return obj;
+      
+    switch (obj.constructor) {
+      case Boolean:
+        return new Boolean(obj);
+      case Number:
+        return new Number(obj);
+      case String:
+        return new String(obj);
+      case Date:
+        return new Date().setTime(obj.getTime());
+      case Array:
+        return obj.map((o) => deepCopy1(o));
+      case RegExp:
+        return new RegExp(obj);
+      case BigInt:
+        return BigInt(obj);
+      case Object: {
+        let copy = {};
+        Object.keys(obj).forEach((key) => {
+          if (obj.hasOwnProperty(key)) copy[key] = deepCopy1(obj[key]);
+        });
+        return copy;
+      }
+    }
+    return obj;
+}
+
 
 //check if user presses the enter key while the focused on the search bar
 document.addEventListener("keyup", function(event){
@@ -57,7 +102,6 @@ function menuDropDown(){
         document.getElementById("menu-bars-id").classList.add("menu-bars-active");
     }
 }
-
 
 function changePage(page){
     //not on search result page
@@ -181,13 +225,41 @@ function changePlayPauseBtn(id, uaid, uacid, href){
 /*
 TO-DO: 
 * make sure that user does not include & or = in their search
-* round the values of music analysis to just two decimal places and put val out of, ex: .55/1
+* show amnt of tracks in currently shown playlist
 */
+//IMPORTANT! "parameter" must include the & and the = symbols
+function removeHashParameter(parameter, hash){
+    let ndx;
+    let size = hash.length;
+    //erase item search parameter
+    if ((ndx = hash.search(parameter)) !== -1){
+        for (let i = ndx + 6; i < size; i++){
+            //there are more parameters so find where item value ends
+            if (hash[i] === "&"){
+                let strToDelete = hash.substring(ndx, i);
+                hash = hash.replace(strToDelete, "");
+                break;
+            }
+            else{
+                //there are no further URL parameters
+                if (i == size -1){
+                    let strToDelete = hash.substr(ndx);
+                    hash = hash.replace(strToDelete, "");
+                }
+            }
+        }
+    }
+    //hash parameter not found
+    if (ndx == -1) {
+        //confirm("Error: parameter not found");
+    }
+    return hash;
+}
 
 
-async function showTrackAnalysis(ucid, uiid, dataMap){
+//                      TRACK ANALYSIS/FEATURES
+function showTrackAnalysis(ucid, uiid){
     let state = document.getElementById(uiid).className;
-    let comp = document.querySelector("#"+uiid);
     //data is showing, hide it; arrow is showing up, point down
     if (state === "info-card-show"){
         document.getElementById(uiid).classList.remove("info-card-show");
@@ -201,17 +273,48 @@ async function showTrackAnalysis(ucid, uiid, dataMap){
         document.getElementById(uiid).classList.add("info-card-show");    
         document.getElementById(ucid).classList.remove("card-svg-down-class");
         document.getElementById(ucid).classList.add("card-svg-up-class");  
-        
-        
-        //GET FEATURES OF THE TRACK
-        //dont make a request if a request for this track has already been made before
-        featureData = await fetchTrackFeatures(dataMap).catch(error =>{
-            confirm('There has been a problem with your fetch operation: ' + error.message);
-        });
+    }
+}
+async function fetchTrackFeatures(idString){
+    //GET AUDIO FEATURES
+    let audioFeatureURL = "https://api.spotify.com/v1/audio-features?ids=" + idString;
+    let response = await fetch(audioFeatureURL,{
+        method: "GET",
+        headers:{
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+    });
+    if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
+    let featureData = await response.json();
+    return featureData;    
+}
+//idString: list of ids to append to 'Get Audio Features for Several Tracks' endpoint call
+async function handleMusicFeatures(idString, ndxCheckPoint){
+                    //GET FEATURES OF THE TRACK
 
-        //transcribe the key and assign it
+
+
+    let featureDataJSON = await fetchTrackFeatures(idString).catch(error =>{ 
+        confirm('There has been a problem with your fetch operation: ' + error.message);
+    });
+    if (featureDataJSON.error){
+        if (featureDataJSON.error.status === 401){
+            confirm("TOKEN TIMED OUT. PLEASE AUTHENTICATE AGAN");
+            logout();
+        }else{
+            confirm("other error encountered")
+        }
+    }
+
+    for (let i = ndxCheckPoint, dataNDX = 0; i < allTracks.length; ++i, ++dataNDX){
+        let currDataMap = allTracks[dataNDX].get("dataMap");
         let tempKey = "err";
-        switch(featureData.key){
+        //transcribe the key and assign it
+        tempKey = featureDataJSON.audio_features[dataNDX].key;
+        console.log(currDataMap);
+        switch(tempKey){
             case 0:
                 tempKey = "C"
                 break;
@@ -250,115 +353,26 @@ async function showTrackAnalysis(ucid, uiid, dataMap){
                 break;                                    
         }
         //check if key is major or minor
-        if (featureData.mode == 1){
+        if (featureDataJSON.audio_features[dataNDX].mode == 1){
             tempKey += " major";
-        }else if (featureData.mode == 0){
+        }else if (featureDataJSON.audio_features[dataNDX].mode == 0){
             tempKey += " minor";
         }
-        dataMap.set("key",              tempKey);
-        dataMap.set("danceability",     featureData.danceability);
-        dataMap.set("energy",           featureData.energy);
-        dataMap.set("loudness",         featureData.loudness);
-        dataMap.set("speechiness",      featureData.speechiness);
-        dataMap.set("acousticness",     featureData.acousticness);
-        dataMap.set("instrumentalness", featureData.instrumentalness);
-        dataMap.set("liveness",         featureData.liveness);
-        dataMap.set("valence",          featureData.valence);
-        dataMap.set("tempo",            featureData.tempo);
-        dataMap.set("time_signature",   featureData.time_signature);
-        
-        const TEMPLATE = `
-            <div class="info-top-data">
-                <p class = "duration-class">Duration: ${dataMap.get("duration")}</p>
-                <p class = "tempo-class">Tempo: ${(Math.round(parseFloat(dataMap.get("tempo")))).toString()}</p>
-                <p class = "key-class"> Key: ${dataMap.get("key")}</p>
-                <p class = "time-sig-class">Time Sig: ${dataMap.get("time_signature")}</p>
-            </div>
-            <div class="analysis-grid">
-                <div class="danceability">danceability</div>
-                <div class="energy">energy</div>
-                <div class="loudness">loudness</div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text dance-bar" style="width: ${(parseFloat(dataMap.get("danceability")) * 100).toString() + "%"};">${(dataMap.get("danceability") * 100).toFixed(2)}</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text energy-bar" style="width: ${(parseFloat(dataMap.get("energy")) * 100).toFixed(2).toString() + "%"};">${(dataMap.get("energy") * 100).toFixed(2)}</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text loudness-bar" style="width: ${((60 - (parseFloat(dataMap.get("loudness")) * -1)) / 60 * 100).toString() + "%"};">${(60 - parseFloat(dataMap.get("loudness")) * -1).toFixed(2)}</div>
-                </div>
-                <div class="speechiness">speechiness</div>
-                <div class="popularity">popularity</div>
-                <div class="acousticness">acousticness</div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text speech-bar" style="width: ${(parseFloat(dataMap.get("speechiness")) * 100).toString() + "%"};">${(dataMap.get("speechiness") * 100).toFixed(2)}</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text popularity-bar" style="width: ${dataMap.get("popularity")+ "%"};">${dataMap.get("popularity")}</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text acoustic-bar" style="width: ${(parseFloat(dataMap.get("acousticness")) * 100).toString() + "%"};">${(dataMap.get("acousticness") * 100).toFixed(2).toString()}</div>
-                </div>
-                <div class="instrumentalness">instrumentalness</div>
-                <div class="liveness">liveness</div>
-                <div class="valence">valence</div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text instrument-bar" style="width: ${(parseFloat(dataMap.get("instrumentalness")) * 100).toString() + "%"};">${(dataMap.get("instrumentalness") * 100).toFixed(2)}</div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text liveness-bar" style="width: ${(parseFloat(dataMap.get("liveness")) * 100).toString() + "%"};">${(dataMap.get("liveness") * 100).toFixed(2)} </div>
-                </div>
-                <div class="skill-bar-container">
-                    <div class="skills-bar-text valence-bar" style="width: ${(parseFloat(dataMap.get("valence")) * 100).toString() + "%"};">${(dataMap.get("valence") * 100).toFixed(2)}</div>
-                </div>
-            </div>
-        `;
-        comp.innerHTML = TEMPLATE;
+        currDataMap.set("key",              tempKey);
+        currDataMap.set("danceability",     (featureDataJSON.audio_features[dataNDX].danceability * 100).toFixed(2));
+        currDataMap.set("energy",           (featureDataJSON.audio_features[dataNDX].energy * 100).toFixed(2));
+        currDataMap.set("loudness",         (60 - parseFloat( featureDataJSON.audio_features[dataNDX].loudness) * -1).toFixed(2));
+        currDataMap.set("speechiness",      (featureDataJSON.audio_features[dataNDX].speechiness * 100).toFixed(2));
+        currDataMap.set("acousticness",     (featureDataJSON.audio_features[dataNDX].acousticness * 100).toFixed(2).toString());
+        currDataMap.set("instrumentalness", (featureDataJSON.audio_features[dataNDX].instrumentalness * 100).toFixed(2));
+        currDataMap.set("liveness",         (featureDataJSON.audio_features[dataNDX].liveness * 100).toFixed(2));
+        currDataMap.set("valence",          (featureDataJSON.audio_features[dataNDX].valence * 100).toFixed(2));
+        currDataMap.set("tempo",            (featureDataJSON.audio_features[dataNDX].tempo));
+        currDataMap.set("time_signature",   (featureDataJSON.audio_features[dataNDX].time_signature));
     }
 }
-//IMPORTANT! "parameter" must include the & and the = symbols
-function removeHashParameter(parameter, hash){
-    let ndx;
-    let size = hash.length;
-    //erase item search parameter
-    if ((ndx = hash.search(parameter)) !== -1){
-        for (let i = ndx + 6; i < size; i++){
-            //there are more parameters so find where item value ends
-            if (hash[i] === "&"){
-                let strToDelete = hash.substring(ndx, i);
-                hash = hash.replace(strToDelete, "");
-                break;
-            }
-            else{
-                //there are no further URL parameters
-                if (i == size -1){
-                    let strToDelete = hash.substr(ndx);
-                    hash = hash.replace(strToDelete, "");
-                }
-            }
-        }
-    }
-    //hash parameter not found
-    if (ndx == -1) {
-        //confirm("Error: parameter not found");
-    }
-    return hash;
-}
-async function fetchTrackFeatures(dataMap){
-    //GET AUDIO FEATURES
-    let audioFeatureURL = "https://api.spotify.com/v1/audio-features/" + dataMap.get("id");
-    let response = await fetch(audioFeatureURL,{
-        method: "GET",
-        headers:{
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + accessToken
-        }
-    });
-    if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
-    let featureData = await response.json();
-    return featureData;    
-}
+
+//                      SEARCHING
 async function fetchTorP(url){
     let response = await fetch(url, 
         {
@@ -441,7 +455,9 @@ async function doSearch(val, option){
             }else{
                 
                 //console.log(JSON.stringify(data, null , 2));
+
                 data.tracks.items.forEach(async function(key){
+                    
                     let dataMap = new Map();
                     //dataStr = key.name + ", by ";
                     let artists = "";
@@ -455,97 +471,79 @@ async function doSearch(val, option){
                     dataMap.set("name", key.name);
                     dataMap.set("uri", key.uri.replace("spotify:track:", ""));
                     dataMap.set("id", key.id);
+                    
                     //get and set the duration of the track
                     let tempDurationMin = (parseInt((parseFloat(key.duration_ms) / 1000) / 60)).toString();
                     let tempDurationSeconds = ((Math.round((parseFloat(key.duration_ms) / 1000) % 60)*100)/ 100).toString()
                     if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
                     dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
+                    //dataMap.set("duration", (Math.round(parseFloat(dataMap.get("duration")))).toString());
                     dataMap.set("popularity", key.popularity);
-                            //GET FEATURES OF THE TRACK
-                    let featureData = await fetchTrackFeatures(dataMap).catch(error =>{
-                        confirm('There has been a problem with your fetch operation: ' + error.message);
-                    });
-                    if (featureData.error){
-                        if (featureData.error.status === 401){
-                            console.log("error 401");
-                            logout();
-                        }
-                    }
-                    //console.log(JSON.stringify(featureData, null , 2));
-                    //transcribe the key and assign it
-                    let tempKey = "err";
-                    switch(featureData.key){
-                        case 0:
-                            tempKey = "C"
-                            break;
-                        case 1:
-                            tempKey = "C#"
-                            break;
-                        case 2:
-                            tempKey = "D"
-                            break;
-                        case 3:
-                            tempKey = "D#"
-                            break;
-                        case 4:
-                            tempKey = "E"
-                            break;
-                        case 5:
-                            tempKey = "F"
-                            break;
-                        case 6:
-                            tempKey = "F#"
-                            break;
-                        case 7:
-                            tempKey = "G"
-                            break;
-                        case 8:
-                            tempKey = "G#"
-                            break;
-                        case 9:
-                            tempKey = "A"
-                            break;
-                        case 10:
-                            tempKey = "A#"
-                            break;
-                        case 11:
-                            tempKey = "B"
-                            break;                                    
-                    }
-                    //check if key is major or minor
-                    if (featureData.mode == 1){
-                        tempKey += " major";
-                    }else if (featureData.mode == 0){
-                        tempKey += " minor";
-                    }
-                    dataMap.set("key",              tempKey);
-                    dataMap.set("danceability",     featureData.danceability);
-                    dataMap.set("energy",           featureData.energy);
-                    dataMap.set("loudness",         featureData.loudness);
-                    dataMap.set("speechiness",      featureData.speechiness);
-                    dataMap.set("acousticness",     featureData.acousticness);
-                    dataMap.set("instrumentalness", featureData.instrumentalness);
-                    dataMap.set("liveness",         featureData.liveness);
-                    dataMap.set("valence",          featureData.valence);
-                    dataMap.set("tempo",            featureData.tempo);
-                    dataMap.set("time_signature",   featureData.time_signature);
-                    //DYNAMICALLY CREATE THE HTML FOR EACH TRACK
-                    createTrackHTML(dataMap, true); 
-                    if (uniqueCardsMap.size !== 0){
-                        //k = unique track id
-                        //v = map of track id info
-                        uniqueCardsMap.forEach(function(v, k){
-                            //assign event listener to the drop down arrow for each track
-                            document.body.querySelector("#"+v.get("ucid")).addEventListener("click", function(){
-                                showTrackAnalysis(v.get("ucid"), v.get("uiid"), dataMap); //the unique id of the analysis card and the panel arrow and pass the map with track info
-                            });
-                        });
-                    }
+                    
+                    
+
+                    let currentTrackMap = new Map();
+                    currentTrackMap.set("dataMap", dataMap);
+                    allTracks.push(currentTrackMap);
                 });
+                //GET FEATURES FOR ALL TRACKS
+                let idString = ""
+                let idCounter = 0;
+                let ndxCheckPoint = 0; //holds the ndx of the last track that had audio features fetched for it
+
+                // allTracks.forEach(async track=>{
+                //     idString += track.get("dataMap").get("id") + "%2C"; //the %2C adds commas
+                //     idCounter++;
+
+                //     if (idCounter == MAX_AUDIO_FEATURE_LIMIT){
+                //         idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
+                //         await handleMusicFeatures(idString, ndxCheckPoint);
+                //         idString = "";
+                //         ndxCheckPoint = idCounter; //update ndx of last track that had audio features fetched
+                //         idCounter = 0;
+                //     }
+                //     //amnt of tracks are below request limit
+                //     else if (idCounter == allTracks.length){
+                //         idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
+                //         await handleMusicFeatures(idString, ndxCheckPoint); 
+                //     }
+                // });
+                for (let i = 0; i < allTracks.length; ++i){
+                    idString += allTracks[i].get("dataMap").get("id") + "%2C"; //the %2C adds commas
+                    idCounter++;
+
+                    if (idCounter == MAX_AUDIO_FEATURE_LIMIT){
+                        idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
+                        await handleMusicFeatures(idString, ndxCheckPoint);
+                        idString = "";
+                        ndxCheckPoint = idCounter; //update ndx of last track that had audio features fetched
+                        idCounter = 0;
+                    }
+                    //amnt of tracks are below request limit
+                    else if (idCounter == allTracks.length){
+                        idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
+                        await handleMusicFeatures(idString, ndxCheckPoint); 
+                    }
+                }
+
+
+                allTracks.forEach(track=>{
+                    //DYNAMICALLY CREATE THE HTML FOR EACH TRACK
+                    
+                    
+                    console.log("yo! " + track.get("dataMap").get("danceability"));
+                    
+                    createTrackHTML(track.get("dataMap"), true); 
+                });
+
+
+                // allTracks.forEach(track=>{
+
             }
         }
     }
 }
+//                      PLAYLISTS
 async function fetchPlaylistTracks(playlistURL){
     //the "+ "?market=US"" is because of country permissions and music company licensing 
     //GET PLAYLIST'S TRACKS
@@ -586,6 +584,7 @@ async function fetchUserPlaylists(url){
     const json = await response.json();
     return json;
 }
+//                      PROFILE DETAILS
 async function fetchProfileDetails(){
     let response = await fetch("https://api.spotify.com/v1/me", 
     {
@@ -610,7 +609,56 @@ async function fetchProfileDetails(){
     return result;
 
 }
+async function doUserDetails(){
+        
+    //GET CURRENT USER'S PROFILE DETAILS
+    await fetchProfileDetails();
 
+    //                         ----- GET CURRENT USER'S PLAYLISTS -----
+    let limit = "limit=50";
+    let url = "https://api.spotify.com/v1/me/playlists?" + limit;
+    let userPlaylistJSON = await fetchUserPlaylists(url).catch(error =>{
+        confirm('There has been a problem with your fetch operation: ' + error.message);
+    })
+
+    //console.log(JSON.stringify(userPlaylistJSON, null, 2));
+
+    //GET EACH PLAYLIST'S TRACKS
+    let playlistIDCounter = 0; 
+    userPlaylistJSON.items.forEach(item=>{
+        let currPlaylistMap = new Map();
+        currPlaylistMap.set("name", item.name);
+        currPlaylistMap.set("albumIMG", item.images[0].url);
+        currPlaylistMap.set("trackHREF", item.tracks.href);
+        //dynamically add the playlist html
+        let tempID = "playlist-id" + playlistIDCounter;
+        //console.log("PLAYLIST NAME: " + playlist.name + "\nby: " + playlist.owner.display_name);
+        const TEMPLATE = `            
+            <div class = "playlist-item-class" id ="${tempID}">
+                ${currPlaylistMap.get("name")}
+                <img src="${currPlaylistMap.get("albumIMG")}" alt="album image" class = "album-img-class">
+            </div>`;
+        playlistIDCounter++;
+        document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
+        playlistMap.set(tempID, currPlaylistMap);
+    });
+    //let playlistName = "BONK";
+    $(document).ready(function(){
+        $('.carousel-wrapper').slick({
+            centerMode: true,
+            centerPadding: '40px',
+            slidesToShow: 3,
+            variableWidth: true,
+            adaptiveHeight: true,
+            infinite: false
+        })
+        //assinging event listeners to carousel arrow
+        addPlaylistArrowEL();
+        //get track analytics and display to screen
+        doPlaylistTrackDetails();
+
+    })
+}
 async function doPlaylistTrackDetails(){
     let playlistID = document.body.querySelector(".slick-current").id;
     let playlistTracksJSON = await fetchPlaylistTracks(playlistMap.get(playlistID).get("trackHREF")).catch(error =>{
@@ -662,57 +710,6 @@ async function doPlaylistTrackDetails(){
     })
 }
 
-async function doUserDetails(){
-        
-    //GET CURRENT USER'S PROFILE DETAILS
-    await fetchProfileDetails();
-
-    //                         ----- GET CURRENT USER'S PLAYLISTS -----
-    let limit = "limit=50";
-    let url = "https://api.spotify.com/v1/me/playlists?" + limit;
-    let userPlaylistJSON = await fetchUserPlaylists(url).catch(error =>{
-        console.log('There has been a problem with your fetch operation: ' + error.message);
-    })
-
-    //console.log(JSON.stringify(userPlaylistJSON, null, 2));
-
-    //GET EACH PLAYLIST'S TRACKS
-    let playlistIDCounter = 0; 
-    userPlaylistJSON.items.forEach(item=>{
-        let currPlaylistMap = new Map();
-        currPlaylistMap.set("name", item.name);
-        currPlaylistMap.set("albumIMG", item.images[0].url);
-        currPlaylistMap.set("trackHREF", item.tracks.href);
-        //dynamically add the playlist html
-        let tempID = "playlist-id" + playlistIDCounter;
-        //console.log("PLAYLIST NAME: " + playlist.name + "\nby: " + playlist.owner.display_name);
-        const TEMPLATE = `            
-            <div class = "playlist-item-class" id ="${tempID}">
-                ${currPlaylistMap.get("name")}
-                <img src="${currPlaylistMap.get("albumIMG")}" alt="album image" class = "album-img-class">
-            </div>`;
-        playlistIDCounter++;
-        document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
-        playlistMap.set(tempID, currPlaylistMap);
-    });
-    //let playlistName = "BONK";
-    $(document).ready(function(){
-        $('.carousel-wrapper').slick({
-            centerMode: true,
-            centerPadding: '40px',
-            slidesToShow: 3,
-            variableWidth: true,
-            adaptiveHeight: true,
-            infinite: false
-        })
-        //assinging event listeners to carousel arrow
-        addPlaylistArrowEL();
-        //get track analytics and display to screen
-        doPlaylistTrackDetails();
-
-    })
-}
-
 function createTrackHTML(dataMap, embed = false){
 
     let ucid = "card-svg-id" + unique_id_counter;
@@ -722,66 +719,113 @@ function createTrackHTML(dataMap, embed = false){
     let uacid = "audio-cont-id" + unique_id_counter;
     let utid = "unique-track-id" + unique_id_counter;
     let insert = ``;
-    let tempMap = new Map();
-    /*
-        <audio src="${dataMap.get("previewURL")}" id="${uaid}">
-            Your browser does not support the audio tag.
-        </audio>
-    */
+    console.log("temp = ", dataMap.get("danceability"));
     if (embed){
         insert = `
-        <div class = "track-wrapper" id = "${utid}">
-            <div class="track-card-container track-only-option">
-                <iframe src="https://open.spotify.com/embed/track/${dataMap.get("uri")}" width="420" height="80" frameborder="0" allowtransparency="true" title="spotify embed"></iframe>
+        <div class="track-card-container track-only-option">
+            <iframe src="https://open.spotify.com/embed/track/${dataMap.get("uri")}" width="420" height="80" frameborder="0" allowtransparency="true" title="spotify embed"></iframe>
+            <div class="track-arrow-img">
+                <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
+            </div>
+        </div>`;
+    }else{
+        insert = `
+            <div class="track-card-container playlist-option">
+                <div class="album-img-container">
+                    <img src="${dataMap.get("albumHREF")}"  alt="album img" class = "album-img" id = "album-img-id">
+                    <img src="/resources/playbutton.svg" alt="play button" class = "play-button" id = "${ppid}">
+                    <div class = "audio-container", id = "${uacid}"></div>
+                </div>
+                <div class = "track-and-artist">
+                    <div class = "track-name">
+                        ${dataMap.get("name").toUpperCase()}
+                    </div>
+                    <div class = "artist-name">
+                        ${dataMap.get("artists")}
+                    </div>
+                </div>
                 <div class="track-arrow-img">
                     <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
                 </div>
             </div>
-            <div class="info-card-hide" id="${uiid}"></div>
-        </div>`;
-    }else{
-        insert = `
-            <div class = "track-wrapper" id = "${utid}">
-                <div class="track-card-container playlist-option">
-                    <div class="album-img-container">
-                        <img src="${dataMap.get("albumHREF")}"  alt="album img" class = "album-img" id = "album-img-id">
-                        <img src="/resources/playbutton.svg" alt="play button" class = "play-button" id = "${ppid}">
-                        <div class = "audio-container", id = "${uacid}"></div>
-                    </div>
-                    <div class = "track-and-artist">
-                        <div class = "track-name">
-                            ${dataMap.get("name").toUpperCase()}
-                        </div>
-                        <div class = "artist-name">
-                            ${dataMap.get("artists")}
-                        </div>
-                    </div>
-                    <div class="track-arrow-img">
-                        <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
-                    </div>
-                </div>
-                <div class="info-card-hide" id="${uiid}"></div>
-            </div>      
         `;        
     }
-    
-    const TEMPLATE = insert;
+    const TEMPLATE = 
+    `
+    <div class = "track-wrapper" id = "${utid}">
+        ${insert}
+        <div class="info-card-hide" id="${uiid}">
+        
+            <div class="info-top-data">
+                <p class = "duration-class">Duration: ${dataMap.get("duration")}</p>
+                <p class = "tempo-class">Tempo: ${dataMap.get("tempo")}</p>
+                <p class = "key-class"> Key: ${dataMap.get("key")}</p>
+                <p class = "time-sig-class">Time Sig: ${dataMap.get("time_signature")}</p>
+            </div>
+        <div class="analysis-grid">
+            <div class="danceability">danceability</div>
+            <div class="energy">energy</div>
+            <div class="loudness">loudness</div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text dance-bar" style="width: ${parseFloat(dataMap.get("danceability")) + "%"};">${dataMap.get("danceability")}</div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text energy-bar" style="width: ${dataMap.get("energy") + "%"};">${dataMap.get("energy")}</div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text loudness-bar" style="width: ${dataMap.get("loudness") + "%"};">${dataMap.get("loudness")}</div>
+            </div>
+            <div class="speechiness">speechiness</div>
+            <div class="popularity">popularity</div>
+            <div class="acousticness">acousticness</div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text speech-bar" style="width: ${dataMap.get("speechiness") + "%"};">${dataMap.get("speechiness")}</div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text popularity-bar" style="width: ${dataMap.get("popularity")+ "%"};">${dataMap.get("popularity")}</div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text acoustic-bar" style="width: ${dataMap.get("acousticness") + "%"};">${dataMap.get("acousticness")}</div>
+            </div>
+            <div class="instrumentalness">instrumentalness</div>
+            <div class="liveness">liveness</div>
+            <div class="valence">valence</div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text instrument-bar" style="width: ${dataMap.get("instrumentalness") + "%"};">${dataMap.get("instrumentalness")}</div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text liveness-bar" style="width: ${dataMap.get("liveness")+ "%"};">${dataMap.get("liveness")} </div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skills-bar-text valence-bar" style="width: ${dataMap.get("valence")+ "%"};">${dataMap.get("valence")}</div>
+            </div>
+        </div>
+    </div>
+    `;
 
         document.body.querySelector(".playlist-tracks").innerHTML += TEMPLATE;
-        tempMap.set("ucid", ucid);
-        tempMap.set("uiid", uiid);
+        dataMap.set("ucid", ucid);
+        dataMap.set("uiid", uiid);
         //no embedding so it means custom track appearance
         if (!embed){
-            tempMap.set("ppid", ppid);
-            tempMap.set("uaid", uaid);
-            tempMap.set("uacid", uacid);
-            tempMap.set("href", dataMap.get("previewURL"));
-            trackMap.set(ucid, dataMap); //THIS IS A GLOBAL MAP HOLDING DATA ABOUT EACH TRACK TO DYNAMICALLY CREATE ANALYSIS GRID ON THE SPOT
+            dataMap.set("ppid", ppid);
+            dataMap.set("uaid", uaid);
+            dataMap.set("uacid", uacid);
+            //dataMap.set("href", dataMap.get("previewURL"));
+            //dataMap.set(ucid, dataMap); //THIS IS A GLOBAL MAP HOLDING DATA ABOUT EACH TRACK TO DYNAMICALLY CREATE ANALYSIS GRID ON THE SPOT
         }
-        uniqueCardsMap.set(utid, tempMap);
+        //idMap.set(utid, tempMap);
+
+        //ADD EVENT LISTENERS TO TRACK ARROWS
+        $(document).ready(function(){
+            document.body.querySelector("#"+ucid).addEventListener("click", function(){
+                showTrackAnalysis(ucid, uiid);
+            });
+        })
         unique_id_counter += 1;
 }
 
+//                   SORTING AND FILTERING
 function checkFilterSelected(){
     //filter was last clicked so now none or sort is selected so hide filter range
     //filtershow is defaulted to false because none is default selected
@@ -821,9 +865,7 @@ function checkFilterSelected(){
             //     break;
             case "duration":
                 let arr = new Array();
-                console.log("unique: ",uniqueCardsMap);
-                console.log("playlist: ", playlistMap);
-                console.log("trackMap: ", trackMap);
+
                 // let times = document.querySelectorAll(".duration-class");
                 // console.log(times);
                 // times.forEach(item=>{

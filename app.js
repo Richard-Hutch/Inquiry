@@ -10,13 +10,13 @@ const AUTH_URL = "https://accounts.spotify.com/authorize" +
 let userHash = window.location.hash;
 let accessToken;
 let unique_id_counter = 0;
-// let playlistMap = new Map();
 // let trackMap = new Map();
 // let uniqueCardsMap = new Map();
 
 const MAX_AUDIO_FEATURE_LIMIT = 99;
 
 let allTracks = new Array(); //this 2D array holds all of the tracks displayed on screen holds arrays of track information
+let playlistMap = new Map();
 
 
 
@@ -182,16 +182,16 @@ function checkParameters(){
     })
     //check if a search is being made
     if (location.href.includes("result.html")){
-        addSortFilterEL();
-        checkFilterSelected(); //needed to hide the filter slider right off the bat
+        //addSortFilterEL();
+        //checkFilterSelected(); //needed to hide the filter slider right off the bat
         let val = decodeURI(params.searchItem);
         let option = params.searchOption;
         document.getElementById("searching-for-query-id").innerText = val.toUpperCase();
         doSearch(val,option);
     }
     else if (location.href.includes("profile.html")){
-        addSortFilterEL();
-        checkFilterSelected(); //needed to hide the filter slider right off the bat
+        //addSortFilterEL();
+        //checkFilterSelected(); //needed to hide the filter slider right off the bat
         doUserDetails();
     }
 }
@@ -292,10 +292,7 @@ async function fetchTrackFeatures(idString){
 }
 //idString: list of ids to append to 'Get Audio Features for Several Tracks' endpoint call
 async function handleMusicFeatures(idString, ndxCheckPoint){
-                    //GET FEATURES OF THE TRACK
-
-
-
+    //GET FEATURES OF THE TRACK
     let featureDataJSON = await fetchTrackFeatures(idString).catch(error =>{ 
         confirm('There has been a problem with your fetch operation: ' + error.message);
     });
@@ -491,23 +488,6 @@ async function doSearch(val, option){
                 let idCounter = 0;
                 let ndxCheckPoint = 0; //holds the ndx of the last track that had audio features fetched for it
 
-                // allTracks.forEach(async track=>{
-                //     idString += track.get("dataMap").get("id") + "%2C"; //the %2C adds commas
-                //     idCounter++;
-
-                //     if (idCounter == MAX_AUDIO_FEATURE_LIMIT){
-                //         idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
-                //         await handleMusicFeatures(idString, ndxCheckPoint);
-                //         idString = "";
-                //         ndxCheckPoint = idCounter; //update ndx of last track that had audio features fetched
-                //         idCounter = 0;
-                //     }
-                //     //amnt of tracks are below request limit
-                //     else if (idCounter == allTracks.length){
-                //         idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
-                //         await handleMusicFeatures(idString, ndxCheckPoint); 
-                //     }
-                // });
                 for (let i = 0; i < allTracks.length; ++i){
                     idString += allTracks[i].get("dataMap").get("id") + "%2C"; //the %2C adds commas
                     idCounter++;
@@ -526,19 +506,10 @@ async function doSearch(val, option){
                     }
                 }
 
-
                 allTracks.forEach(track=>{
-                    //DYNAMICALLY CREATE THE HTML FOR EACH TRACK
-                    
-                    
-                    console.log("yo! " + track.get("dataMap").get("danceability"));
-                    
+                    //DYNAMICALLY CREATE THE HTML FOR EACH TRACK                    
                     createTrackHTML(track.get("dataMap"), true); 
                 });
-
-
-                // allTracks.forEach(track=>{
-
             }
         }
     }
@@ -565,7 +536,7 @@ function addPlaylistArrowEL(){
         x.addEventListener("click", function(){
             //clear currently displaying tracks
             document.body.querySelector(".playlist-tracks").innerHTML = "";
-            uniqueCardsMap.clear(); //any existing items of map will be previous playlist's tracks so remove
+            allTracks.splice(0, allTracks.length); //any existing items of the array will be previous playlist's tracks so remove
             //get playlists tracks and get their features
             doPlaylistTrackDetails();
         })
@@ -686,28 +657,39 @@ async function doPlaylistTrackDetails(){
         if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
         dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
         dataMap.set("popularity", item.track.popularity);
-        
-        //DYNAMICALLY CREATE THE CARD HTML FOR EACH TRACK
-        createTrackHTML(dataMap); 
-        if (uniqueCardsMap.size !== 0){
-            //k = unique track id
-            //v = map with that track's unique ids
-            uniqueCardsMap.forEach(function(v, k){
-                
-                //assign event listener to the play and pause button for each track
-                if (v.get("ppid")){
-                    document.body.querySelector("#"+v.get("ppid")).addEventListener("click", function(){
-                        changePlayPauseBtn(v.get("ppid"), v.get("uaid"), v.get("uacid"), v.get("href")); //pass the unique element id of the play/pause btn and audio id
-                    })
-                }
-                //assign event listener to the drop down arrow for each track
-                document.body.querySelector("#"+v.get("ucid")).addEventListener("click", function(){
-                    showTrackAnalysis(v.get("ucid"), v.get("uiid"), trackMap.get(v.get("ucid"))); //the unique id of the analysis card and the panel arrow and pass the map with track info
-                });
-                
-            });
+
+        let currentTrackMap = new Map();
+        currentTrackMap.set("dataMap", dataMap);
+        allTracks.push(currentTrackMap);
+    });
+    //GET FEATURES FOR ALL TRACKS
+    let idString = ""
+    let idCounter = 0;
+    let ndxCheckPoint = 0; //holds the ndx of the last track that had audio features fetched for it
+
+    for (let i = 0; i < allTracks.length; ++i){
+        idString += allTracks[i].get("dataMap").get("id") + "%2C"; //the %2C adds commas
+        idCounter++;
+
+        if (idCounter == MAX_AUDIO_FEATURE_LIMIT){
+            idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
+            await handleMusicFeatures(idString, ndxCheckPoint);
+            idString = "";
+            ndxCheckPoint = idCounter; //update ndx of last track that had audio features fetched
+            idCounter = 0;
         }
-    })
+        //amnt of tracks are below request limit
+        else if (idCounter == allTracks.length){
+            idString = idString.substr(0, idString.length - 3); //cut out the trailing comma from end
+            await handleMusicFeatures(idString, ndxCheckPoint); 
+        }
+    }
+    //DYNAMICALLY CREATE THE CARD HTML FOR EACH TRACK
+    allTracks.forEach(track=>{
+        //DYNAMICALLY CREATE THE HTML FOR EACH TRACK                    
+        createTrackHTML(track.get("dataMap"), false); 
+    });
+
 }
 
 function createTrackHTML(dataMap, embed = false){
@@ -719,7 +701,6 @@ function createTrackHTML(dataMap, embed = false){
     let uacid = "audio-cont-id" + unique_id_counter;
     let utid = "unique-track-id" + unique_id_counter;
     let insert = ``;
-    console.log("temp = ", dataMap.get("danceability"));
     if (embed){
         insert = `
         <div class="track-card-container track-only-option">
@@ -818,6 +799,13 @@ function createTrackHTML(dataMap, embed = false){
 
         //ADD EVENT LISTENERS TO TRACK ARROWS
         $(document).ready(function(){
+            //assign event listener to the play and pause button for each track
+            if (!embed){
+                document.body.querySelector("#"+ppid).addEventListener("click", function(){
+                    changePlayPauseBtn(ppid, uaid, uacid, dataMap.get("previewURL")); //pass the unique element id of the play/pause btn and audio id
+                })
+            }
+
             document.body.querySelector("#"+ucid).addEventListener("click", function(){
                 showTrackAnalysis(ucid, uiid);
             });

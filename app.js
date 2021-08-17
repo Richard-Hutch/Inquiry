@@ -363,7 +363,7 @@ async function handleMusicFeatures(idString, ndxCheckPoint){
         currDataMap.set("instrumentalness", (featureDataJSON.audio_features[dataNDX].instrumentalness * 100).toFixed(2));
         currDataMap.set("liveness",         (featureDataJSON.audio_features[dataNDX].liveness * 100).toFixed(2));
         currDataMap.set("valence",          (featureDataJSON.audio_features[dataNDX].valence * 100).toFixed(2));
-        currDataMap.set("tempo",            (featureDataJSON.audio_features[dataNDX].tempo));
+        currDataMap.set("tempo",            (featureDataJSON.audio_features[dataNDX].tempo).toFixed(0));
         currDataMap.set("time_signature",   (featureDataJSON.audio_features[dataNDX].time_signature));
     }
 }
@@ -826,8 +826,6 @@ function checkFilterSelected(){
     //hide visuals related to filtering
     if (option === "none" || option === "sort"){
         document.querySelector(".filter-range-div").style.display = "none";
-        document.querySelector("#property-filter-select-id").style.display = "none";
-        document.querySelector("#property-sort-select-id").style.display = "block"; //only difference is that property filter excludes key
         document.querySelector(".sort-filter-container").classList.remove("filter-range-show");
 
     }else{
@@ -837,46 +835,128 @@ function checkFilterSelected(){
         let minSpan = document.querySelector("#slider-min-id");
         let maxSpan = document.querySelector("#slider-max-id");
 
-        let property = document.querySelector("#property-filter-select-id").value;
-        let min = 1, max = 100;
+        let property = document.querySelector("#property-select-id").value;
+        let max = min = 0;
         //find the shortest and the greatest duration
+        document.body.querySelector("#greater-less-than-id").removeAttribute("disabled"); //in case a list was previously set
         switch(property){
-
-            //     break;
+            case "key":
+                max = 12;
+                min = 1;
+                document.body.querySelector("#slider-text-id").innerHTML = "C";
+                document.body.querySelector("#greater-less-than-id").setAttribute("disabled", "disabled");
+                document.body.querySelector("#property-slider-id").max = max;
+                document.body.querySelector("#property-slider-id").min = min;
+                break;
             case "duration":
                 max = 0;
-                min = "0:00"
+                //get duration of longest track
                 allTracks.forEach(item =>{
                     let durationVal = item.get("dataMap").get("duration").replace(":", "");
                     if (durationVal > max){
                         max = durationVal;
                     }
                 })
+                let seconds = max.substring(max.length - 2);
+                let minutes = max.substring(0, max.length - 2);
+                let temp = max;
+                max = (minutes * 60000) + (seconds * 1000); //storing max in milliseconds
                 document.body.querySelector("#property-slider-id").max = max;
-                max = [max.slice(0, max.length- 2), ":", max.slice(max.length - 2)].join('');
-
+                max = temp;
+                max = [max.slice(0, max.length- 2), ":", max.slice(max.length - 2)].join(''); //place the : back into the string
                 break;
             case "tempo":
+                max = 0;
+                min = 0;
+                allTracks.forEach(item =>{
+                    let tempoVal = item.get("dataMap").get("tempo");
+
+                    if (Number(tempoVal) > Number(max)){
+                        max = tempoVal;
+                    }
+                })
+                document.body.querySelector("#property-slider-id").max = max;
+                
                 break;
             case "loudness":
-
+                max = 60;
+                min = 0;
+                document.body.querySelector("#property-slider-id").max = 60;
                 break;
-            default: confirm("error no property selected");
+            default: 
+                max = 100;
+                min = 0;
+                document.body.querySelector("#property-slider-id").max = 100;
+                document.body.querySelector("#property-slider-id").min = 0;
+            ;
         }
-
-        sliderSpan.innerText = slider.value;
+        //innerText is set when handling key because its a special case
+        if (property != "key"){
+            sliderSpan.innerText = slider.value;
+        }
         slider.oninput = function(){
-            sliderSpan.innerText = [this.value.slice(0, this.value.length- 2), ":", this.value.slice(this.value.length - 2)].join('');
+            if (property === "duration"){
+                document.body.querySelector("#property-slider-id").step = 60;
+                //convert milliseconds to mm:ss format
+                let tempDurationMin = Math.floor(((this.value / 1000) / 60)).toString();
+                let tempDurationSeconds = (Math.floor((this.value / 1000)) % 60).toString();
+                let test = tempDurationMin + ":" + tempDurationSeconds;
+                sliderSpan.innerText = test;
+                //sliderSpan.innerText = [this.value.slice(0, this.value.length- 2), ":", this.value.slice(this.value.length - 2)].join('');
+            }
+            else{
+                document.body.querySelector("#property-slider-id").step = 1;
+                if (property === "key"){
+                    let temp = this.value;
+                    switch(temp){
+                        case "1":
+                            temp = "C"
+                            break;
+                        case "2":
+                            temp = "C#"
+                            break;
+                        case "3":
+                            temp = "D"
+                            break;
+                        case "4":
+                            temp = "D#"
+                            break;
+                        case "5":
+                            temp = "E"
+                            break;
+                        case "6":
+                            temp = "F"
+                            break;
+                        case "7":
+                            temp = "F#"
+                            break;
+                        case "8":
+                            temp = "G"
+                            break;
+                        case "9":
+                            temp = "G#"
+                            break;
+                        case "10":
+                            temp = "A"
+                            break;
+                        case "11":
+                            temp = "A#"
+                            break;
+                        case "12":
+                            temp = "B"
+                            break;                                    
+                    }
+                    sliderSpan.innerText = temp;
+                }else{
+                    sliderSpan.innerText = this.value;
+
+                }
+            }
         }
         maxSpan.innerText = max;
         minSpan.innerText = min;
-        const TEMPLATE = `
-
-        `
         document.querySelector(".filter-range-div").style.display = "grid";
         document.querySelector(".sort-filter-container").classList.add("filter-range-show");
-        document.querySelector("#property-filter-select-id").style.display = "block";
-        document.querySelector("#property-sort-select-id").style.display = "none"; //only difference is that property filter excludes key
     }
 }
 //add event listeners to radio btns
@@ -888,6 +968,9 @@ function addSortFilterEL(){
         checkFilterSelected();
     });
     document.querySelector("#filter-radio-btn").addEventListener("click", function(){
+        checkFilterSelected();
+    });
+    document.querySelector(".track-properties-list").addEventListener("click", function(){
         checkFilterSelected();
     });
 }

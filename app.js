@@ -473,6 +473,8 @@ async function doSearch(val, option){
                     let tempDurationSeconds = ((Math.round((parseFloat(key.duration_ms) / 1000) % 60)*100)/ 100).toString()
                     if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
                     dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
+                    dataMap.set("durationMS", key.duration_ms);
+
                     //dataMap.set("duration", (Math.round(parseFloat(dataMap.get("duration")))).toString());
                     dataMap.set("popularity", key.popularity);
                     
@@ -647,14 +649,16 @@ async function doPlaylistTrackDetails(){
         dataMap.set("name", item.track.name);
         dataMap.set("previewURL", item.track.preview_url);
         //get the id of the track
-        dataMap.set("uri", item.track.uri.replace("spotify:track:", ""));
+        //dataMap.set("uri", item.track.uri.replace("spotify:track:", ""));
         dataMap.set("id", item.track.id);
         dataMap.set("albumHREF", item.track.album.images[0].url);
         //get and set the duration of the track
+        
         let tempDurationMin = (parseInt((parseFloat(item.track.duration_ms) / 1000) / 60)).toString();
         let tempDurationSeconds = ((Math.round((parseFloat(item.track.duration_ms) / 1000) % 60)*100)/ 100).toString()
         if (parseInt(tempDurationSeconds) < 10){tempDurationSeconds = "0"+tempDurationSeconds;}
         dataMap.set("duration", tempDurationMin + ":" + tempDurationSeconds);
+        dataMap.set("durationMS", item.track.duration_ms);
         dataMap.set("popularity", item.track.popularity);
 
         let currentTrackMap = new Map();
@@ -823,11 +827,34 @@ function checkFilterSelected(){
             option = btn.value;
         }
     })
+
+    //if key is disabled from property list, enable it
+    if (document.body.querySelector(".property-option-id").hasAttribute("disabled")){
+        let items = document.body.querySelectorAll(".property-option-id");
+        items.forEach( item =>{
+            item.removeAttribute("disabled");
+        })
+    }
+
     //hide visuals related to filtering
     if (option === "none" || option === "sort"){
         document.querySelector(".filter-range-div").style.display = "none";
         document.querySelector(".sort-filter-container").classList.remove("filter-range-show");
+        //display ascending or descending option
+        if (option === "sort"){
+            document.querySelector(".ascending-descending-container").style.display = "block";
+            //disable key option
+            let items = document.body.querySelectorAll(".property-option-id");
+            items.forEach( item =>{
+                item.setAttribute("disabled", "disabled");
+            })
+            document.querySelector(".sort-filter-container").classList.add("ascend-descend-show");
 
+        }else{
+            document.querySelector(".ascending-descending-container").style.display = "none";
+            document.querySelector(".sort-filter-container").classList.remove("ascend-descend-show");
+
+        }
     }else{
         //find out what property is selected and create slider accordingly, then add to html
         let slider = document.querySelector("#property-slider-id");
@@ -876,7 +903,6 @@ function checkFilterSelected(){
                     }
                 })
                 document.body.querySelector("#property-slider-id").max = max;
-                
                 break;
             case "loudness":
                 max = 60;
@@ -982,9 +1008,32 @@ function sortOrFilterSubmit(){
             selected = btn.value;
         }
     })
+    let property = document.querySelector("#property-select-id").value;
+
     if (selected === "filter"){
-        let property = document.querySelector("#property-select-id").value;
         console.log(property);
+    }
+    else if (selected === "sort"){
+        let direction = document.querySelector("#ascending-descending-wrapper-id").value;
+
+        switch(property){
+            case "duration":
+                property = "durationMS";
+                break;
+        }
+
+        if (direction === "ascending"){
+            allTracks.sort(function(a, b){return a.get("dataMap").get(property) - b.get("dataMap").get(property)})
+
+        }else if (direction === "descending"){
+            allTracks.sort(function(a, b){return b.get("dataMap").get(property) - a.get("dataMap").get(property)});
+        }else{
+            confirm("ERROR with sorting direction");
+        }
+        document.body.querySelector(".playlist-tracks").innerHTML = ""; //clear the results to prepare for updating
+        for (let i = 0; i < allTracks.length; ++i){
+            createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("uri")? true : false);
+        }
     }
 
     

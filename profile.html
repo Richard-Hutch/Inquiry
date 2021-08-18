@@ -54,11 +54,63 @@
 
         <div class="playlist-wrapper">
             <h1 id="playlist-heading-id"><span>PLAYLISTS</span></h2>
+                <div class="sort-filter-wrapper">
+                    <div class="sort-filter-container">
+                    
+                        <div class="sort-or-filter-radio-wrapper" id = "sort-or-filter-radio-id">
+                            <input type="radio" name="s-or-f" id="none-radio-btn" value  = "none" checked>NONE
+                            <input type="radio" name="s-or-f" id="sort-radio-btn" value  = "sort">SORT
+                            <input type="radio" name="s-or-f" id="filter-radio-btn" value  = "filter">FILTER
+                        </div>
+                
+                        <div class="track-properties-list">
+                            <select class="property-select" id = "property-select-id">
+                                <option value="duration">DURATION</option>
+                                <option value="tempo">TEMPO</option>
+                                <option value="key" class = "property-option-id">KEY</option>
+                                <option value="timeSig" class = "property-option-id">TIME SIGNATURE</option>
+                                <option value="danceability">DANCEABILITY</option>
+                                <option value="energy">ENERGY</option>
+                                <option value="loudness">LOUDNESS</option>
+                                <option value="speechiness">SPEECHINESS</option>
+                                <option value="popularity">POPULARITY</option>
+                                <option value="acousticness">ACOUSTICNESS</option>
+                                <option value="INSTRUMENTALNESS">INSTRUMENTALNESS</option>
+                                <option value="LIVENESS">LIVENESS</option>
+                                <option value="VALENCE">VALENCE</option>
+                            </select>
+            
+                        </div>
+                        <div class="filter-range-div">
+                            <span id = "slider-min-id"></span>
+                            <div class="current-range">
+                                <input type="range" min="0" max="100" value="0" class="property-slider" id="property-slider-id">
+                                <span id = "slider-text-id"></span>
+                                <select class="greater-less-than" id = "greater-less-than-id">
+                                    <option value="greater-than">show tracks >= value </option>
+                                    <option value="less-than">show tracks <= value</option>
+                                </select>
+                            </div>
+                            <span id = "slider-max-id"></span>
+                        </div>
+                        <div class="ascending-descending-container" id = "scending-descending-container-id">
+                            <select class="ascending-descending-wrapper" id = "ascending-descending-wrapper-id">
+                                <option value="ascending">ASCENDING</option>
+                                <option value="descending">DESCENDNG</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sort-or-filter-submit-wrapper">
+                        <input type="button" value="SUBMIT" onclick="sortOrFilterSubmit()" id = "sort-filter-submit-id">
+                    </div>
+                </div>
+                <div class="property-definitions-class"></div>
             <div class="carousel-container">
                 <div class="carousel-wrapper">
                 </div>
             </div>
         </div>
+        
         <div class="playlist-tracks"></div>
     </div>
 

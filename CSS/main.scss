@@ -802,7 +802,9 @@ body{
 
 .sort-filter-wrapper{
     display: grid;
-    grid-template-rows: 40px 40px;
+    grid-template-rows: 40px 50px;
+    margin-bottom: 1em;
+
     .sort-filter-container{
         position: relative;
         left: 50%;
@@ -865,10 +867,20 @@ body{
                 }
             }
         }
+        .ascending-descending-container{
+            position: relative;
+            left: 50%;
+            transform: translate(-50%);
+            .ascending-descending-wrapper{
+                border-style: solid;
+                border-color: white;
+                border-width: .3em;
+                border-radius: .5em;
+            }
+        }
     }
     .sort-or-filter-submit-wrapper{
         margin-top: 2em;
-        margin-bottom: 1em;
         #sort-filter-submit-id{
             position: relative;
             left: 50%;
@@ -891,13 +903,56 @@ body{
         }
         
     }
+
     .filter-range-show{
         width: 610px;
+
         grid-template-columns: 200px 180px 230px;
+    }
+    .ascend-descend-show{
+        width: 510px;
+        grid-template-columns: 200px 180px 120px;
+    }
+}
+.property-definitions-class{
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    width: 55%;
+    border-style: solid;
+    border-radius: .5em;
+    border-width: 10px;
+    #property-definitions-title-id{
+        text-align: center;
+        font-size: x-large;
+        
+        font-weight: bold;
+        height: 20px;
+     }
+    ul{
+        list-style: none;
+        padding-left: 0;
+    }
+    li{
+        margin-bottom: .5em;
+        display: grid; 
+        grid-template-columns: 140px 80%;
+        //border-bottom-style: solid;
+        border-top-style: solid;
+        border-width: .3em;
+        
+        .prop-def-point{
+            // top: 50%;
+            // transform: translateY(-50%);
+            padding-left: .4em;
+            text-align: left;
+        }
+        .prop-def-txt{
+        }
+        
 
     }
 }
-
 
 // @keyframes slide-ltor{
 //    from{

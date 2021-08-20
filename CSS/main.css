@@ -816,10 +816,14 @@ body {
 .sort-filter-wrapper {
   display: -ms-grid;
   display: grid;
-  -ms-grid-rows: 40px 50px;
-      grid-template-rows: 40px 50px;
+  -ms-grid-rows: 40px 40px;
+      grid-template-rows: 40px 40px;
   margin-bottom: 1em;
   margin-top: 1em;
+  border-bottom-style: solid;
+  padding-bottom: .5em;
+  border-bottom-width: 10px;
+  border-radius: .5em;
 }
 
 .sort-filter-wrapper .sort-filter-container {
@@ -842,6 +846,8 @@ body {
 }
 
 .sort-filter-wrapper .sort-filter-container .track-properties-list .property-select {
+  height: 2.5em;
+  font-family: inherit;
   position: relative;
   left: 50%;
   -webkit-transform: translate(-50%);
@@ -902,25 +908,25 @@ body {
   border-radius: .5em;
 }
 
-.sort-filter-wrapper .sort-or-filter-submit-wrapper {
-  margin-top: 2em;
-}
-
 .sort-filter-wrapper .sort-or-filter-submit-wrapper #sort-filter-submit-id {
+  font-family: inherit;
+  color: #444444;
   position: relative;
+  color: #ffb362;
   left: 50%;
-  top: 35%;
+  top: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
   cursor: pointer;
   -webkit-transition: .4s;
   transition: .4s;
   border-style: solid;
-  border-radius: .5em;
+  border-radius: .8em;
   border-color: white;
   background-color: white;
   font-size: large;
-  font-style: inherit;
+  height: 35px;
+  width: 100px;
 }
 
 .sort-filter-wrapper .sort-or-filter-submit-wrapper #sort-filter-submit-id:hover {
@@ -961,18 +967,42 @@ body {
   font-weight: bold;
   color: #ffb362;
   background-color: white;
-  height: 40px;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-radius: .5em;
+  height: 45px;
   width: 300px;
   cursor: pointer;
   -webkit-transition: .5s;
   transition: .5s;
+  padding-top: .5em;
+  line-height: .9em;
   -webkit-transform-origin: center center;
           transform-origin: center center;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 .property-definitions-class #property-definitions-title-id:hover {
-  -webkit-transform: translate(-50%) scale(1.2);
-          transform: translate(-50%) scale(1.2);
+  border-left-width: .5em;
+  border-right-width: .5em;
+}
+
+.property-definitions-class #property-definitions-title-id #property-def-arrow-id {
+  -webkit-transition: .5s;
+  transition: .5s;
+}
+
+.property-definitions-class #property-definitions-title-id .property-def-arrow-down {
+  -webkit-transform: scale(0.8) rotate(0deg);
+          transform: scale(0.8) rotate(0deg);
+}
+
+.property-definitions-class #property-definitions-title-id .property-def-arrow-up {
+  -webkit-transform: scale(0.8) rotate(180deg);
+          transform: scale(0.8) rotate(180deg);
 }
 
 .property-definitions-class ul {

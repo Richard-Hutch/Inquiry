@@ -1042,9 +1042,19 @@ function sortOrFilterSubmit(){
     }    
 }
 function foldPropDefs(){
+    //show property definitions
     if (document.body.querySelector("#property-definitions-id").style.display === "none"){
-        document.body.querySelector("#property-definitions-id").style.display = "inherit";
-    }else{
+        document.body.querySelector("#property-definitions-id").style.display = "block";
+        document.body.querySelector("#property-def-arrow-id").classList.add("property-def-arrow-up");
+        document.body.querySelector("#property-def-arrow-id").classList.remove("property-def-arrow-down");
+
+    }
+    //hide property definitions
+    else{
         document.body.querySelector("#property-definitions-id").style.display = "none";
+        document.body.querySelector("#property-def-arrow-id").classList.add("property-def-arrow-down");
+        document.body.querySelector("#property-def-arrow-id").classList.remove("property-def-arrow-up");
+
+
     }
 }

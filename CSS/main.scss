@@ -41,6 +41,7 @@ Developer Note: dont forget to click "watch sass" in VS Code
     }
 }
 
+
 //so far, only applies to mainpage body
 body{
     animation-name: appear;
@@ -801,10 +802,14 @@ body{
 
 .sort-filter-wrapper{
     display: grid;
-    grid-template-rows: 40px 50px;
+    grid-template-rows: 40px 40px;
     margin-bottom: 1em;
     margin-top: 1em;
-
+    border-bottom-style: solid;
+    padding-bottom: .5em;
+    border-bottom-width: 10px;
+    border-radius: .5em;
+    
     .sort-filter-container{
         position: relative;
         left: 50%;
@@ -821,6 +826,8 @@ body{
         .track-properties-list{
 
             .property-select{
+                height: 2.5em;
+                font-family: inherit;
                 position: relative;
                 left: 50%;
                 transform: translate(-50%);
@@ -880,21 +887,23 @@ body{
         }
     }
     .sort-or-filter-submit-wrapper{
-        margin-top: 2em;
         #sort-filter-submit-id{
+            font-family: inherit;
+            color: rgb(68, 68, 68);
             position: relative;
+            color: rgb(255, 179, 98);
             left: 50%;
-            top: 35%;
+            top: 50%;
             transform: translate(-50%, -50%);
             cursor: pointer;
             transition: .4s;
             border-style: solid;
-            border-radius: .5em;
+            border-radius: .8em;
             border-color: white;
             background-color: white;
             font-size: large;
-            font-style: inherit;
-
+            height: 35px;
+            width: 100px;
             &:hover{
                 box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
                 background-color: rgb(255, 34, 34);
@@ -936,20 +945,37 @@ body{
         font-weight: bold;
         color: rgb(255, 179, 98);
         background-color: white;
-        // border-left-style: solid;
-        // border-right-style: solid;
+        border-left-style: solid;
+        border-right-style: solid;
         // border-width: .3em;
-        // border-radius: .5em;
+        border-radius: .5em;
         // border-color: rgb(221, 221, 221);
-        height: 40px;
+        height: 45px;
         width: 300px;
         cursor: pointer;
         transition: .5s;
+        padding-top: .5em;
+        line-height: .9em;
         transform-origin: center center;
+        user-select: none;
         &:hover{
-            transform: translate(-50%) scale(1.2);
+            //transform: translate(-50%) scale(1.1);
+            border-left-width: .5em;
+            border-right-width: .5em;
+
         }
-     }
+        #property-def-arrow-id{
+            transition: .5s;
+        }
+        .property-def-arrow-down{
+            transform:scale(.8) rotate(0deg);
+        }
+        .property-def-arrow-up{
+            transform: scale(.8) rotate(180deg);
+
+        }
+    }
+
     ul{
         list-style: none;
         padding-left: 0;

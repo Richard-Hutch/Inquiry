@@ -853,9 +853,14 @@ function checkFilterSelected(){
         }else{
             document.querySelector(".ascending-descending-container").style.display = "none";
             document.querySelector(".sort-filter-container").classList.remove("ascend-descend-show");
-
         }
     }else{
+        
+        if (document.querySelector(".sort-filter-container").classList.contains("ascend-descend-show")){
+            document.querySelector(".sort-filter-container").classList.remove("ascend-descend-show");
+            document.querySelector(".ascending-descending-container").style.display = "none";
+        }
+        
         //find out what property is selected and create slider accordingly, then add to html
         let slider = document.querySelector("#property-slider-id");
         let sliderSpan = document.querySelector("#slider-text-id");
@@ -1034,7 +1039,12 @@ function sortOrFilterSubmit(){
         for (let i = 0; i < allTracks.length; ++i){
             createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("uri")? true : false);
         }
+    }    
+}
+function foldPropDefs(){
+    if (document.body.querySelector("#property-definitions-id").style.display === "none"){
+        document.body.querySelector("#property-definitions-id").style.display = "inherit";
+    }else{
+        document.body.querySelector("#property-definitions-id").style.display = "none";
     }
-
-    
 }

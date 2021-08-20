@@ -294,7 +294,12 @@ async function fetchTrackFeatures(idString){
 async function handleMusicFeatures(idString, ndxCheckPoint){
     //GET FEATURES OF THE TRACK
     let featureDataJSON = await fetchTrackFeatures(idString).catch(error =>{ 
-        confirm('There has been a problem with your fetch operation: ' + error.message);
+        if (error.message.includes("401")){
+            confirm('Token has timed out. Please log back in');
+            changePage(3);
+        }else{
+            confirm('There has been a problem with your fetch operation: ' + error.message);
+        }
     });
     if (featureDataJSON.error){
         if (featureDataJSON.error.status === 401){
@@ -402,7 +407,13 @@ async function doSearch(val, option){
         }
         url += val + type + limit + market;
         let data = await fetchTorP(url).catch(error =>{
-            confirm('There has been a problem with your fetch operation: ' + error.message);
+
+            if (error.message.includes("401")){
+                confirm('Token has timed out. Please log back in');
+                changePage(3);
+            }else{
+                confirm('There has been a problem with your fetch operation: ' + error.message);
+            }
         });
         //PLAYLIST OPTION!!!!!
         if (option === "Playlist"){
@@ -590,8 +601,12 @@ async function doUserDetails(){
     let limit = "limit=50";
     let url = "https://api.spotify.com/v1/me/playlists?" + limit;
     let userPlaylistJSON = await fetchUserPlaylists(url).catch(error =>{
-        confirm('There has been a problem with your fetch operation: ' + error.message);
-    })
+        if (error.message.includes("401")){
+            confirm('Token has timed out. Please log back in');
+            changePage(3);
+        }else{
+            confirm('There has been a problem with your fetch operation: ' + error.message);
+        }    })
 
     //console.log(JSON.stringify(userPlaylistJSON, null, 2));
 
@@ -634,8 +649,12 @@ async function doUserDetails(){
 async function doPlaylistTrackDetails(){
     let playlistID = document.body.querySelector(".slick-current").id;
     let playlistTracksJSON = await fetchPlaylistTracks(playlistMap.get(playlistID).get("trackHREF")).catch(error =>{
-        confirm('There has been a problem with your fetch operation: ' + error.message);
-    })
+        if (error.message.includes("401")){
+            confirm('Token has timed out. Please log back in');
+            changePage(3);
+        }else{
+            confirm('There has been a problem with your fetch operation: ' + error.message);
+        }    })
     //console.log(JSON.stringify(playlistTracksJSON, null, 2));
     playlistTracksJSON.items.forEach(async function(item){
         //console.log(JSON.stringify(item, null, 2));

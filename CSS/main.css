@@ -794,15 +794,12 @@ body {
 }
 
 .playlist-tracks {
-  border-style: solid;
-  border-width: 1em;
   border-radius: .5em;
   padding-top: .5em;
-  margin-top: 1em;
   margin-bottom: 4em;
   position: relative;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, #CA4246), color-stop(30%, #f03f3f), color-stop(40%, #f56156), color-stop(55%, #ec7113), color-stop(65%, #fc9343), color-stop(75%, #e0960d), color-stop(85%, #ffc964));
-  background-image: linear-gradient(180deg, #CA4246 20%, #f03f3f 30%, #f56156 40%, #ec7113 55%, #fc9343 65%, #e0960d 75%, #ffc964 85%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(20%, #fd4d53), color-stop(30%, #ff7d7d), color-stop(40%, #fd9e97), color-stop(75%, #fdce76), color-stop(85%, #ffc964));
+  background-image: linear-gradient(180deg, #fd4d53 20%, #ff7d7d 30%, #fd9e97 40%, #fdce76 75%, #ffc964 85%);
   background-repeat: repeat;
   left: 50%;
   -webkit-transform: translate(-50%);
@@ -821,8 +818,10 @@ body {
   margin-bottom: 1em;
   margin-top: 1em;
   border-bottom-style: solid;
+  border-top-style: solid;
   padding-bottom: .5em;
-  border-bottom-width: 10px;
+  padding-top: .5em;
+  border-width: 1px;
   border-radius: .5em;
 }
 
@@ -963,19 +962,18 @@ body {
   -webkit-transform: translate(-50%);
           transform: translate(-50%);
   text-align: center;
-  font-size: x-large;
+  font-size: large;
   font-weight: bold;
   color: #ffb362;
   background-color: white;
   border-left-style: solid;
   border-right-style: solid;
   border-radius: .5em;
-  height: 45px;
-  width: 300px;
+  height: 30px;
+  width: 250px;
   cursor: pointer;
   -webkit-transition: .5s;
   transition: .5s;
-  padding-top: .5em;
   line-height: .9em;
   -webkit-transform-origin: center center;
           transform-origin: center center;
@@ -983,6 +981,7 @@ body {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  line-height: .4em;
 }
 
 .property-definitions-class #property-definitions-title-id:hover {
@@ -990,24 +989,49 @@ body {
   border-right-width: .5em;
 }
 
-.property-definitions-class #property-definitions-title-id #property-def-arrow-id {
-  -webkit-transition: .5s;
-  transition: .5s;
-}
-
 .property-definitions-class #property-definitions-title-id .property-def-arrow-down {
-  -webkit-transform: scale(0.8) rotate(0deg);
-          transform: scale(0.8) rotate(0deg);
+  -webkit-transform: scale(0.5) rotate(0deg);
+          transform: scale(0.5) rotate(0deg);
 }
 
 .property-definitions-class #property-definitions-title-id .property-def-arrow-up {
-  -webkit-transform: scale(0.8) rotate(180deg);
-          transform: scale(0.8) rotate(180deg);
+  -webkit-transform: scale(0.5) rotate(180deg);
+          transform: scale(0.5) rotate(180deg);
+}
+
+.property-definitions-class #property-definitions-span-id {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 30px;
+  padding-top: .25em;
+}
+
+.property-definitions-class #property-def-arrow-id {
+  -webkit-transition: .5s;
+  transition: .5s;
+  position: absolute;
+  right: 0;
+  top: .2em;
 }
 
 .property-definitions-class ul {
   list-style: none;
   padding-left: 0;
+  overflow: auto;
+  background-color: white;
+  max-height: 600px;
+  min-width: 300px;
+  border-style: solid;
+  border-radius: .5em;
+  border-color: white;
 }
 
 .property-definitions-class li {
@@ -1017,12 +1041,7 @@ body {
   -ms-grid-columns: auto auto;
       grid-template-columns: auto auto;
   border-bottom-style: solid;
-  border-top-style: solid;
-  border-width: .3em;
-  border-radius: .5em;
-  border-color: #3d3d3d;
-  min-width: 400px;
-  background-color: white;
+  border-bottom-color: red;
 }
 
 .property-definitions-class li .prop-def-point {
@@ -1046,6 +1065,5 @@ body {
   padding-top: .7em;
   line-height: 1.2em;
   padding-right: .2em;
-  overflow: auto;
 }
 /*# sourceMappingURL=main.css.map */

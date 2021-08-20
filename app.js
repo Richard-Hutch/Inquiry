@@ -17,7 +17,7 @@ const MAX_AUDIO_FEATURE_LIMIT = 99;
 
 let allTracks = new Array(); //this 2D array holds all of the tracks displayed on screen holds arrays of track information
 let playlistMap = new Map();
-
+let filteredTracks = new Array();
 
 
 /*
@@ -1036,6 +1036,40 @@ function sortOrFilterSubmit(){
 
     if (selected === "filter"){
         console.log(property);
+        if (property === "duration"){
+            property = "durationMS";
+        }
+        let filterOrder = document.body.querySelector("#greater-less-than-id").value;
+        let targetValue = document.body.querySelector("#slider-text-id").innerText;
+        //convert target value to ms if property == duration
+        if (property == "duration" || "durationMS"){
+            let tempSecs = Number(targetValue.substring(targetValue.length - 2));
+            let tempMins = targetValue.substring(0, targetValue.length - 3);
+            targetValue =Number((tempSecs * 60000) + (tempMins * 1000));
+        }
+        console.log(property);
+        console.log(targetValue);
+        for (let i = 0; i < allTracks.length; ++i){
+            
+            if (filterOrder === "greater-than"){
+                console.log(Number(allTracks[i].get("dataMap").get(property)));
+                if (Number(allTracks[i].get("dataMap").get(property)) >= targetValue){
+                    console.log(allTracks[i].get("dataMap").get(property) + " >= " + targetValue);
+                }
+            }else if (filterOrder === "less-than"){
+                if (Number(allTracks[i].get("dataMap").get(property)) <= targetValue){
+                    console.log(allTracks[i].get("dataMap").get(property) + " <= " + targetValue);
+
+                }
+            }else{
+                confirm("ERROR IN FILTERING ORDER");
+            }
+
+
+        }
+
+
+
     }
     else if (selected === "sort"){
         let direction = document.querySelector("#ascending-descending-wrapper-id").value;

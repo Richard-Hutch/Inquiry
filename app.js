@@ -38,6 +38,50 @@ window.onload = function(){
     checkParameters();
 }
 
+function keyTranscriber(tempKey){
+    switch(Number(tempKey)){
+        case 0:
+            tempKey = "C"
+            break;
+        case 1:
+            tempKey = "C#"
+            break;
+        case 2:
+            tempKey = "D"
+            break;
+        case 3:
+            tempKey = "D#"
+            break;
+        case 4:
+            tempKey = "E"
+            break;
+        case 5:
+            tempKey = "F"
+            break;
+        case 6:
+            tempKey = "F#"
+            break;
+        case 7:
+            tempKey = "G"
+            break;
+        case 8:
+            tempKey = "G#"
+            break;
+        case 9:
+            tempKey = "A"
+            break;
+        case 10:
+            tempKey = "A#"
+            break;
+        case 11:
+            tempKey = "B"
+            break; 
+        default: tempKey = "err";
+    }
+
+    return tempKey;
+}
+
 function deepCopy(obj) {
   
     if (null === obj || 'object' !== typeof obj) return obj;
@@ -315,45 +359,7 @@ async function handleMusicFeatures(idString, ndxCheckPoint){
         let tempKey = "err";
         //transcribe the key and assign it
         tempKey = featureDataJSON.audio_features[dataNDX].key;
-        switch(tempKey){
-            case 0:
-                tempKey = "C"
-                break;
-            case 1:
-                tempKey = "C#"
-                break;
-            case 2:
-                tempKey = "D"
-                break;
-            case 3:
-                tempKey = "D#"
-                break;
-            case 4:
-                tempKey = "E"
-                break;
-            case 5:
-                tempKey = "F"
-                break;
-            case 6:
-                tempKey = "F#"
-                break;
-            case 7:
-                tempKey = "G"
-                break;
-            case 8:
-                tempKey = "G#"
-                break;
-            case 9:
-                tempKey = "A"
-                break;
-            case 10:
-                tempKey = "A#"
-                break;
-            case 11:
-                tempKey = "B"
-                break;                                    
-        }
-        //check if key is major or minor
+        tempKey = keyTranscriber(tempKey);
         if (featureDataJSON.audio_features[dataNDX].mode == 1){
             tempKey += " major";
         }else if (featureDataJSON.audio_features[dataNDX].mode == 0){
@@ -892,12 +898,26 @@ function checkFilterSelected(){
         document.body.querySelector("#greater-less-than-id").removeAttribute("disabled"); //in case a list was previously set
         switch(property){
             case "key":
-                max = 12;
-                min = 1;
+                max = 11;
+                min = 0;
                 document.body.querySelector("#slider-text-id").innerHTML = "C";
                 document.body.querySelector("#greater-less-than-id").setAttribute("disabled", "disabled");
                 document.body.querySelector("#property-slider-id").max = max;
                 document.body.querySelector("#property-slider-id").min = min;
+                break;
+            case "timeSig":
+
+                let tempSet = new Set();
+                allTracks.forEach(item=>{
+                    tempSet.add(Number(item.get("dataMap").get("time_signature")));
+                });
+                console.log(tempSet);
+                max = Math.max(...tempSet); //... means entries
+                min = Math.min(...tempSet);
+
+                document.body.querySelector("#property-slider-id").max = max;
+                document.body.querySelector("#property-slider-id").min = min;
+                document.body.querySelector("#greater-less-than-id").setAttribute("disabled", "disabled");
                 break;
             case "duration":
                 max = 0;
@@ -950,6 +970,9 @@ function checkFilterSelected(){
                 //convert milliseconds to mm:ss format
                 let tempDurationMin = Math.floor(((this.value / 1000) / 60)).toString();
                 let tempDurationSeconds = (Math.floor((this.value / 1000)) % 60).toString();
+                if (tempDurationSeconds < 10){
+                    tempDurationSeconds = "0" + tempDurationSeconds
+                }
                 let test = tempDurationMin + ":" + tempDurationSeconds;
                 sliderSpan.innerText = test;
                 //sliderSpan.innerText = [this.value.slice(0, this.value.length- 2), ":", this.value.slice(this.value.length - 2)].join('');
@@ -958,44 +981,7 @@ function checkFilterSelected(){
                 document.body.querySelector("#property-slider-id").step = 1;
                 if (property === "key"){
                     let temp = this.value;
-                    switch(temp){
-                        case "1":
-                            temp = "C"
-                            break;
-                        case "2":
-                            temp = "C#"
-                            break;
-                        case "3":
-                            temp = "D"
-                            break;
-                        case "4":
-                            temp = "D#"
-                            break;
-                        case "5":
-                            temp = "E"
-                            break;
-                        case "6":
-                            temp = "F"
-                            break;
-                        case "7":
-                            temp = "F#"
-                            break;
-                        case "8":
-                            temp = "G"
-                            break;
-                        case "9":
-                            temp = "G#"
-                            break;
-                        case "10":
-                            temp = "A"
-                            break;
-                        case "11":
-                            temp = "A#"
-                            break;
-                        case "12":
-                            temp = "B"
-                            break;                                    
-                    }
+                    temp = keyTranscriber(temp);
                     sliderSpan.innerText = temp;
                 }else{
                     sliderSpan.innerText = this.value;
@@ -1035,49 +1021,69 @@ function sortOrFilterSubmit(){
     let property = document.querySelector("#property-select-id").value;
 
     if (selected === "filter"){
-        console.log(property);
-        if (property === "duration"){
-            property = "durationMS";
-        }
+
         let filterOrder = document.body.querySelector("#greater-less-than-id").value;
         let targetValue = document.body.querySelector("#slider-text-id").innerText;
         //convert target value to ms if property == duration
-        if (property == "duration" || "durationMS"){
+        if (property == "duration" || property =="durationMS"){
+            property = "durationMS";
             let tempSecs = Number(targetValue.substring(targetValue.length - 2));
             let tempMins = targetValue.substring(0, targetValue.length - 3);
-            targetValue =Number((tempSecs * 60000) + (tempMins * 1000));
+            targetValue =Number((tempMins * 60000) + (tempSecs * 1000));
+        }else if (property == "timeSig"){
+            property = "time_signature";
         }
-        console.log(property);
-        console.log(targetValue);
+        //make sure filtered tracks array is empty
+        filteredTracks.splice(0, filteredTracks.length);
         for (let i = 0; i < allTracks.length; ++i){
             
-            if (filterOrder === "greater-than"){
-                console.log(Number(allTracks[i].get("dataMap").get(property)));
-                if (Number(allTracks[i].get("dataMap").get(property)) >= targetValue){
-                    console.log(allTracks[i].get("dataMap").get(property) + " >= " + targetValue);
+            if (property == "time_signature" || property == "key"){
+                let val = allTracks[i].get("dataMap").get(property);
+                if (property == "key"){
+                    val = val.split(' ');
+                    //key will be in the first ndx;
+                    val = val[0];
+                    console.log(val);
                 }
-            }else if (filterOrder === "less-than"){
-                if (Number(allTracks[i].get("dataMap").get(property)) <= targetValue){
-                    console.log(allTracks[i].get("dataMap").get(property) + " <= " + targetValue);
-
+                if (val == targetValue){
+                    filteredTracks.push(allTracks[i]);       
                 }
             }else{
-                confirm("ERROR IN FILTERING ORDER");
+                if (filterOrder === "greater-than"){
+                    if (Number(allTracks[i].get("dataMap").get(property)) >= targetValue){
+                        filteredTracks.push(allTracks[i]);
+                    }
+                }else if (filterOrder === "less-than"){
+                    if (Number(allTracks[i].get("dataMap").get(property)) <= targetValue){
+                        filteredTracks.push(allTracks[i]);
+                    }
+                }else{
+                    confirm("ERROR IN FILTERING ORDER");
+                }
             }
 
 
+            
         }
-
-
-
+        //clear shown tracks to display results 
+        document.body.querySelector(".playlist-tracks").innerHTML = "";
+        for (let j = 0; j < filteredTracks.length; ++j){
+            createTrackHTML(filteredTracks[j].get("dataMap"), filteredTracks[j].get("dataMap").has("uri")? true : false);
+        }
+        
     }
+    //create an array and sort only the tracks in the innerhtml of the playlist-tracks class
     else if (selected === "sort"){
+        //not valid options
+        if (property == "key" || property == "timeSig"){
+            return;
+        }
         let direction = document.querySelector("#ascending-descending-wrapper-id").value;
 
         switch(property){
             case "duration":
                 property = "durationMS";
-                break;
+            break;
         }
 
         if (direction === "ascending"){
@@ -1092,7 +1098,15 @@ function sortOrFilterSubmit(){
         for (let i = 0; i < allTracks.length; ++i){
             createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("uri")? true : false);
         }
-    }    
+    }
+    //NONE is selected
+    else{
+        document.body.querySelector(".playlist-tracks").innerHTML = "";
+
+        for (let i = 0; i < allTracks.length; ++i){
+            createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("uri")? true : false);
+        }
+    } 
 }
 function foldPropDefs(){
     //show property definitions

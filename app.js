@@ -18,6 +18,16 @@ const MAX_AUDIO_FEATURE_LIMIT = 99;
 let allTracks = new Array(); //this 2D array holds all of the tracks displayed on screen holds arrays of track information
 let playlistMap = new Map();
 let filteredTracks = new Array();
+let addedTracks = new Array();
+
+
+//to work on
+/*
+create a panel to show what songs have selected and allow the user to remove tracks from there
+OR
+check if song is in addedTracks array and then make it selected :) i like this idea more
+*/
+
 
 
 /*
@@ -728,6 +738,9 @@ function createTrackHTML(dataMap, embed = false){
     let uaid = "audio-id" + unique_id_counter;
     let uacid = "audio-cont-id" + unique_id_counter;
     let utid = "unique-track-id" + unique_id_counter;
+    let utbid = "unique-track-button-id" + unique_id_counter;
+    let uitbid = "unique-inner-track-button-id" + unique_id_counter;
+
     let insert = ``;
     if (embed){
         insert = `
@@ -762,6 +775,12 @@ function createTrackHTML(dataMap, embed = false){
     const TEMPLATE = 
     `
     <div class = "track-wrapper" id = "${utid}">
+
+        <div class = "track-select-btn track-select-btn-outer" id = "${utbid}">
+            <div class = "track-select-btn-inner " id= "${uitbid}">
+            </div>
+        </div>
+
         ${insert}
         <div class="info-card-hide" id="${uiid}">
         
@@ -815,7 +834,8 @@ function createTrackHTML(dataMap, embed = false){
         document.body.querySelector(".playlist-tracks").innerHTML += TEMPLATE;
         dataMap.set("ucid", ucid);
         dataMap.set("uiid", uiid);
-        dataMap.set("utid", utid); //unique 
+        dataMap.set("utid", utid);
+        dataMap.set("uitbid", uitbid);
         //no embedding so it means custom track appearance
         if (!embed){
             dataMap.set("ppid", ppid);
@@ -832,11 +852,14 @@ function createTrackHTML(dataMap, embed = false){
             if (!embed){
                 document.body.querySelector("#"+ppid).addEventListener("click", function(){
                     changePlayPauseBtn(ppid, uaid, uacid, dataMap.get("previewURL")); //pass the unique element id of the play/pause btn and audio id
-                })
+                });
             }
 
             document.body.querySelector("#"+ucid).addEventListener("click", function(){
                 showTrackAnalysis(ucid, uiid);
+            });
+            document.body.querySelector("#"+utbid).addEventListener("click", function(){
+                trackBtnSelected(utbid, uitbid);
             });
         })
         unique_id_counter += 1;
@@ -1127,7 +1150,45 @@ function foldPropDefs(){
         document.body.querySelector("#property-definitions-id").style.display = "none";
         document.body.querySelector("#property-def-arrow-id").classList.add("property-def-arrow-down");
         document.body.querySelector("#property-def-arrow-id").classList.remove("property-def-arrow-up");
-
-
     }
+}
+function trackBtnSelected(utbid, uitbid){
+
+    
+
+    if (document.body.querySelector("#"+uitbid).classList.contains("track-select-btn-selected")){
+        document.body.querySelector("#"+uitbid).classList.remove("track-select-btn-selected");
+        document.body.querySelector(".amnt-tracks-selected-count").innerText =  Number(document.body.querySelector(".amnt-tracks-selected-count").innerText) - 1;
+        for (let i = 0; i < addedTracks.length; ++i){
+            if (uitbid == addedTracks[i].get("dataMap").get("uitbid")){
+                addedTracks.splice(i,1); //remove the entry from the array
+                break;
+            }
+        }
+ 
+
+    }else{
+        document.body.querySelector(".amnt-tracks-selected-count").innerText = 1 + Number(document.body.querySelector(".amnt-tracks-selected-count").innerText);
+        document.body.querySelector("#"+uitbid).classList.add("track-select-btn-selected");  
+        
+        for (let i = 0; i < allTracks.length; ++i){
+            if (uitbid == allTracks[i].get("dataMap").get("uitbid")){
+                addedTracks.push(allTracks[i]); //add the entry to the array
+                break;
+            }
+        }
+    }
+}
+function createPlaylist(){
+    console.log("CREATE PLAYLIST");
+
+    console.log(addedTracks);
+    //add addedTracks items to new playlist
+}
+function addToPlaylist(){
+    console.log("ADD TO PLAYLIST");
+
+
+    console.log(addedTracks);
+    //add addedTracks items to new playlist
 }

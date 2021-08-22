@@ -225,6 +225,32 @@ body{
         grid-template-columns: 420px 50px;
 
     }
+
+    .track-select-btn{
+        border-radius: 50%;
+        border-color: white;
+        border-style: solid;
+        background-color: white;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        left: -30px;
+        top: 50%;
+        transform:translateY(-50%);
+        z-index: 1;
+        &:hover{
+            border-color: rgb(146, 0, 0);
+        }
+        .track-select-btn-selected{
+            border-radius: 50%;
+            background-color: rgb(146, 0, 0);
+            width: 20px;
+            height: 20px;
+            z-index: 2;
+        }
+    }
+
+
     .playlist-option{
         grid-template-columns: 81px 335px 64px;
 
@@ -233,8 +259,8 @@ body{
         position: relative;
         height: 80px;
         border-style:solid;
-        border-right-width: 1em;
-        border-left-width: 1em;
+        border-right-width: .8em;
+        border-left-width: .8em;
         border-radius: .5em;
         margin-bottom: .3em;
         //background-color: var(--off-white);
@@ -778,7 +804,7 @@ body{
     border-radius: .5em;
     padding-top: .5em;
     //margin-top: 1em;
-    margin-bottom: 4em;
+    // margin-bottom: 4em;
     position: relative;
     background-image: linear-gradient(
                     180deg,
@@ -794,7 +820,7 @@ body{
     transform: translate(-50%);
     height: auto; 
     max-height: 800px;
-    width: 520px; 
+    width: 570px; 
     overflow: auto;
 }
 
@@ -1026,6 +1052,53 @@ body{
             padding-right: .2em;
         }
     }
+}
+
+.create-add-playlist-wrapper{
+    margin-top: 1em;
+    .amnt-tracks-selected{
+        text-align: center;
+        position: relative;
+        width: 200px;
+        left: 50%;
+        transform: translate(-50%);
+        .amnt-tracks-selected-count{
+
+        }
+    }
+
+
+    .create-add-playlist-btn{
+        position: relative;
+        width: 400px;
+        left: 50%;
+        transform: translate(-50%);
+        .create-playlist-btn, .add-to-playlist-btn{
+            font-family: inherit;
+            background-color: white;
+            display: block;
+            position: relative;
+            left: 50%;
+            transform: translate(-50%);
+            border-radius: .5em;
+            border-style: solid;
+            border-color: white;
+            height: 30px;
+            width: 200px;
+            margin-bottom: .8em;
+            transition: .3s;
+            &:hover{
+                transform: translate(-50%) scale(1.1);
+
+            }
+        }
+        .create-playlist-btn{
+        }
+        .add-to-playlist-btn{
+    
+        }
+    }
+
 }
 
 // @keyframes slide-ltor{

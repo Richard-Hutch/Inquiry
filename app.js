@@ -815,6 +815,7 @@ function createTrackHTML(dataMap, embed = false){
         document.body.querySelector(".playlist-tracks").innerHTML += TEMPLATE;
         dataMap.set("ucid", ucid);
         dataMap.set("uiid", uiid);
+        dataMap.set("utid", utid); //unique 
         //no embedding so it means custom track appearance
         if (!embed){
             dataMap.set("ppid", ppid);
@@ -1061,16 +1062,12 @@ function sortOrFilterSubmit(){
                     confirm("ERROR IN FILTERING ORDER");
                 }
             }
-
-
-            
         }
         //clear shown tracks to display results 
         document.body.querySelector(".playlist-tracks").innerHTML = "";
         for (let j = 0; j < filteredTracks.length; ++j){
             createTrackHTML(filteredTracks[j].get("dataMap"), filteredTracks[j].get("dataMap").has("uri")? true : false);
         }
-        
     }
     //create an array and sort only the tracks in the innerhtml of the playlist-tracks class
     else if (selected === "sort"){
@@ -1079,24 +1076,33 @@ function sortOrFilterSubmit(){
             return;
         }
         let direction = document.querySelector("#ascending-descending-wrapper-id").value;
-
         switch(property){
             case "duration":
                 property = "durationMS";
-            break;
+                break;
         }
+        let tracksOnScreen = new Array();
+        let curTracks = document.body.querySelectorAll(".track-wrapper");
+        
+        curTracks.forEach(currItem =>{
+            allTracks.forEach(allTItem =>{
+                if (currItem.id == allTItem.get("dataMap").get("utid")){
+                    tracksOnScreen.push(allTItem);
+                }
+            });   
+        });
 
         if (direction === "ascending"){
-            allTracks.sort(function(a, b){return a.get("dataMap").get(property) - b.get("dataMap").get(property)})
+            tracksOnScreen.sort(function(a, b){return a.get("dataMap").get(property) - b.get("dataMap").get(property)})
 
         }else if (direction === "descending"){
-            allTracks.sort(function(a, b){return b.get("dataMap").get(property) - a.get("dataMap").get(property)});
+            tracksOnScreen.sort(function(a, b){return b.get("dataMap").get(property) - a.get("dataMap").get(property)});
         }else{
             confirm("ERROR with sorting direction");
         }
         document.body.querySelector(".playlist-tracks").innerHTML = ""; //clear the results to prepare for updating
-        for (let i = 0; i < allTracks.length; ++i){
-            createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("uri")? true : false);
+        for (let i = 0; i < tracksOnScreen.length; ++i){
+            createTrackHTML(tracksOnScreen[i].get("dataMap"), tracksOnScreen[i].get("dataMap").has("uri")? true : false);
         }
     }
     //NONE is selected

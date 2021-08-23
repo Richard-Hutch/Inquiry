@@ -72,7 +72,6 @@
                     <option value="LIVENESS">LIVENESS</option>
                     <option value="VALENCE">VALENCE</option>
                 </select>
-
             </div>
             <div class="filter-range-div">
                 <span id = "slider-min-id"></span>
@@ -113,10 +112,31 @@
         </div>
         <div class="create-add-playlist-btn">
             <button class = "create-playlist-btn" onclick = "createPlaylist()">CREATE PLAYLIST</button>
+            <div class="new-playlist-name" style="display:none;">
+                <form onsubmit="fetchCreatePlaylist(event)">
+                    <label for="name">Please Enter Name For Playlist</label>
+                    <input type = "text" name = "name" required id = "new-playlist-name-id">
+                    <input type="submit" id = "new-playlist-name-submit-id" value = "ENTER">
+                    <input type="button" id = "new-playlist-name-cancel-id" value = "CANCEL" onclick = "createPlaylist()">
+                </form>
+
+                <!-- <span>Please Enter Name For Playlist</span>
+
+                <input type = "text" required id = "new-playlist-name-id">
+                <button id = "new-playlist-name-submit-id">ENTER</button>
+                <button id = "new-playlist-name-cancel-id" onclick = "createPlaylist()">CANCEL</button> -->
+
+            </div>
             <button class = "add-to-playlist-btn" onclick = "addToPlaylist()">ADD TO EXISTING PLAYLIST</button>
+            <div class="existing-playlist-selection" style="display:none;">
+                <span>Select Playlist to Add Selected Tracks</span>
+                <select class="existing-playlist-select" id = "existing-playlist-select-id">
+                    <option value="None"></option>
+                </select>
+                <button id = "existing-playlist-submit-id">SELECT</button>
+
+            </div>
         </div>
-
-
     </div>
 
 

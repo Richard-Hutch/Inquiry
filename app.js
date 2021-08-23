@@ -1,6 +1,6 @@
 const client_id = "45d081854dd645af9ace7d813d3f7ae4";
 const redirect_uri = "http://127.0.0.1:5500/mainpage.html";
-const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative playlist-modify-private";
+const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public";
 const AUTH_URL = "https://accounts.spotify.com/authorize" + 
     "?client_id=" + client_id + 
     "&response_type=token" + 
@@ -19,7 +19,7 @@ let allTracks = new Array(); //this 2D array holds all of the tracks displayed o
 let playlistMap = new Map();
 let filteredTracks = new Array();
 let addedTracks = new Array();
-
+// let usersPlaylist = new Array();
 
 //to work on
 /*
@@ -493,6 +493,8 @@ async function doSearch(val, option){
                     //get the id of the track
                     dataMap.set("name", key.name);
                     dataMap.set("uri", key.uri.replace("spotify:track:", ""));
+                    dataMap.set("embed", true);
+
                     dataMap.set("id", key.id);
                     
                     //get and set the duration of the track
@@ -584,7 +586,7 @@ async function fetchUserPlaylists(url){
     return json;
 }
 //                      PROFILE DETAILS
-async function fetchProfileDetails(){
+async function fetchProfileDetails(plain = false){
     let response = await fetch("https://api.spotify.com/v1/me", 
     {
         method: "GET",
@@ -594,17 +596,20 @@ async function fetchProfileDetails(){
     })
     if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
     let result = await response.json();
-    document.getElementById("profile-name-id").innerHTML = result.display_name;
-    document.getElementById("profile-link-id").setAttribute("href", result.external_urls.spotify);
-    document.getElementById("profile-link-id").setAttribute("target", "_blank"); //open to new tab
-    if (result.images[0] != null){
-        document.getElementById("user-img-id").setAttribute("src", result.images[0].url);
-        document.getElementById("profile-picture-div-id").classList.remove("profile-picture-blank");
-        document.getElementById("profile-picture-div-id").classList.add("profile-picture-custom");
+    if (!plain){
+        document.getElementById("profile-name-id").innerHTML = result.display_name;
+        document.getElementById("profile-link-id").setAttribute("href", result.external_urls.spotify);
+        document.getElementById("profile-link-id").setAttribute("target", "_blank"); //open to new tab
+        if (result.images[0] != null){
+            document.getElementById("user-img-id").setAttribute("src", result.images[0].url);
+            document.getElementById("profile-picture-div-id").classList.remove("profile-picture-blank");
+            document.getElementById("profile-picture-div-id").classList.add("profile-picture-custom");
+        }
+        document.getElementById("user-name-id").innerHTML += " " + result.id;
+        document.getElementById("email-id").innerHTML += " " + result.email;
+        document.getElementById("follower-count-id").innerHTML += " " + result.followers.total;
     }
-    document.getElementById("user-name-id").innerHTML += " " + result.id;
-    document.getElementById("email-id").innerHTML += " " + result.email;
-    document.getElementById("follower-count-id").innerHTML += " " + result.followers.total;
+
     return result;
 
 }
@@ -638,7 +643,10 @@ async function doUserDetails(){
     userPlaylistJSON.items.forEach(item=>{
         let currPlaylistMap = new Map();
         currPlaylistMap.set("name", item.name);
-        currPlaylistMap.set("albumIMG", item.images[0].url);
+        //playlist may not have a photo
+        if (item.images.length > 0){
+            currPlaylistMap.set("albumIMG", item.images[0].url);
+        }
         currPlaylistMap.set("trackHREF", item.tracks.href);
         //dynamically add the playlist html
         let tempID = "playlist-id" + playlistIDCounter;
@@ -646,7 +654,7 @@ async function doUserDetails(){
         const TEMPLATE = `            
             <div class = "playlist-item-class" id ="${tempID}">
                 ${currPlaylistMap.get("name")}
-                <img src="${currPlaylistMap.get("albumIMG")}" alt="album image" class = "album-img-class">
+                <img src="${currPlaylistMap.get("albumIMG")}" alt="NO ALBUM IMG" class = "album-img-class">
             </div>`;
         playlistIDCounter++;
         document.body.querySelector(".carousel-wrapper").innerHTML += TEMPLATE;
@@ -677,7 +685,7 @@ async function doPlaylistTrackDetails(){
             changePage(3);
         }else{
             confirm('There has been a problem with your fetch operation: ' + error.message);
-        }    })
+        }    });
     //console.log(JSON.stringify(playlistTracksJSON, null, 2));
     playlistTracksJSON.items.forEach(async function(item){
         //console.log(JSON.stringify(item, null, 2));
@@ -691,7 +699,7 @@ async function doPlaylistTrackDetails(){
         dataMap.set("name", item.track.name);
         dataMap.set("previewURL", item.track.preview_url);
         //get the id of the track
-        //dataMap.set("uri", item.track.uri.replace("spotify:track:", ""));
+        dataMap.set("uri", item.track.uri.replace("spotify:track:", ""));
         dataMap.set("id", item.track.id);
         dataMap.set("albumHREF", item.track.album.images[0].url);
         //get and set the duration of the track
@@ -750,7 +758,6 @@ function createTrackHTML(dataMap, embed = false){
     let selected = false;
     addedTracks.forEach(addTrack=>{
         if (addTrack.get("dataMap").get("id") == dataMap.get("id")){
-            console.log("old");
             selected = true;
             ucid = addTrack.get("dataMap").get("ucid");
             uiid = addTrack.get("dataMap").get("uiid");
@@ -763,7 +770,6 @@ function createTrackHTML(dataMap, embed = false){
         }
     })
     if (!selected){
-        console.log("new");
         ucid = "card-svg-id" + unique_id_counter;
         uiid = "info-card-id" + unique_id_counter;
         ppid = "play-pause-btn-id" + unique_id_counter;
@@ -773,13 +779,6 @@ function createTrackHTML(dataMap, embed = false){
         utbid = "unique-track-button-id" + unique_id_counter;
         uitbid = "unique-inner-track-button-id" + unique_id_counter;
     }
-
-    
-
-    
-
-
-
     let insert = ``;
     if (embed){
         insert = `
@@ -1135,7 +1134,7 @@ function sortOrFilterSubmit(){
         //clear shown tracks to display results 
         document.body.querySelector(".playlist-tracks").innerHTML = "";
         for (let j = 0; j < filteredTracks.length; ++j){
-            createTrackHTML(filteredTracks[j].get("dataMap"), filteredTracks[j].get("dataMap").has("uri")? true : false);
+            createTrackHTML(filteredTracks[j].get("dataMap"), filteredTracks[j].get("dataMap").has("embed")? true : false);
         }
     }
     //create an array and sort only the tracks in the innerhtml of the playlist-tracks class
@@ -1171,7 +1170,7 @@ function sortOrFilterSubmit(){
         }
         document.body.querySelector(".playlist-tracks").innerHTML = ""; //clear the results to prepare for updating
         for (let i = 0; i < tracksOnScreen.length; ++i){
-            createTrackHTML(tracksOnScreen[i].get("dataMap"), tracksOnScreen[i].get("dataMap").has("uri")? true : false);
+            createTrackHTML(tracksOnScreen[i].get("dataMap"), tracksOnScreen[i].get("dataMap").has("embed")? true : false);
         }
     }
     //NONE is selected
@@ -1179,7 +1178,7 @@ function sortOrFilterSubmit(){
         document.body.querySelector(".playlist-tracks").innerHTML = "";
 
         for (let i = 0; i < allTracks.length; ++i){
-            createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("uri")? true : false);
+            createTrackHTML(allTracks[i].get("dataMap"), allTracks[i].get("dataMap").has("embed")? true : false);
         }
     } 
 }
@@ -1226,15 +1225,134 @@ function trackBtnSelected(utbid, uitbid){
         }
     }
 }
-function createPlaylist(){
-    console.log("CREATE PLAYLIST");
 
-    console.log(addedTracks);
-    //add addedTracks items to new playlist
+
+
+async function fetchAddItemsToPlaylist(playlistID, uris){
+    console.log(playlistID);
+    console.log("in method: " + uris);
+    let response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks?`, 
+    {
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + accessToken
+        },
+        body: JSON.stringify(uris),
+    })
+    /*
+                "uris": [
+            "spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"]
+            }),
+    */
+    if (!response.ok) {throw new Error(`HTTP error! status: ${response.status}`);}
+    let result = await response.json();
+    return result;
 }
-function addToPlaylist(){
-    console.log("ADD TO PLAYLIST");
 
+
+async function fetchCreatePlaylist(event){
+    event.preventDefault();//prevent page refresh!
+    let userInput = document.body.querySelector("#new-playlist-name-id").value;
+    let profDetails = await fetchProfileDetails(true).catch(error =>{
+        if (error.message.includes("401")){
+            confirm('Token has timed out. Please log back in');
+            changePage(3);
+        }else{
+            confirm('There has been a problem with your fetch operation: ' + error.message);
+        }    
+    });
+    if (addedTracks.length > 0){
+        //CREATE PLAYLIST
+        let url = `https://api.spotify.com/v1/users/${profDetails.id}/playlists`;
+        let response = await fetch(url, 
+            {
+                method: "POST",
+                headers:{
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + accessToken
+                },
+                body: JSON.stringify({
+                    "name": `${userInput}`,
+                    "description": "Playlist created through INQUIRY by Richard Hutcheson",
+                    "public": false
+                })
+
+            });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`).catch(error =>{
+                if (error.message.includes("401")){
+                    confirm('Token has timed out. Please log back in');
+                    changePage(3);
+                }else{
+                    confirm('There has been a problem with your fetch operation: ' + error.message);
+                }    
+            });
+        }
+        const json = await response.json();
+        let playlistID = json.id;
+        let uriString = "";
+        let uriArray = new Array();
+        for (let i = 0; i < addedTracks.length; ++i){
+            uriArray.push("spotify:track:"+ addedTracks[i].get("dataMap").get("uri"));
+            // uriString +=  ("\"spotify:track:"+ addedTracks[i].get("dataMap").get("uri") + "\",");
+            // console.log(uriString);
+        }
+        await fetchAddItemsToPlaylist(playlistID, {
+            uris: uriArray
+        });
+    }
+    
+    
+    //console.log(JSON.stringify(json, null, 2)); 
+}
+function createPlaylist(){
+    if (document.body.querySelector(".new-playlist-name").style.display == "none"){
+        document.body.querySelector(".new-playlist-name").style.display = "block";
+    }else{
+        document.body.querySelector(".new-playlist-name").style.display = "none"
+    }
+}
+async function addToPlaylist(){
+    console.log("ADD TO PLAYLIST");
+    if (document.body.querySelector(".existing-playlist-selection").style.display == "none"){
+        document.body.querySelector(".existing-playlist-selection").style.display = "block";
+    }else{
+        document.body.querySelector(".existing-playlist-selection").style.display = "none"
+    }
+    //have to get list of user's playlists
+    if (playlistMap.size == 0){
+        let limit = "limit=50";
+        let url = "https://api.spotify.com/v1/me/playlists?" + limit;
+        
+        let json = await fetchUserPlaylists(url).catch(error =>{
+            if (error.message.includes("401")){
+                confirm('Token has timed out. Please log back in');
+                changePage(3);
+            }else{
+                confirm('There has been a problem with your fetch operation: ' + error.message);
+            }    
+        });
+        document.body.querySelector(".existing-playlist-select").innerHTML = "";
+
+        json.items.forEach(item =>{
+            
+            const TEMPLATE = `<option value = "${item.id}">${item.name}</option>`
+            document.body.querySelector(".existing-playlist-select").innerHTML += TEMPLATE;
+            console.log(item.name);
+        });
+    }else{
+        document.body.querySelector(".existing-playlist-select").innerHTML = "";
+
+        let iterator = playlistMap.values();
+
+        playlistMap.forEach( temp =>{
+            let pl = iterator.next().value;
+            const TEMPLATE = `<option value = "${pl.get("id")}">${pl.get("name")}</option>`
+            document.body.querySelector(".existing-playlist-select").innerHTML += TEMPLATE;
+            console.log(pl.get("name"));
+        })
+    }
 
     console.log(addedTracks);
     //add addedTracks items to new playlist

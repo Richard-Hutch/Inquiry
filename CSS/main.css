@@ -1112,6 +1112,7 @@ body {
   left: 50%;
   -webkit-transform: translate(-50%);
           transform: translate(-50%);
+  margin-bottom: 6em;
 }
 
 .create-add-playlist-wrapper .create-add-playlist-btn .create-playlist-btn, .create-add-playlist-wrapper .create-add-playlist-btn .add-to-playlist-btn {

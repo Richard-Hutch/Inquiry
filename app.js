@@ -611,7 +611,14 @@ async function fetchProfileDetails(){
 async function doUserDetails(){
         
     //GET CURRENT USER'S PROFILE DETAILS
-    await fetchProfileDetails();
+    await fetchProfileDetails().catch(error =>{
+        if (error.message.includes("401")){
+            confirm('Token has timed out. Please log back in');
+            changePage(3);
+        }else{
+            confirm('There has been a problem with your fetch operation: ' + error.message);
+        }    
+    });
 
     //                         ----- GET CURRENT USER'S PLAYLISTS -----
     let limit = "limit=50";
@@ -622,7 +629,7 @@ async function doUserDetails(){
             changePage(3);
         }else{
             confirm('There has been a problem with your fetch operation: ' + error.message);
-        }    })
+        }    });
 
     //console.log(JSON.stringify(userPlaylistJSON, null, 2));
 
@@ -731,15 +738,47 @@ async function doPlaylistTrackDetails(){
 }
 
 function createTrackHTML(dataMap, embed = false){
+    let ucid;
+    let uiid;
+    let ppid;
+    let uaid;
+    let uacid;
+    let utid;
+    let utbid;
+    let uitbid;
 
-    let ucid = "card-svg-id" + unique_id_counter;
-    let uiid = "info-card-id" + unique_id_counter;
-    let ppid = "play-pause-btn-id" + unique_id_counter;
-    let uaid = "audio-id" + unique_id_counter;
-    let uacid = "audio-cont-id" + unique_id_counter;
-    let utid = "unique-track-id" + unique_id_counter;
-    let utbid = "unique-track-button-id" + unique_id_counter;
-    let uitbid = "unique-inner-track-button-id" + unique_id_counter;
+    let selected = false;
+    addedTracks.forEach(addTrack=>{
+        if (addTrack.get("dataMap").get("id") == dataMap.get("id")){
+            console.log("old");
+            selected = true;
+            ucid = addTrack.get("dataMap").get("ucid");
+            uiid = addTrack.get("dataMap").get("uiid");
+            ppid = addTrack.get("dataMap").get("ppid");
+            uaid = addTrack.get("dataMap").get("uaid");
+            uacid = addTrack.get("dataMap").get("uacid");
+            utid = addTrack.get("dataMap").get("utid");
+            utbid = addTrack.get("dataMap").get("utbid");
+            uitbid = addTrack.get("dataMap").get("uitbid");
+        }
+    })
+    if (!selected){
+        console.log("new");
+        ucid = "card-svg-id" + unique_id_counter;
+        uiid = "info-card-id" + unique_id_counter;
+        ppid = "play-pause-btn-id" + unique_id_counter;
+        uaid = "audio-id" + unique_id_counter;
+        uacid = "audio-cont-id" + unique_id_counter;
+        utid = "unique-track-id" + unique_id_counter;
+        utbid = "unique-track-button-id" + unique_id_counter;
+        uitbid = "unique-inner-track-button-id" + unique_id_counter;
+    }
+
+    
+
+    
+
+
 
     let insert = ``;
     if (embed){
@@ -861,6 +900,13 @@ function createTrackHTML(dataMap, embed = false){
             document.body.querySelector("#"+utbid).addEventListener("click", function(){
                 trackBtnSelected(utbid, uitbid);
             });
+            //check if selected btn needs to be highlighted
+            addedTracks.forEach(item=>{
+                console.log(item.get("dataMap").get("name"));
+                if (item.get("dataMap").get("id") == dataMap.get("id")){
+                    document.body.querySelector("#"+uitbid).classList.add("track-select-btn-selected");
+                }
+            })
         })
         unique_id_counter += 1;
 }
@@ -1155,18 +1201,19 @@ function foldPropDefs(){
 function trackBtnSelected(utbid, uitbid){
 
     
-
+    console.log("before: ", addedTracks);
     if (document.body.querySelector("#"+uitbid).classList.contains("track-select-btn-selected")){
         document.body.querySelector("#"+uitbid).classList.remove("track-select-btn-selected");
         document.body.querySelector(".amnt-tracks-selected-count").innerText =  Number(document.body.querySelector(".amnt-tracks-selected-count").innerText) - 1;
+        console.log(uitbid);
         for (let i = 0; i < addedTracks.length; ++i){
+            console.log(addedTracks[i].get("dataMap").get("uitbid"));
             if (uitbid == addedTracks[i].get("dataMap").get("uitbid")){
                 addedTracks.splice(i,1); //remove the entry from the array
                 break;
             }
         }
- 
-
+        console.log("after: ", addedTracks);
     }else{
         document.body.querySelector(".amnt-tracks-selected-count").innerText = 1 + Number(document.body.querySelector(".amnt-tracks-selected-count").innerText);
         document.body.querySelector("#"+uitbid).classList.add("track-select-btn-selected");  

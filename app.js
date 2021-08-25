@@ -169,20 +169,20 @@ function changePage(page){
     let change = true;
     //home page
     if (page == 0){
-        url = "/mainpage.html#" + userHash;
+        url = "/Inquiry/mainpage.html#" + userHash;
     }
     //profile page
     else if (page == 1){
-        url = "/profile.html#" + userHash;
+        url = "/Inquiry/profile.html#" + userHash;
     }
     //search result page
     else if (page == 2){
         let key = document.getElementById("search-input").value;
         let option = document.getElementById("select-ID").value; //retrieve what criteria to search by
-        url = "/result.html#" + userHash + SEARCH_ITEM + key + SEARCH_OPTION + option;
+        url = "/Inquiry/result.html#" + userHash + SEARCH_ITEM + key + SEARCH_OPTION + option;
     }
     else if (page == 3){
-        url = "/halt.html#";
+        url = "/Inquiry/halt.html#";
     }
     else{
         change = false;
@@ -201,7 +201,7 @@ function checkLoggedIn(order = 0){
         if (!location.href.includes("halt")){
             //user does not have access token, meaning not logged in
             if (!location.href.includes("access_token=")){
-                location.href = "/halt.html";
+                location.href = "/Inquiry/halt.html";
             }
         }
         //get access token
@@ -222,7 +222,7 @@ function authorize(){
     window.location = AUTH_URL;
     // //user denied login
     if (location.href.includes("error=access_denied")){
-        location.href = "/halt.html";
+        location.href = "/Inquiry/halt.html";
     }
 }
 
@@ -263,7 +263,7 @@ function changePlayPauseBtn(id, uaid, uacid, href){
             <audio src="${href}" id="${uaid}">Your browser does not support the audio tag.</audio>
         `;
         contComp.innerHTML += TEMPLATE;
-        component.src = "/resources/pausebutton.svg";
+        component.src = "/Inquiry/resources/pausebutton.svg";
         document.body.querySelector("#"+uaid).play();
     }
     //state === pause-button
@@ -271,7 +271,7 @@ function changePlayPauseBtn(id, uaid, uacid, href){
         component.classList.remove("pause-button");
         component.classList.remove("audio-playing");
         component.classList.add("play-button");
-        component.src = "/resources/playbutton.svg";
+        component.src = "/Inquiry/resources/playbutton.svg";
         document.body.querySelector("#"+uaid).pause(); //remove the html with the audio element
         contComp.innerHTML = "";
     }
@@ -785,7 +785,7 @@ function createTrackHTML(dataMap, embed = false){
         <div class="track-card-container track-only-option">
             <iframe src="https://open.spotify.com/embed/track/${dataMap.get("uri")}" width="420" height="80" frameborder="0" allowtransparency="true" title="spotify embed"></iframe>
             <div class="track-arrow-img">
-                <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
+                <img src="/Inquiry/resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
             </div>
         </div>`;
     }else{
@@ -793,7 +793,7 @@ function createTrackHTML(dataMap, embed = false){
             <div class="track-card-container playlist-option">
                 <div class="album-img-container">
                     <img src="${dataMap.get("albumHREF")}"  alt="album img" class = "album-img" id = "album-img-id">
-                    <img src="/resources/playbutton.svg" alt="play button" class = "play-button" id = "${ppid}">
+                    <img src="/Inquiry//resources/playbutton.svg" alt="play button" class = "play-button" id = "${ppid}">
                     <div class = "audio-container", id = "${uacid}"></div>
                 </div>
                 <div class = "track-and-artist">
@@ -805,7 +805,7 @@ function createTrackHTML(dataMap, embed = false){
                     </div>
                 </div>
                 <div class="track-arrow-img">
-                    <img src="resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
+                    <img src="/Inquiry/resources/down-arrow2.svg" alt="down arrow svg" class="card-svg-down-class" id="${ucid}">
                 </div>
             </div>
         `;        

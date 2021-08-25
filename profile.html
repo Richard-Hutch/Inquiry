@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inquiry-Profile</title> <!-- edit this to adjust browser tab name -->
-    <link rel="stylesheet" href="CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
+    <link rel="stylesheet" href="/Inquiry/CSS/main.css" type="text/css"> <!--the .css not the .scss because .scss is just for writing code-->
     
     <!-- SLICK (hosted by jsDelivr CDN) AND JQUERY (hosted from Google's Content Delivery Network)-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     
-    <script src="Inquiry/app.js"></script>
+    <script src="/app.js"></script>
 
     <!-- SLICK (hosted by jsDelivr CDN) AND JQUERY (hosted from Google's Content Delivery Network)-->
     <!-- https://github.com/kenwheeler/slick/ -->
@@ -38,7 +38,7 @@
                 <h3 id ="profile-header-id">PROFILE FOR:</h3>
                 <div class="profile-picture-blank", id = "profile-picture-div-id">
                     <a href="#" id = "profile-link-id">
-                        <img src="Inquiry/resources/anon-user.svg" alt="user profile pic", id = "user-img-id">
+                        <img src="/resources/anon-user.svg" alt="user profile pic", id = "user-img-id">
                     </a>
                 </div>
                 <h1 id = "profile-name-id"></h1>
@@ -56,7 +56,7 @@
             <h1 id="playlist-heading-id"><span>PLAYLISTS</span></h2>
                 <div class="property-definitions-class">
                     <div id = "property-definitions-title-id" onclick = "foldPropDefs()">
-                        <span id = "property-definitions-span-id">PROPERTY DEFINITIONS</span><img src="Inquiry/resources/down-arrow2.svg" alt="down-arrow" id = "property-def-arrow-id" class = "property-def-arrow-down">
+                        <span id = "property-definitions-span-id">PROPERTY DEFINITIONS</span><img src="/resources/down-arrow2.svg" alt="down-arrow" id = "property-def-arrow-id" class = "property-def-arrow-down">
                     </div>
                     <ul id = "property-definitions-id" style = "display: none;">
                         <li><span class = "prop-def-point">DANCEABILITY</span><span class = "prop-def-txt">Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0 is least danceable and 100 is most danceable.</span></li>

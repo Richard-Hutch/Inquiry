@@ -1229,7 +1229,6 @@ function trackBtnSelected(utbid, uitbid){
 
 
 async function fetchAddItemsToPlaylist(playlistID, uris){
-    console.log(playlistID);
     console.log("in method: " + uris);
     let response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks?`, 
     {
@@ -1314,7 +1313,6 @@ function createPlaylist(){
     }
 }
 async function addToPlaylist(){
-    console.log("ADD TO PLAYLIST");
     if (document.body.querySelector(".existing-playlist-selection").style.display == "none"){
         document.body.querySelector(".existing-playlist-selection").style.display = "block";
     }else{
@@ -1356,4 +1354,16 @@ async function addToPlaylist(){
 
     console.log(addedTracks);
     //add addedTracks items to new playlist
+}
+async function fetchAddToPlaylist(){
+    let selection = document.body.querySelector("#existing-playlist-select-id").value;
+    let uriArray = new Array();
+
+    for (let i = 0; i < addedTracks.length; ++i){
+        uriArray.push("spotify:track:"+ addedTracks[i].get("dataMap").get("uri"));
+    }
+
+    await fetchAddItemsToPlaylist(selection, {
+        uris: uriArray
+    });
 }

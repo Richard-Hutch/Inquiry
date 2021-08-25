@@ -1159,12 +1159,11 @@ function sortOrFilterSubmit(){
                 }
             });   
         });
-
         if (direction === "ascending"){
-            tracksOnScreen.sort(function(a, b){return a.get("dataMap").get(property) - b.get("dataMap").get(property)})
+            tracksOnScreen.sort(function(a, b){return Number(a.get("dataMap").get(property)) - Number(b.get("dataMap").get(property))})
 
         }else if (direction === "descending"){
-            tracksOnScreen.sort(function(a, b){return b.get("dataMap").get(property) - a.get("dataMap").get(property)});
+            tracksOnScreen.sort(function(a, b){return Number(b.get("dataMap").get(property)) - Number(a.get("dataMap").get(property))});
         }else{
             confirm("ERROR with sorting direction");
         }

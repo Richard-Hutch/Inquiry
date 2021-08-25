@@ -1,5 +1,5 @@
 const client_id = "45d081854dd645af9ace7d813d3f7ae4";
-const redirect_uri = "http://127.0.0.1:5500/mainpage.html";
+const redirect_uri = "/mainpage.html";
 const scopes = "user-read-email user-read-private playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public";
 const AUTH_URL = "https://accounts.spotify.com/authorize" + 
     "?client_id=" + client_id + 

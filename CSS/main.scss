@@ -574,8 +574,10 @@ body{
         top: 8.5em;
         right: 0em;
         .selectSearch{
+            font-family: inherit;
             margin: 0;
             padding: 0;
+            border-style: solid;
             background-color: white;
             border-color:var(--off-white);
             height: 2.7em;

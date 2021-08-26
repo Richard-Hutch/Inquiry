@@ -293,7 +293,7 @@ body {
   width: 20px;
   height: 20px;
   position: absolute;
-  left: -32px;
+  left: -30px;
   top: 50%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
@@ -606,8 +606,10 @@ body {
 }
 
 .search-section .dropdown-wrapper .selectSearch {
+  font-family: inherit;
   margin: 0;
   padding: 0;
+  border-style: solid;
   background-color: white;
   border-color: var(--off-white);
   height: 2.7em;

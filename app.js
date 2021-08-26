@@ -1299,6 +1299,8 @@ async function fetchCreatePlaylist(event){
         await fetchAddItemsToPlaylist(playlistID, {
             uris: uriArray
         });
+        confirm("TRACKS ADDED TO NEWLY CREATED PLAYLIST");
+
     }
     
     
@@ -1365,4 +1367,5 @@ async function fetchAddToPlaylist(){
     await fetchAddItemsToPlaylist(selection, {
         uris: uriArray
     });
+    confirm("TRACKS ADDED TO PLAYLIST");
 }

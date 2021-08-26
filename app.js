@@ -601,7 +601,6 @@ async function fetchProfileDetails(plain = false){
         document.getElementById("profile-link-id").setAttribute("href", result.external_urls.spotify);
         document.getElementById("profile-link-id").setAttribute("target", "_blank"); //open to new tab
         if (result.images[0] != null){
-            console.log(result.images[0].url);
             document.getElementById("user-img-id").setAttribute("src", result.images[0].url);
             document.getElementById("profile-picture-div-id").classList.remove("profile-picture-blank");
             document.getElementById("profile-picture-div-id").classList.add("profile-picture-custom");

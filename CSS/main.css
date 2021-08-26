@@ -561,7 +561,7 @@ body {
 .search-section .search-title {
   text-align: center;
   font-size: 2.5em;
-  width: 14.5em;
+  width: 15em;
   height: 1.8em;
   display: block;
   margin-left: auto;
@@ -597,16 +597,17 @@ body {
   border-radius: 2em;
   border-color: var(--off-white);
   outline-width: 0;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .search-section .dropdown-wrapper {
   position: absolute;
   top: 8.5em;
-  right: 0em;
+  right: -.5em;
 }
 
 .search-section .dropdown-wrapper .selectSearch {
-  font-family: inherit;
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
   padding: 0;
   border-style: solid;
@@ -615,7 +616,6 @@ body {
   height: 2.7em;
   border-width: .3em;
   border-radius: .5em;
-  font-family: inherit;
 }
 
 .search-section .search-button-div {

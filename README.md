@@ -1,2 +1,4 @@
 # Inquiry
-Website integrated with Spotify's API that allows users to upload their personal playlist or search for a public playlist and then organize the songs based on metadata the user chooses. Also enable users to access specific track and playlist metadata
+Web app integrated with Spotify's API that allows users to log into their Spotify accounts and access the metadata of tracks from Spotify's database of millions. Users may also sort, filter, and create playlists from their query results or add to existing playlists.
+
+https://richard-hutch.github.io/Inquiry/
